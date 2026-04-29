@@ -102,7 +102,7 @@ export const loginUserController = async (req, res) => {
  */
 export const logoutUserController = async (req, res)=>{
     const token = req.cookies.token;
-    console.log("Token = ",token);
+    // console.log("Token = ",token);
     
     if(token){
       await TokenBlacklistModel.create({token});
@@ -110,4 +110,19 @@ export const logoutUserController = async (req, res)=>{
     }
     res.clearCookie("token");
     res.status(200).json({message:"user logged out successfully"})
+}
+/**
+ * @name getMeController
+ * @description get the current logged in user details,
+ * @access Private
+ */
+export const getMeController = async (req, res)=>{
+    const user = await userModel.findById(req.user.id);
+
+    res.status(200).json({message:"Fetched the user details", user:{
+      id:user._id,
+      userName: user.userName,
+      email : user.email
+    }})
+
 }
