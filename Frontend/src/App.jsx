@@ -12,6 +12,7 @@ const App = () => {
         <Routes>
           <Route path="/login" element={<Login/>}/>
           <Route path="/register" element={<Register/>}/>
+          <Route path="/"  element={<h1 className="text-white text-center pt-40">Home Page vaya....🤣</h1>}/>
         </Routes>
       </Router>
     </div>

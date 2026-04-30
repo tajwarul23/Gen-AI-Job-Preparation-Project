@@ -1,0 +1,31 @@
+🌑 Background system
+bg-gray-950 → page background
+bg-gray-900 → card surface
+bg-gray-800 → input fields
+🔵 Interaction system
+blue-600 → primary action
+focus:ring-blue-500 → focus state
+hover:bg-blue-700 → hover state
+⚪ Text hierarchy
+text-white → main text
+text-gray-300 → labels
+text-sm → secondary text
+
+4 layer architecture in react
+
+1. UI layer 
+folders => component and pages
+
+
+2. Hook layer (for managing state and api layers)
+folders => hooks
+
+3. State layer (storing the user data in the frontend or managing the state ) => where we implement the context api
+files => feature.context.jsx example auth.context.jsx or ai.context.jsx
+
+4. API layer (for communication with backend)
+folder => services
+                => auth.api.js
+                => ai.api.js
+
+Order of implementation for easier approach UI => API => State => Hook

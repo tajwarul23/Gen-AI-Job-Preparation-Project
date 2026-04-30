@@ -1,8 +1,26 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../Hooks/useAuth";
+import { useState } from "react";
 
 const Login = () => {
-    const handleSubmit = (e)=>{
+  
+    const {loading, handleLogin} = useAuth();
+    const [formInput, setFormInput] = useState({
+      email:"",
+      password:""
+    })
+    
+      const handleSubmit = async (e)=>{
         e.preventDefault();
+        handleLogin(formInput)
+        // console.log(formInput);
+    }
+    const handleChange = (e)=>{
+      
+      setFormInput({...formInput, [e.target.name] : e.target.value})
+    }
+    if(loading){
+      return <main className="min-h-screen flex justify-center items-center"><h1 className="text-white text-3xl">Loading....</h1></main>
     }
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-950 px-4">
@@ -21,7 +39,9 @@ const Login = () => {
               type="email"
               id="email"
               name="email"
+              value={formInput.email}
               placeholder="Enter Email Address"
+              onChange={handleChange}
               className="px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -35,6 +55,8 @@ const Login = () => {
               type="password"
               id="password"
               name="password"
+              value={formInput.password}
+              onChange={handleChange}
               placeholder="Enter Password"
               className="px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -47,7 +69,7 @@ const Login = () => {
           >
             Login
           </button>
-          <h1 className="text-md">Don't have an account?<Link className="ml-2 text-blue-700 underline" to={"/register"}>Register</Link></h1>
+          <h1 className="text-md">Don't have an account?<Link className="ml-1 text-blue-700 " to={"/register"}>Register</Link></h1>
         </form>
 
       </div>
