@@ -1,6 +1,6 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "../auth.context.jsx";
-import { login, register, logout } from "../services/auth.api.js";
+import { login, register, logout, getMe } from "../services/auth.api.js";
 import { useNavigate } from "react-router-dom";
 
 export const useAuth = () => {
@@ -15,8 +15,7 @@ export const useAuth = () => {
       const data = await login({ email, password });
       setUser(data.user);
       // console.log("Logged in successfully", data.user);
-      navigate('/');
-      
+      navigate("/");
     } catch (error) {
       console.log("Error in handleLogin", error.message);
     } finally {
@@ -41,6 +40,8 @@ export const useAuth = () => {
     setLoading(true);
     try {
       const data = await logout();
+      console.log(data);
+      
       setUser(null);
     } catch (error) {
       console.log("Error in handleLogout", error.message);
@@ -48,6 +49,22 @@ export const useAuth = () => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    const getAndSetUser = async () => {
+      try {
+        const data = await getMe();
+        setUser(data.user);
+      } catch (error) {
+        console.log("Error in useAuth", error.message);
+
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getAndSetUser();
+  }, []);
 
   return { user, loading, handleRegister, handleLogin, handleLogout };
 };

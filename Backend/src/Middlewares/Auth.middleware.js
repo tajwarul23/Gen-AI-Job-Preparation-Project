@@ -8,7 +8,7 @@ export const verifyToken = async(req, res, next) => {
     return res.status(401).json({ message: "Token not provided" });
   }
   const isTokenBlackListed = await  TokenBlacklistModel.findOne({token});
-  if(!isTokenBlackListed){
+  if(isTokenBlackListed){
     return res.status(401).json({message:"Token is blacklisted. Please login again."})
   }
   try {
