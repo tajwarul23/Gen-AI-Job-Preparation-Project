@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+
 const QuestionCard = ({ index, question, intention, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -35,7 +36,7 @@ const QuestionCard = ({ index, question, intention, answer }) => {
             <p className="text-[11px] font-medium text-gray-400 uppercase tracking-widest mb-1">Intention</p>
             <p className="text-sm text-gray-200 leading-relaxed">{intention}</p>
           </div>
-          <div className="border border-gray-700 rounded-lg p-4">
+          <div className="border-2 border-green-900 rounded-lg p-4">
             <p className="text-[11px] font-medium text-gray-400 uppercase tracking-widest mb-1">Answer</p>
             <p className="text-sm text-gray-200 leading-relaxed">{answer}</p>
           </div>

@@ -6,8 +6,9 @@ const TechnicalQuestion = () => {
   const { technicalQuestions } = report;
   return (
     <div className="min-h-screen">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 ">
         <div className="flex flex-col items-center justify-between gap-4">
+          <h1 className="text-xl font-semibold text-gray-50 leading-snug mb-1.5 tracking-wide">Technical Questions of {report.title}</h1>
           {technicalQuestions.map((q, i) => (
             <QuestionCard
               key={q.question}

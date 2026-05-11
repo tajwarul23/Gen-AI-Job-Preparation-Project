@@ -1,15 +1,63 @@
-🌑 Background system
-bg-gray-950 → page background
-bg-gray-900 → card surface
-bg-gray-800 → input fields
-🔵 Interaction system
-blue-600 → primary action
-focus:ring-blue-500 → focus state
-hover:bg-blue-700 → hover state
-⚪ Text hierarchy
-text-white → main text
-text-gray-300 → labels
-text-sm → secondary text
+  colors: {
+        // ── Backgrounds ──────────────────────
+        app:     '
+#0a0a0f',   // bg-app      → page background
+        surface: '
+#111118',   // bg-surface  → cards, panels
+        overlay: '
+#16161f',   // bg-overlay  → modals, dropdowns
+        // ── Borders ──────────────────────────
+        line:    '
+#1e1e2e',   // border-line → default border
+        linehov: '
+#2a2a3e',   // border-linehov → hover border
+        // ── Text ─────────────────────────────
+        ink:     '
+#e8e8f0',   // text-ink    → primary text
+        muted:   '
+#6b6b80',   // text-muted  → secondary text
+        // ── Accent colours ───────────────────
+        violet: {
+          DEFAULT: '
+#7c6af7',  // primary accent
+          dim:     'rgba(124,106,247,0.15)',
+          border:  'rgba(124,106,247,0.35)',
+          text:    '
+#a99af7',   // readable on dark bg
+        },
+        coral: {
+          DEFAULT: '
+#f7826a',  // secondary accent / warning
+          dim:     'rgba(247,130,106,0.12)',
+          border:  'rgba(247,130,106,0.3)',
+          text:    '
+#f7a090',
+        },
+        teal: {
+          DEFAULT: '
+#6af7c8',  // success / "done" state
+          dim:     'rgba(106,247,200,0.10)',
+          border:  'rgba(106,247,200,0.25)',
+          text:    '
+#6af7c8',
+        },
+        gold: {
+          DEFAULT: '
+#f7d06a',  // phase 4 / highlight
+          dim:     'rgba(247,208,106,0.12)',
+        },
+        purple: {
+          DEFAULT: '
+#c46af7',  // deep accent / advanced badge
+          dim:     'rgba(196,106,247,0.12)',
+          border:  'rgba(196,106,247,0.3)',
+        },
+      },
+      fontFamily: {
+        mono: ['JetBrains Mono', 'monospace'],
+        display: ['Syne', 'sans-serif'],
+      },
+    },
 
 4 layer architecture in react
 

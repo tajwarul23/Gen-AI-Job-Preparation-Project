@@ -1,12 +1,15 @@
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../auth.context.jsx";
 import { login, register, logout, getMe } from "../services/auth.api.js";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   const { user, setUser, loading, setLoading } = context;
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || "/";
 
   const handleLogin = async ({ email, password }) => {
     setLoading(true);
@@ -15,7 +18,7 @@ export const useAuth = () => {
       const data = await login({ email, password });
       setUser(data.user);
       // console.log("Logged in successfully", data.user);
-      navigate("/");
+      navigate(from, {replace:true});
     } catch (error) {
       console.log("Error in handleLogin", error.message);
     } finally {
@@ -39,9 +42,9 @@ export const useAuth = () => {
   const handleLogout = async () => {
     setLoading(true);
     try {
+      navigate("/");
       const data = await logout();
       console.log(data);
-      
       setUser(null);
     } catch (error) {
       console.log("Error in handleLogout", error.message);

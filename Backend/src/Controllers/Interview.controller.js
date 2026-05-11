@@ -64,7 +64,7 @@ export const getInterviewReportByIdController = async(req, res)=>{
  */
 export const getAllInterviewReportController = async(req, res)=>{
   try {
-    const allReport = await interviewReportModel.find({user:req.user.id}).sort({createdAt:-1}).select("title _id")
+  const allReport = await interviewReportModel.find({user:req.user.id}).sort({createdAt:-1});
     if(!allReport){
       return res.status(404).json({message:"No reports found"})
     }

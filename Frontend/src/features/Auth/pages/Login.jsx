@@ -23,7 +23,7 @@ const Login = () => {
       return <main className="min-h-screen flex justify-center items-center"><h1 className="text-white text-3xl">Loading....</h1></main>
     }
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-950 px-4">
+    <main className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-gray-900 text-white rounded-2xl shadow-lg p-8">
         
         <h1 className="text-3xl font-bold text-center mb-6">Login</h1>

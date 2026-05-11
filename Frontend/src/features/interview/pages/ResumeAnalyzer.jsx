@@ -1,12 +1,15 @@
-import { useState } from "react";
+import {  useState } from "react";
 import { useNavigate } from "react-router";
 import { useInterview } from "../Hooks/useInterview";
-const Home = () => {
-  const { generateReport, loading } = useInterview();
+
+
+const ResumeAnalyzer = () => {
+  const { generateReport, loading} = useInterview();
   const [file, setFile] = useState(null);
   const [selfDescription, setSelfDescription] = useState("");
   const [jobDescription, setJobDescription] = useState("");
 
+  
   const navigate = useNavigate();
   const handleFileChange = (e) => {
     e.preventDefault();
@@ -26,7 +29,7 @@ const Home = () => {
       
     navigate(`/interview/${data._id}`);
   };
-  if (loading) {
+  if (loading  ) {
     return (
       <main className="min-h-screen flex justify-center items-center">
         <h1 className="text-white text-3xl">Loading....</h1>
@@ -34,7 +37,7 @@ const Home = () => {
     );
   }
   return (
-    <main className="min-h-screen flex justify-center items-center bg-gray-950 p-8">
+    <main className="min-h-screen flex flex-col justify-center items-center bg-gray-950 p-8">
       <div className="bg-gray-900 border border-white/[0.07] rounded-2xl p-10 w-full max-w-xl shadow-2xl">
         {/* Header */}
         <div className="mb-8">
@@ -134,8 +137,9 @@ const Home = () => {
           Generate Interview Report →
         </button>
       </div>
+            
     </main>
   );
 };
 
-export default Home;
+export default ResumeAnalyzer;

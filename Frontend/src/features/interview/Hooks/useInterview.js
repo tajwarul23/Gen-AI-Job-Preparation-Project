@@ -6,7 +6,10 @@ import {
 } from "../services/interview.api.js";
 import { InterviewContext } from "../interview.context";
 
+
+
 export const useInterview = () => {
+  
   const context = useContext(InterviewContext);
   if (!context) {
     throw new Error("useInterview must be used withing an InterviewProvider");
@@ -21,8 +24,9 @@ export const useInterview = () => {
     resumeFile,
   }) => {
     setLoading(true);
+    let response = null;
     try {
-      const response = await generateInterviewReport({
+       response = await generateInterviewReport({
         jobDescription,
         selfDescription,
         resumeFile,
@@ -36,13 +40,15 @@ export const useInterview = () => {
     } finally {
       setLoading(false);
     }
+    return response.interviewReport
   };
 
   const getReportById = async (interviewId) => {
     setLoading(true);
+    let response = null;
     try {
-      const response = await getInterviewReportById(interviewId);
-      console.log(response.interviewReport);
+       response = await getInterviewReportById(interviewId);
+      
       
       setReport(response.interviewReport);
     } catch (error) {
@@ -50,23 +56,23 @@ export const useInterview = () => {
     } finally {
       setLoading(false);
     }
+    return response.interviewReport
   };
 
-  const getAllReport = async() =>{
-    setLoading(true)
+ const getAllReport = async () => {
+    setLoading(true);
     try {
         const response = await getAllInterviewReports();
-        setReports(response.allReport)
-        console.log(reports);
-        
+        setReports(response.allReport);
+        return response.allReport;
     } catch (error) {
         console.log("Error in getAllReport", error.message);
-        
+    } finally {
+        setLoading(false);
     }
-    finally{
-        setLoading(false)
-    }
+    
   }
+
 
   return { generateReport, getReportById, getAllReport, loading, report, reports };
 };

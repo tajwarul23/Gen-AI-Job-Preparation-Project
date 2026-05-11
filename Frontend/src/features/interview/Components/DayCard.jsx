@@ -11,7 +11,7 @@ const DayCard = ({ day, focus, tasks }) => {
           onClick={() => setIsOpen(!isOpen)}
           className="w-full flex items-center justify-between gap-3 px-5 py-4 text-left cursor-pointer"
         >
-          <div className="flex justify-self-start  items-center gap-3 flex-1 min-w-3xl">
+          <div className="flex justify-self-start  items-center gap-3 flex-1 min-w-0 md:min-w-2xl">
             <span className="min-w-6 h-6 bg-gray-800 border border-gray-700 rounded-md flex items-center justify-center text-xs font-medium text-gray-400 mt-0.5">
               {day}
             </span>
