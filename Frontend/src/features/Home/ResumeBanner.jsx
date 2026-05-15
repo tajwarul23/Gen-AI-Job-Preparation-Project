@@ -4,6 +4,8 @@ import ResumeForm from "./ResumeForm";
 const ResumeBanner = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* divider */}
+      <div className="border-t w-150 border-line mb-16 mx-auto" />
       <div className="flex flex-col lg:flex-row gap-12 items-start">
         {/* Left */}
         <div className="flex-1">

@@ -63,7 +63,7 @@ const ResumeForm = () => {
           <Field label="Projects (name, link, impact)" />
         </Section>
 
-        <button className="mt-2 w-full bg-violet hover:bg-[#7c72f7] active:scale-[0.99] text-white font-semibold text-[15px] tracking-wide rounded-[10px] py-4 transition-all duration-200 cursor-pointer">
+        <button className="mt-2 w-full bg-violet hover:bg-[#7c72f7] active:scale-[0.99] text-white font-semibold text-[15px] tracking-wide rounded-xl py-4 transition-all duration-200 cursor-pointer">
           <Link to={"/resume-builder"}>Generate Resume →</Link>
         </button>
       </div>

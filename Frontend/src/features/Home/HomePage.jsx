@@ -1,6 +1,9 @@
 
 import Features from './Features'
+import Footer from './Footer'
 import Hero from './Hero'
+import LastBanner from './LastBanner'
+import PrevReportBanner from './PrevReportBanner'
 import ResumeBanner from './ResumeBanner'
 
 const HomePage = () => {
@@ -9,6 +12,9 @@ const HomePage = () => {
         <Hero/>
         <Features/>
         <ResumeBanner/>
+        <PrevReportBanner/>
+        <LastBanner/>
+        <Footer/>
     </div>
   )
 }
