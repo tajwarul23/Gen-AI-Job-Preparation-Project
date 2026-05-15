@@ -6,7 +6,7 @@ import axios from "axios"
 //creating an instance of axios that is constant for API calling
 
 const api = axios.create({
-    baseURL : "http://localhost:3000",
+    baseURL : "http://192.168.0.106:3000",
     withCredentials:true
 })
 

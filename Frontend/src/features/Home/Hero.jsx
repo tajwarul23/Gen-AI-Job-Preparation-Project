@@ -17,7 +17,7 @@ const Hero = () => {
                       rounded-full bg-purple/20 blur-[120px]" />
 
       {/* HERO SECTION */}
-      <section className="relative flex flex-col items-center pt-32 text-center px-4">
+      <section className="relative flex flex-col items-center pt-15  text-center px-4">
         <div className="rounded-full border border-violet-border bg-violet-dim px-5 py-1 text-sm text-violet-text uppercase tracking-wider">
           <span className="inline-block mr-4 w-2 h-2 bg-violet rounded-full animate-pulse" />
           AI-Powered Interview Intelligence
@@ -69,8 +69,8 @@ const Hero = () => {
           { top: "Free",        bottom: "No sign-up needed" },
         ].map((item, i) => (
           <div key={i} className="flex flex-col items-center text-center border-line rounded-2xl px-8 py-5 min-w-36">
-            <span className="text-3xl font-mono font-bold text-ink">{item.top}</span>
-            <span className="text-sm text-muted mt-1">{item.bottom}</span>
+            <span className="text-3xl font-display font-bold text-ink">{item.top}</span>
+            <span className="text-sm sm:text-lg text-muted mt-1">{item.bottom}</span>
           </div>
         ))}
       </div>

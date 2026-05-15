@@ -7,13 +7,13 @@ const Features = () => {
         {/* Divider */}
         <div className="border-t w-200 border-line mb-16 mx-auto" />
         {/* Description */}
-        <div className="flex items-baseline-last gap-6">
+        <div className="flex flex-wrap sm:flex-nowrap items-baseline-last gap-6">
           <div>
             <p className="text-violet uppercase font-mono tracking-wider text-sm mb-4">
               // What you get
             </p>
 
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black leading-tight text-ink font-display max-w-2xl break-words">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black leading-tight text-ink font-display max-w-2xl wrap-break-words">
               Everything you {""}
               <span className="text-violet-text">need to</span> land the offer
             </h1>

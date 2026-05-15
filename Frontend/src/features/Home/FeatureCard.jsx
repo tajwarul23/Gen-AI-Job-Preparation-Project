@@ -45,6 +45,7 @@ className={`group
   hover:border-b-transparent
   ${styles.topBorder}
   hover:-translate-y-1
+  cursor-pointer
   ${styles.shadow}`}
     >
       {/* subtle glow */}
