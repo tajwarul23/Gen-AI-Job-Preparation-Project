@@ -6,6 +6,7 @@ const Field = ({ label }) => (
       <span className="w-[7px] h-[7px] rounded-full bg-violet" />
       <span className="font-mono text-[13px] text-[#5a5a78] select-none pointer-events-none">
         {label}
+        
       </span>
     </div>
   );

@@ -6,8 +6,8 @@ const QuestionCard = ({ index, question, intention, answer }) => {
 
   return (
     <div className={`border rounded-xl overflow-hidden transition-colors ${
-      isOpen ? "border-gray-700" : "border-gray-800"
-    } bg-gray-900`}>
+      isOpen ? "border-linehov" : "border-line"
+    } bg-surface font-display`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between gap-3 px-5 py-4 text-left cursor-pointer"

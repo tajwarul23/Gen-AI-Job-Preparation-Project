@@ -5,13 +5,13 @@ const DayCard = ({ day, focus, tasks }) => {
   
     return (
       <div className={`border rounded-xl overflow-hidden transition-colors  ${
-        isOpen ? "border-gray-700" : "border-gray-800"
-      } bg-gray-900`}>
+        isOpen ? "border-linehov" : "border-line"
+      } bg-surface`}>
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="w-full flex items-center justify-between gap-3 px-5 py-4 text-left cursor-pointer"
         >
-          <div className="flex justify-self-start  items-center gap-3 flex-1 min-w-0 md:min-w-2xl">
+          <div className="flex justify-self-start  items-center gap-3 flex-1 min-w-0 md:min-w-xl">
             <span className="min-w-6 h-6 bg-gray-800 border border-gray-700 rounded-md flex items-center justify-center text-xs font-medium text-gray-400 mt-0.5">
               {day}
             </span>
@@ -31,7 +31,7 @@ const DayCard = ({ day, focus, tasks }) => {
   
         {isOpen && (
           <div className="px-5 pb-5 pl-[calc(1.25rem+24px+12px)] flex flex-col gap-2.5">
-            <div className="bg-gray-800 rounded-lg p-4">
+            <div className=" border border-teal rounded-lg p-4 ">
               <p className="text-[11px] font-medium text-gray-400 uppercase tracking-widest mb-1">Focus</p>
               <p className="text-sm text-gray-200 leading-relaxed">{focus}</p>
             </div>

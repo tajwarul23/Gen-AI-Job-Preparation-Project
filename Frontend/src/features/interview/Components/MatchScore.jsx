@@ -2,49 +2,74 @@ import { useInterview } from "../Hooks/useInterview";
 
 const MatchScore = () => {
   const { report } = useInterview();
-  const score = report?.matchScore;
+
+  const score = report?.matchScore || 0;
 
   const getScoreStyle = (score) => {
-    if (score >= 80) return {
-      ring: "bg-green-500",
-      text: "text-green-400",
-      label: "Excellent",
-      labelColor: "text-green-400"
-    };
-    if (score >= 60) return {
-      ring: "bg-blue-500",
-      text: "text-blue-400",
-      label: "Good",
-      labelColor: "text-blue-400"
-    };
-    if (score >= 40) return {
-      ring: "bg-yellow-500",
-      text: "text-yellow-400",
-      label: "Average",
-      labelColor: "text-yellow-400"
-    };
+    if (score >= 80)
+      return {
+        color: "#22c55e",
+        text: "text-green-400",
+        label: "Excellent Fit",
+      };
+
+    if (score >= 60)
+      return {
+        color: "#3b82f6",
+        text: "text-blue-400",
+        label: "Good Match",
+      };
+
+    if (score >= 40)
+      return {
+        color: "#facc15",
+        text: "text-yellow-400",
+        label: "Average Match",
+      };
+
     return {
-      ring: "bg-red-500",
+      color: "#ef4444",
       text: "text-red-400",
       label: "Needs Work",
-      labelColor: "text-red-400"
     };
   };
 
   const style = getScoreStyle(score);
 
   return (
-    <div className="flex flex-col items-center gap-2">
-       <h1 className="text-xl font-semibold text-gray-50 leading-snug mb-1.5">
-                  Match Score
-                </h1>
-      <div className={`w-30 h-30 ${style.ring} rounded-full flex items-center justify-center`}>
-        <div className="bg-gray-900 w-26 h-26 rounded-full flex flex-col items-center justify-center">
-          <span className={`text-3xl font-bold tracking-tight ${style.text}`}>{score} %</span>
-          
+    <div className="flex flex-col items-center gap-4 font-display">
+
+      <h1 className="text-xl font-semibold text-gray-50">
+        Match Score
+      </h1>
+
+      {/* Circular Progress */}
+      <div
+        className="relative w-36 h-36 rounded-full flex items-center justify-center"
+        style={{
+          background: `conic-gradient(${style.color} ${score * 3.6}deg, #1f2937 0deg)`,
+        }}
+      >
+
+        {/* Inner Circle */}
+        <div className="w-28 h-28 rounded-full bg-gray-900 flex flex-col items-center justify-center">
+
+          <span className={`text-3xl font-bold ${style.text}`}>
+            {score}%
+          </span>
+
+          <span className="text-xs text-gray-500 mt-1">
+            ATS Match
+          </span>
+
         </div>
       </div>
-      <span className={`text-xl font-medium ${style.labelColor}`}>{style.label}</span>
+
+      {/* Label */}
+      <span className={`text-lg font-semibold ${style.text}`}>
+        {style.label}
+      </span>
+
     </div>
   );
 };

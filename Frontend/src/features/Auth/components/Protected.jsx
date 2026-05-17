@@ -7,7 +7,7 @@ const Protected = ({children}) => {
     const location = useLocation();
     
     if(loading){
-      return <main className="min-h-screen flex justify-center items-center"><h1 className="text-white text-3xl">Loading....</h1></main>
+      return null;
     }
     if(!user){
         return <Navigate to={"/login"} state={{from:location}} replace></Navigate>

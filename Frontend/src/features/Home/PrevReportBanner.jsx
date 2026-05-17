@@ -1,4 +1,4 @@
-import ReportCard from "./ReportCard";
+import ReportCard from "./ReportCardFake";
 import { MdLockOutline } from "react-icons/md";
 import { FiArrowUpRight } from "react-icons/fi";
 import { useAuth } from "../Auth/Hooks/useAuth";

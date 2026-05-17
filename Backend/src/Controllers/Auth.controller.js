@@ -22,7 +22,7 @@ export const registerUserController = async (req, res) => {
   if (isUserAlreadyExists) {
     if (isUserAlreadyExists.userName === userName)
       return res.status(400).json({
-        message: "Account already exists with this userName",
+        message: "Account already exists with this user name",
         success: false,
       });
     else {

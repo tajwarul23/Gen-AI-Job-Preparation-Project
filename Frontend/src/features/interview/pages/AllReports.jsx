@@ -1,49 +1,40 @@
-
 import { useEffect } from "react";
 import { useInterview } from "../Hooks/useInterview";
-import { Link } from "react-router-dom";
 
+import AllReportSkeleton from "./AllReportSkeleton";
+import ReportCard from "../Components/ReportCard";
 
 const AllReports = () => {
-  const {  reports, loading, getAllReport } = useInterview();
-
-useEffect(() => {
-    getAllReport()
-  }, []);
+  const { reports, loading, getAllReport } = useInterview();
   
+  useEffect(() => {
+    getAllReport();
+  }, []);
+
   if (loading || !reports) {
-    return (
-      <main className="loading-screen text-ink text-7xl">
-        <h1>Loading your interview plan...</h1>
-      </main>
-    );
+    return <AllReportSkeleton />;
   }
 
   return (
-    <div className="min-h-screen text-white">
+    <div className="min-h-screen text-white font-display">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1>This is reports {reports?.length}</h1>
-        <div className="grid grid-cols-1 lg:flex justify-around items-center   gap-5 ">
-          {reports?.map((r, i) => (
-            <div className="bg-gray-900 p-5 rounded-2xl" key={i}>
-              <h1>{r.title}</h1>
-            <div className="flex flex-col gap-2 ">
-                  <p className="text-sm text-gray-500">
-                {" "}
-                {new Date(r?.createdAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </p>
-             <Link
-  className="inline-flex items-center justify-center w-fit bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-medium px-3 py-2 rounded-lg transition active:scale-95"
-  to={`/interview/${r._id}`}
->
-  View Report
-</Link>
-            </div>
-            </div>
+        {/* Header */}
+        <div className="mb-8">
+          <p className="text-violet uppercase font-mono tracking-wider text-sm">
+            // Interview Reports
+          </p>
+
+          <h1 className="text-4xl sm:text-5xl font-black text-ink font-display mt-3">
+            Your Analysis History
+          </h1>
+
+          <p className="text-muted mt-3">Total Reports: {reports.length}</p>
+        </div>
+
+        {/* Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          {reports.map((r,i) => (
+            <ReportCard r={r} key={i}/>
           ))}
         </div>
       </div>

@@ -12,6 +12,7 @@ import ProtectedLayout from "./features/Layout/ProtectedLayout.jsx";
 import Test from "./test.jsx"
 import ResumeBuilder from "./features/interview/pages/ResumeBuilder.jsx";
 import HomePage from "./features/Home/HomePage.jsx";
+import InterviewReportSkeleton from "./features/interview/pages/InterviewReportSkeleton.jsx";
 const App = () => {
   return (
     <div className="min-h-screen bg-app">

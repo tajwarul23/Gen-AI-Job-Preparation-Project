@@ -17,27 +17,26 @@ export const useAuth = () => {
     try {
       const data = await login({ email, password });
       setUser(data.user);
-      // console.log("Logged in successfully", data.user);
+      
       navigate(from, {replace:true});
     } catch (error) {
-      console.log("Error in handleLogin", error.message);
+      throw error;
     } finally {
       setLoading(false);
     }
   };
 
-  const handleRegister = async ({ userName, email, password }) => {
-    setLoading(true);
-
-    try {
-      const data = await register({ userName, email, password });
-      setUser(data.user);
-    } catch (error) {
-      console.log("Error in handleRegister", error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+const handleRegister = async ({ userName, email, password }) => {
+  setLoading(true);
+  try {
+    const data = await register({ userName, email, password });
+    setUser(data.user);
+  } catch (error) {
+    throw  error; 
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleLogout = async () => {
     setLoading(true);
@@ -47,13 +46,14 @@ export const useAuth = () => {
       console.log(data);
       setUser(null);
     } catch (error) {
-      console.log("Error in handleLogout", error.message);
+      throw error
     } finally {
       setLoading(false);
     }
   };
   useEffect(() => {
     const getAndSetUser = async () => {
+      setLoading(true)
       try {
         const data = await getMe();
         setUser(data.user);
@@ -67,7 +67,7 @@ export const useAuth = () => {
     };
 
     getAndSetUser();
-  }, []);
+  }, [setUser, setLoading]);
 
   return { user, loading, handleRegister, handleLogin, handleLogout };
 };

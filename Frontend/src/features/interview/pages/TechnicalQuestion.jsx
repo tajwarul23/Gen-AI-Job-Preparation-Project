@@ -5,7 +5,7 @@ const TechnicalQuestion = () => {
   const { report } = useInterview();
   const { technicalQuestions } = report;
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen font-display">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 ">
         <div className="flex flex-col items-center justify-between gap-4">
           <h1 className="text-xl font-semibold text-gray-50 leading-snug mb-1.5 tracking-wide">Technical Questions of {report.title}</h1>

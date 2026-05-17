@@ -24,7 +24,7 @@ const SkillGaps = () => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-2 mb-1">
-        <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+        <div className="w-1.5 h-1.5 rounded-full bg-violet" />
         <span className="text-[11px] font-medium text-gray-500 uppercase tracking-widest">
           Skill Gaps
         </span>
@@ -36,14 +36,14 @@ const SkillGaps = () => {
         return (
           <div
             key={i}
-            className="flex items-center justify-between bg-gray-800 rounded-lg px-4 py-3 border border-gray-700"
+            className="flex items-center justify-between bg-surface rounded-lg px-4 py-3 border border-linehov"
           >
             <div className="flex items-center justify-between w-full gap-3">
               <div className="flex items-center  gap-3 flex-1">
                 <div
                   className={`w-2.5 h-2.5 rounded-full shrink-0 ${config.dot}`}
                 />
-                <span className="text-sm text-gray-200 tracking-tight font-medium">
+                <span className="text-sm text-gray-200 tracking-tight font-mono">
                   {item.skill}
                 </span>
               </div>

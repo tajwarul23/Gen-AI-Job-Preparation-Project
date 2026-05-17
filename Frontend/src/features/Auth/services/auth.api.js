@@ -1,56 +1,47 @@
-import axios from "axios"
+import axios from "axios";
 
-//whenever there is any interaction with the cookie we have to use withCredentials : true 
+//whenever there is any interaction with the cookie we have to use withCredentials : true
 ////so the browser sends the cookie to server also receives/stores the cookie
 
 //creating an instance of axios that is constant for API calling
 
 const api = axios.create({
-    baseURL : "http://192.168.0.106:3000",
-    withCredentials:true
-})
+  baseURL: "http://192.168.0.106:3000",
+  withCredentials: true,
+});
 
+export const register = async ({ userName, email, password }) => {
+  const response = await api.post("/api/auth/register", {
+    userName,
+    email,
+    password,
+  });
+  return response.data;
+};
 
-export const register = async({userName, email, password})=>{
+export const login = async ({ email, password }) => {
+  const response = await api.post("/api/auth/login", {
+    email,
+    password,
+  });
+  return response.data;
+};
 
-   try {
-     const response = await api.post("/api/auth/register",{
-        userName,email,password
-    })
-
+export const logout = async () => {
+  
+    const response = await api.get("/api/auth/logout");
     return response.data;
+  
+};
 
-   } catch (error) {
-    console.log("Error in register", error.message)
-   }
+export const getMe = async () => {
+  
+try {
+      const response = await api.get("/api/auth/get-me");
+    return response.data;
+} catch (error) {
+  console.log(error);
+  
 }
-
-export const login = async({email, password})=>{
-    try {
-        const response = await api.post("/api/auth/login",{
-            email, password
-        })
-        return response.data;
-    } catch (error) {
-        console.log("Error in login", error.message);
-        
-    }
-}
-
-export const logout = async()=>{
-    try {
-        const response = await api.get("/api/auth/logout")
-        return response.data
-    } catch (error) {
-        console.log("Error in logout", error.message);
-    }
-}
-
-export const getMe = async()=>{
-    try {
-        const response = await api.get("/api/auth/get-me");
-        return response.data;
-    } catch (error) {
-        console.log("Error in getMe", error.message);
-    }
-}
+  
+};

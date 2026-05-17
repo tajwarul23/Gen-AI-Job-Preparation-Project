@@ -6,7 +6,7 @@ import { useInterview } from "../Hooks/useInterview";
 import { useNavigate, useParams } from "react-router-dom";
 import MatchScore from "../Components/MatchScore";
 import SkillGaps from "../Components/SkillGaps";
-
+import InterviewReportSkeleton from "./InterviewReportSkeleton";
 
 const InterviewReport = () => {
   const [activeTab, setActiveTab] = useState("technical");
@@ -21,24 +21,22 @@ const InterviewReport = () => {
 
   if (loading || !report) {
     return (
-      <main className="loading-screen">
-        <h1>Loading your interview plan...</h1>
-      </main>
+      <InterviewReportSkeleton/>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
+    <div className="min-h-screen  text-white font-display">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1  lg:grid-cols-[200px_1fr_290px] gap-6">
           {/* Left Sidebar */}
-          <aside className="hidden min-h-screen  lg:flex flex-col  justify-start gap-20  bg-gray-900 rounded-xl p-4 border border-gray-800">
+          <aside className="hidden min-h-screen  lg:flex flex-col  justify-start gap-20  bg-surface rounded-xl p-4 border border-line font-display">
             <button
               onClick={() => setActiveTab("technical")}
               className={`cursor-pointer w-full mt-2 font-semibold text-sm py-3.5 rounded-xl transition active:scale-95 ${
                 activeTab === "technical"
-                  ? " bg-blue-600 text-white  hover:text-blue-200"
-                  : " bg-blue-950/40 text-white shadow-[0_0_24px_rgba(37,99,235,0.4)]"
+                  ? "bg-violet text-ink shadow-[0_0_24px_rgba(124,58,237,0.5)]"
+                  : " bg-violet/40 text-ink "
               }`}
             >
               Technical Question{" "}
@@ -47,8 +45,8 @@ const InterviewReport = () => {
               onClick={() => setActiveTab("behavioral")}
               className={`cursor-pointer w-full mt-2 font-semibold text-sm py-3.5 rounded-xl transition active:scale-95 ${
                 activeTab === "behavioral"
-                  ? " bg-blue-600 text-white  hover:text-blue-200"
-                  : " bg-blue-950/40 text-white shadow-[0_0_24px_rgba(37,99,235,0.4)]"
+                  ? "bg-violet text-ink shadow-[0_0_24px_rgba(124,58,237,0.5)]"
+                  : " bg-violet/40 text-ink "
               }`}
             >
               Behavioral Question{" "}
@@ -57,18 +55,21 @@ const InterviewReport = () => {
               onClick={() => setActiveTab("roadmap")}
               className={`cursor-pointer w-full mt-2 font-semibold text-sm py-3.5 rounded-xl transition active:scale-95 ${
                 activeTab === "roadmap"
-                  ? " bg-blue-600 text-white hover:text-blue-200"
-                  : " bg-blue-950/40 text-white shadow-[0_0_24px_rgba(37,99,235,0.4)]"
+                  ? "bg-violet text-ink shadow-[0_0_24px_rgba(124,58,237,0.5)]"
+                  : " bg-violet/40 text-ink "
               }`}
             >
               Roadmap{" "}
             </button>
             <button
-              onClick={() => {setActiveTab("prevReport"); navigate("/interview/allReports")}}
+              onClick={() => {
+                setActiveTab("prevReport");
+                navigate("/interview/allReports");
+              }}
               className={`cursor-pointer w-full mt-2 font-semibold text-sm py-3.5 rounded-xl transition active:scale-95 ${
                 activeTab === "prevReport"
-                  ? " bg-blue-600 text-white hover:text-blue-200"
-                  : " bg-blue-950/40 text-white shadow-[0_0_24px_rgba(37,99,235,0.4)]"
+                  ? "bg-violet text-ink shadow-[0_0_24px_rgba(124,58,237,0.5)]"
+                  : " bg-violet/40 text-ink "
               }`}
             >
               Previous Reports{" "}
@@ -76,12 +77,12 @@ const InterviewReport = () => {
           </aside>
 
           {/* Main Content */}
-          <main className="bg-gray-900 rounded-xl p-4 border border-gray-800">
+          <main className="bg-surface rounded-xl p-4 border border-line">
             {/* Header */}
             <div className="flex flex-col items-start justify-between gap-4 flex-wrap mb-5">
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-bounce" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-violet animate-bounce" />
                   <span className="text-[11px] font-medium text-gray-500 uppercase tracking-widest">
                     Interview Report
                   </span>
@@ -117,7 +118,10 @@ const InterviewReport = () => {
                   Roadmap
                 </span>
                 <span
-                onClick={() => {setActiveTab("prevReport"); navigate("/interview/allReports")} }
+                  onClick={() => {
+                    setActiveTab("prevReport");
+                    navigate("/interview/allReports");
+                  }}
                   className="cursor-pointer text-xs font-medium bg-amber-950 text-amber-300 px-3 py-1 rounded-full border border-amber-800/40"
                 >
                   Previous Reports
@@ -130,24 +134,22 @@ const InterviewReport = () => {
             {activeTab === "behavioral" && <BehavioralQuestion />}
             {activeTab === "roadmap" && <Roadmap />}
             {/* {activeTab === "prevReport" && <AllReports />} */}
-         
           </main>
 
           {/* Right Sidebar */}
-          <aside className="hidden lg:flex flex-col gap-10  bg-gray-900 rounded-xl p-4 border border-gray-800 ">
-            <MatchScore/>
-            <SkillGaps/>
+          <aside className="hidden lg:flex flex-col gap-10  bg-surface rounded-xl p-4 border border-line ">
+            <MatchScore />
+            <SkillGaps />
           </aside>
-            {/* Right side bar on small screen */}
-           <div>
-             <div className=" lg:hidden bg-gray-900 rounded-xl p-4 border border-gray-800">
-              <MatchScore/>
-             
+          {/* Right side bar on small screen */}
+          <div>
+            <div className=" lg:hidden bg-surface rounded-xl p-4 border border-line">
+              <MatchScore />
             </div>
-            <div className=" lg:hidden bg-gray-900 rounded-xl p-4 border border-gray-800 mt-5">
-              <SkillGaps/>
+            <div className=" lg:hidden bg-surface rounded-xl p-4 border border-line mt-5">
+              <SkillGaps />
             </div>
-           </div>
+          </div>
         </div>
       </div>
     </div>
