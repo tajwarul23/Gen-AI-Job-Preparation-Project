@@ -31,7 +31,7 @@ const schema = z.object({
         !val ||
         val === "" ||
         /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-./?%&=]*)?$/.test(val),
-      "Enter a valid URL"
+      "Enter a valid URL",
     ),
   summary: z
     .string()
@@ -41,17 +41,33 @@ const schema = z.object({
   // Work Experience — repeatable
   experiences: z
     .array(
-      z.object({
-        jobTitle: z.string().min(2, "Job title is required"),
-        company: z.string().min(1, "Company name is required"),
-        duration: z.string().min(1, "Duration is required"),
-        expLocation: z.string().min(1, "Location is required"),
-        achievements: z
-          .string()
-          .min(20, "Add at least one achievement (20+ characters)"),
-      })
+      z
+        .object({
+          jobTitle: z.string().optional(),
+          company: z.string().optional(),
+          duration: z.string().optional(),
+          expLocation: z.string().optional(),
+          achievements: z.string().optional(),
+        })
+        .refine(
+          (exp) => {
+            const hasAny = Object.values(exp).some((v) => v && v.trim() !== "");
+            if (!hasAny) return true; // empty entry = skip validation
+            // if any field filled, require all
+            return (
+              exp.jobTitle &&
+              exp.company &&
+              exp.duration &&
+              exp.expLocation &&
+              exp.achievements
+            );
+          },
+          {
+            message: "Complete all fields for this position or leave it empty",
+          },
+        ),
     )
-    .min(1, "Add at least one work experience"),
+    .optional(),
 
   // Education & Skills
   degree: z.string().min(2, "Degree & major is required"),
@@ -68,7 +84,7 @@ const schema = z.object({
 });
 
 // ── Sub-components ───────────────────────────────────────────────────────────
-const Field = ({  error, children }) => (
+const Field = ({ error, children }) => (
   <div className="flex flex-col gap-[6px]">
     <div
       className={`flex items-center gap-3 bg-[#12121a] border rounded-[10px] px-4 py-[13px] transition-colors duration-200 ${
@@ -113,7 +129,7 @@ const Section = ({ title, children }) => (
 const CharCount = ({ current, max }) => (
   <span
     className={`font-mono text-[10px] ml-auto flex-shrink-0 ${
-      current > max * 0.9 ? "text-[#f7a090]" : "text-[#3a3a55]"
+      current > max ? "text-[#f7a090]" : "text-[#3a3a55]"
     }`}
   >
     {current}/{max}
@@ -137,15 +153,7 @@ const ResumeBuilder = () => {
       location: "",
       portfolioUrl: "",
       summary: "",
-      experiences: [
-        {
-          jobTitle: "",
-          company: "",
-          duration: "",
-          expLocation: "",
-          achievements: "",
-        },
-      ],
+      experiences: [],
       degree: "",
       university: "",
       techStack: "",
@@ -166,265 +174,281 @@ const ResumeBuilder = () => {
   const onSubmit = async (data) => {
     // Replace with your actual submit logic / API call
     console.log("Form data:", data);
-    await new Promise((r) => setTimeout(r, 800)); // simulate request
+    // await new Promise((r) => setTimeout(r, 800)); // simulate request
   };
 
   return (
-    <div className="flex justify-center items-start px-4 py-8">
-      <div className="bg-surface border border-line rounded-2xl p-7 w-full max-w-[860px]">
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
-
-          {/* ── Personal Info ── */}
-          <Section title="Personal Info">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[10px]">
-              <Field label="Full Name" error={errors.fullName?.message}>
-                <input
-                  {...register("fullName")}
-                  placeholder="Full Name"
-                  autoComplete="name"
-                  className={inputClass}
-                />
-              </Field>
-              <Field label="Email" error={errors.email?.message}>
-                <input
-                  {...register("email")}
-                  type="email"
-                  placeholder="Email"
-                  autoComplete="email"
-                  className={inputClass}
-                />
-              </Field>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[10px]">
-              <Field label="Phone" error={errors.phone?.message}>
-                <input
-                  {...register("phone")}
-                  type="tel"
-                  placeholder="Phone"
-                  autoComplete="tel"
-                  className={inputClass}
-                />
-              </Field>
-              <Field label="Location" error={errors.location?.message}>
-                <input
-                  {...register("location")}
-                  placeholder="Location"
-                  className={inputClass}
-                />
-              </Field>
-            </div>
-
-            <Field
-              label="LinkedIn / Portfolio URL"
-              error={errors.portfolioUrl?.message}
-            >
-              <input
-                {...register("portfolioUrl")}
-                type="url"
-                placeholder="LinkedIn / Portfolio URL"
-                autoComplete="url"
-                className={inputClass}
-              />
-            </Field>
-
-            <Field
-              label="Professional Summary"
-              error={errors.summary?.message}
-            >
-              <textarea
-                {...register("summary")}
-                placeholder="Professional Summary (2–3 lines)"
-                rows={3}
-                className={textareaClass}
-              />
-              <CharCount current={summaryVal.length} max={500} />
-            </Field>
-          </Section>
-
-          {/* ── Work Experience ── */}
-          <Section title="Work Experience">
-            {fields.map((field, index) => (
-              <div
-                key={field.id}
-                className="bg-[#0f0f17] border border-[#252535] rounded-xl p-4 flex flex-col gap-[10px]"
-              >
-                {/* block header */}
-                <div className="flex items-center justify-between mb-1">
-                  <span className="font-mono text-[11px] text-[#3a3a55] uppercase tracking-widest">
-                    Position #{index + 1}
-                  </span>
-                  {fields.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => remove(index)}
-                      className="font-mono text-[11px] text-[#5a5a78] hover:text-[#f7a090] transition-colors duration-150 cursor-pointer"
-                    >
-                      Remove
-                    </button>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-[10px]">
-                  <Field
-                    label="Job Title"
-                    error={errors.experiences?.[index]?.jobTitle?.message}
-                  >
-                    <input
-                      {...register(`experiences.${index}.jobTitle`)}
-                      placeholder="Job Title"
-                      className={inputClass}
-                    />
-                  </Field>
-                  <Field
-                    label="Company"
-                    error={errors.experiences?.[index]?.company?.message}
-                  >
-                    <input
-                      {...register(`experiences.${index}.company`)}
-                      placeholder="Company"
-                      className={inputClass}
-                    />
-                  </Field>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-[10px]">
-                  <Field
-                    label="Duration"
-                    error={errors.experiences?.[index]?.duration?.message}
-                  >
-                    <input
-                      {...register(`experiences.${index}.duration`)}
-                      placeholder="e.g. Jan 2022 – Present"
-                      className={inputClass}
-                    />
-                  </Field>
-                  <Field
-                    label="Location"
-                    error={errors.experiences?.[index]?.expLocation?.message}
-                  >
-                    <input
-                      {...register(`experiences.${index}.expLocation`)}
-                      placeholder="City or Remote"
-                      className={inputClass}
-                    />
-                  </Field>
-                </div>
-
-                <Field
-                  label="Key Achievements"
-                  error={errors.experiences?.[index]?.achievements?.message}
-                >
-                  <textarea
-                    {...register(`experiences.${index}.achievements`)}
-                    placeholder="• Led migration of payment service, reducing latency by 40%&#10;• Designed API handling 2M+ requests/day"
-                    rows={3}
-                    className={textareaClass}
+    <div className="max-w-7xl mx-auto">
+      <div className="mt-10">
+        <p className="text-violet uppercase font-mono tracking-wider text-sm">
+          // Resume Builder
+        </p>
+        <h1 className=" text-4xl sm:text-5xl lg:text-7xl font-black leading-none  text-ink font-display scale-y-75  wrap-break-word">
+          Build a resume that actually gets read
+        </h1>
+        <p className="text-muted font-display">
+          Fill in your details and PrepLab generates a clean, ATS-optimized
+          resume. No templates that look like everyone else's.
+        </p>
+      </div>
+      <div className="flex  justify-center items-start px-4 py-8">
+        <div className="bg-surface border border-line rounded-2xl p-7 w-full max-w-[860px]">
+          <form onSubmit={handleSubmit(onSubmit)} noValidate>
+            {/* ── Personal Info ── */}
+            <Section title="Personal Info">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-[10px]">
+                <Field label="Full Name" error={errors.fullName?.message}>
+                  <input
+                    {...register("fullName")}
+                    placeholder="Full Name"
+                    autoComplete="name"
+                    className={inputClass}
+                  />
+                </Field>
+                <Field label="Email" error={errors.email?.message}>
+                  <input
+                    {...register("email")}
+                    type="email"
+                    placeholder="Email"
+                    autoComplete="email"
+                    className={inputClass}
                   />
                 </Field>
               </div>
-            ))}
 
-            {/* Add position */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-[10px]">
+                <Field label="Phone" error={errors.phone?.message}>
+                  <input
+                    {...register("phone")}
+                    type="tel"
+                    placeholder="Phone"
+                    autoComplete="tel"
+                    className={inputClass}
+                  />
+                </Field>
+                <Field label="Location" error={errors.location?.message}>
+                  <input
+                    {...register("location")}
+                    placeholder="Location"
+                    className={inputClass}
+                  />
+                </Field>
+              </div>
+
+              <Field
+                label="LinkedIn / Portfolio URL"
+                error={errors.portfolioUrl?.message}
+              >
+                <input
+                  {...register("portfolioUrl")}
+                  type="url"
+                  placeholder="LinkedIn / Portfolio URL"
+                  autoComplete="url"
+                  className={inputClass}
+                />
+              </Field>
+
+              <Field
+                label="Professional Summary"
+                error={errors.summary?.message}
+              >
+                <textarea
+                  {...register("summary")}
+                  placeholder="Professional Summary (2–3 lines)"
+                  rows={3}
+                  className={textareaClass}
+                />
+                <CharCount current={summaryVal.length} max={500} />
+              </Field>
+            </Section>
+
+            {/* ── Work Experience ── */}
+            <Section title="Work Experience (Optional)">
+              {fields.length === 0 && (
+                <p className="font-mono text-[12px] text-[#5a5a78] text-center py-2">
+                  No experience added — click below to add a position
+                </p>
+              )}
+              {fields.map((field, index) => (
+                <div
+                  key={field.id}
+                  className="bg-[#0f0f17] border border-[#252535] rounded-xl p-4 flex flex-col gap-[10px]"
+                >
+                  {/* block header */}
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-mono text-[11px] text-[#3a3a55] uppercase tracking-widest">
+                      Position #{index + 1}
+                    </span>
+                    {fields.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => remove(index)}
+                        className="font-mono text-[11px] text-[#5a5a78] hover:text-[#f7a090] transition-colors duration-150 cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-[10px]">
+                    <Field
+                      label="Job Title"
+                      error={errors.experiences?.[index]?.jobTitle?.message}
+                    >
+                      <input
+                        {...register(`experiences.${index}.jobTitle`)}
+                        placeholder="Job Title"
+                        className={inputClass}
+                      />
+                    </Field>
+                    <Field
+                      label="Company"
+                      error={errors.experiences?.[index]?.company?.message}
+                    >
+                      <input
+                        {...register(`experiences.${index}.company`)}
+                        placeholder="Company"
+                        className={inputClass}
+                      />
+                    </Field>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-[10px]">
+                    <Field
+                      label="Duration"
+                      error={errors.experiences?.[index]?.duration?.message}
+                    >
+                      <input
+                        {...register(`experiences.${index}.duration`)}
+                        placeholder="e.g. Jan 2022 – Present"
+                        className={inputClass}
+                      />
+                    </Field>
+                    <Field
+                      label="Location"
+                      error={errors.experiences?.[index]?.expLocation?.message}
+                    >
+                      <input
+                        {...register(`experiences.${index}.expLocation`)}
+                        placeholder="City or Remote"
+                        className={inputClass}
+                      />
+                    </Field>
+                  </div>
+
+                  <Field
+                    label="Key Achievements"
+                    error={errors.experiences?.[index]?.achievements?.message}
+                  >
+                    <textarea
+                      {...register(`experiences.${index}.achievements`)}
+                      placeholder="• Led migration of payment service, reducing latency by 40%&#10;• Designed API handling 2M+ requests/day"
+                      rows={3}
+                      className={textareaClass}
+                    />
+                  </Field>
+                </div>
+              ))}
+
+              {/* Add position */}
+              <button
+                type="button"
+                onClick={() =>
+                  append({
+                    jobTitle: "",
+                    company: "",
+                    duration: "",
+                    expLocation: "",
+                    achievements: "",
+                  })
+                }
+                className="w-full border border-dashed border-[#2a2a38] hover:border-[rgba(124,106,247,0.4)] text-[#5a5a78] hover:text-[#a99af7] font-mono text-[12px] rounded-[10px] py-3 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
+              >
+                <span className="text-[16px] leading-none">+</span> Add another
+                position
+              </button>
+            </Section>
+
+            {/* ── Education & Skills ── */}
+            <Section title="Education & Skills">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-[10px]">
+                <Field label="Degree & Major" error={errors.degree?.message}>
+                  <input
+                    {...register("degree")}
+                    placeholder="Degree & Major"
+                    className={inputClass}
+                  />
+                </Field>
+                <Field label="University" error={errors.university?.message}>
+                  <input
+                    {...register("university")}
+                    placeholder="University"
+                    className={inputClass}
+                  />
+                </Field>
+              </div>
+
+              <Field
+                label="Tech Stack / Skills"
+                error={errors.techStack?.message}
+              >
+                <textarea
+                  {...register("techStack")}
+                  placeholder="Go, Python, PostgreSQL, Redis, Kafka, Kubernetes…"
+                  rows={2}
+                  className={textareaClass}
+                />
+                <CharCount current={techStackVal.length} max={300} />
+              </Field>
+
+              <Field
+                label="Certifications"
+                error={errors.certifications?.message}
+              >
+                <input
+                  {...register("certifications")}
+                  placeholder="Certifications (optional)"
+                  className={inputClass}
+                />
+              </Field>
+
+              <Field label="Projects" error={errors.projects?.message}>
+                <textarea
+                  {...register("projects")}
+                  placeholder="Project name · github.com/link · what it does & impact"
+                  rows={3}
+                  className={textareaClass}
+                />
+                <CharCount current={projectsVal.length} max={600} />
+              </Field>
+            </Section>
+
+            {/* ── Submit ── */}
             <button
-              type="button"
-              onClick={() =>
-                append({
-                  jobTitle: "",
-                  company: "",
-                  duration: "",
-                  expLocation: "",
-                  achievements: "",
-                })
-              }
-              className="w-full border border-dashed border-[#2a2a38] hover:border-[rgba(124,106,247,0.4)] text-[#5a5a78] hover:text-[#a99af7] font-mono text-[12px] rounded-[10px] py-3 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
+              type="submit"
+              disabled={isSubmitting}
+              className="mt-2 w-full bg-violet hover:bg-[#7c72f7] active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold text-[15px] tracking-wide rounded-xl py-4 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
             >
-              <span className="text-[16px] leading-none">+</span> Add another
-              position
+              {isSubmitting ? (
+                <>
+                  <span className="w-[18px] h-[18px] border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Generating…
+                </>
+              ) : isSubmitSuccessful ? (
+                "✓ Resume ready — Redirecting"
+              ) : (
+                "Generate Resume →"
+              )}
             </button>
-          </Section>
 
-          {/* ── Education & Skills ── */}
-          <Section title="Education & Skills">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[10px]">
-              <Field label="Degree & Major" error={errors.degree?.message}>
-                <input
-                  {...register("degree")}
-                  placeholder="Degree & Major"
-                  className={inputClass}
-                />
-              </Field>
-              <Field label="University" error={errors.university?.message}>
-                <input
-                  {...register("university")}
-                  placeholder="University"
-                  className={inputClass}
-                />
-              </Field>
-            </div>
-
-            <Field
-              label="Tech Stack / Skills"
-              error={errors.techStack?.message}
-            >
-              <textarea
-                {...register("techStack")}
-                placeholder="Go, Python, PostgreSQL, Redis, Kafka, Kubernetes…"
-                rows={2}
-                className={textareaClass}
-              />
-              <CharCount current={techStackVal.length} max={300} />
-            </Field>
-
-            <Field
-              label="Certifications"
-              error={errors.certifications?.message}
-            >
-              <input
-                {...register("certifications")}
-                placeholder="Certifications (optional)"
-                className={inputClass}
-              />
-            </Field>
-
-            <Field label="Projects" error={errors.projects?.message}>
-              <textarea
-                {...register("projects")}
-                placeholder="Project name · github.com/link · what it does & impact"
-                rows={3}
-                className={textareaClass}
-              />
-              <CharCount current={projectsVal.length} max={600} />
-            </Field>
-          </Section>
-
-          {/* ── Submit ── */}
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="mt-2 w-full bg-violet hover:bg-[#7c72f7] active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold text-[15px] tracking-wide rounded-xl py-4 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
-          >
-            {isSubmitting ? (
-              <>
-                <span className="w-[18px] h-[18px] border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Generating…
-              </>
-            ) : isSubmitSuccessful ? (
-              "✓ Resume ready — Redirecting"
-            ) : (
-              <Link to="/resume-builder" className="w-full text-center">
-                Generate Resume →
-              </Link>
+            {/* Global form error summary (only on submit) */}
+            {Object.keys(errors).length > 0 && (
+              <p className="mt-3 text-center font-mono text-[12px] text-[#f7a090]">
+                ✗ Fix the errors above before generating your resume
+              </p>
             )}
-          </button>
-
-          {/* Global form error summary (only on submit) */}
-          {Object.keys(errors).length > 0 && (
-            <p className="mt-3 text-center font-mono text-[12px] text-[#f7a090]">
-              ✗ Fix the errors above before generating your resume
-            </p>
-          )}
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );

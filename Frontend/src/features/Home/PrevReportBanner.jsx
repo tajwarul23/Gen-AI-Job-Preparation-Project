@@ -3,8 +3,17 @@ import { MdLockOutline } from "react-icons/md";
 import { FiArrowUpRight } from "react-icons/fi";
 import { useAuth } from "../Auth/Hooks/useAuth";
 import { Link } from "react-router-dom";
+import AllReports from "../interview/pages/AllReports";
 const PrevReportBanner = () => {
   const { user } = useAuth();
+  if(user){
+    
+    return(<div>
+      {/* Divider */}
+      <div className="border-t border-line max-w-6xl mx-auto" />
+      <AllReports/>
+    </div>)
+  }
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Divider */}
@@ -18,11 +27,7 @@ const PrevReportBanner = () => {
             Your Analysis History
           </h1>
         </div>
-        {
-          user? <><button className="border font-mono border-muted py-1 rounded-lg text-sm px-2 text-muted cursor-pointer  ">
-          View all reports
-        </button></>:""
-        }
+        
       </div>
       <div className="relative mt-5">
         {/* Blurred cards */}

@@ -61,19 +61,7 @@ const InterviewReport = () => {
             >
               Roadmap{" "}
             </button>
-            <button
-              onClick={() => {
-                setActiveTab("prevReport");
-                navigate("/interview/allReports");
-              }}
-              className={`cursor-pointer w-full mt-2 font-semibold text-sm py-3.5 rounded-xl transition active:scale-95 ${
-                activeTab === "prevReport"
-                  ? "bg-violet text-ink shadow-[0_0_24px_rgba(124,58,237,0.5)]"
-                  : " bg-violet/40 text-ink "
-              }`}
-            >
-              Previous Reports{" "}
-            </button>
+            
           </aside>
 
           {/* Main Content */}
@@ -117,15 +105,7 @@ const InterviewReport = () => {
                 >
                   Roadmap
                 </span>
-                <span
-                  onClick={() => {
-                    setActiveTab("prevReport");
-                    navigate("/interview/allReports");
-                  }}
-                  className="cursor-pointer text-xs font-medium bg-amber-950 text-amber-300 px-3 py-1 rounded-full border border-amber-800/40"
-                >
-                  Previous Reports
-                </span>
+                
               </div>
             </div>
             <div className="border-t border-gray-800 mb-5" />
@@ -133,7 +113,7 @@ const InterviewReport = () => {
             {activeTab === "technical" && <TechnicalQuestion />}
             {activeTab === "behavioral" && <BehavioralQuestion />}
             {activeTab === "roadmap" && <Roadmap />}
-            {/* {activeTab === "prevReport" && <AllReports />} */}
+            
           </main>
 
           {/* Right Sidebar */}

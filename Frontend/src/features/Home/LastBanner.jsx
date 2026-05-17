@@ -17,7 +17,7 @@ const LastBanner = () => {
                   Sign in <FiArrowUpRight className="text-xl" />
                 </Link >
                 <Link to={"/register"} className="flex-1 border border-muted py-2 rounded-xl cursor-pointer text-muted hover:text-ink hover:border-ink transition-colors font-display flex justify-center items-center gap-1">
-                  Watch a demo <FiArrowUpRight className="text-xl" />
+                Watch a demo <FiArrowUpRight className="text-xl" />
                 </Link>
               </div>
       </div>
