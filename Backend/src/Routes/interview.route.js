@@ -23,17 +23,6 @@ interviewRouter.post(
 );
 
 /**
- * @route GET /api/interview/report/:interviewId
- * @description get interview report by interviewId
- * @access Private
- */
-interviewRouter.get(
-  "/report/:interviewId",
-  verifyToken,
-  getInterviewReportByIdController,
-);
-
-/**
  * @route GET /api/interview/
  * @description get all interview reports of logged in user
  * @access Private
@@ -44,6 +33,19 @@ interviewRouter.get(
   verifyToken,
   getAllInterviewReportController,
 );
+
+/**
+ * @route GET /api/interview/report/:interviewId
+ * @description get interview report by interviewId
+ * @access Private
+ */
+interviewRouter.get(
+  "/report/:interviewId",
+  verifyToken,
+  getInterviewReportByIdController,
+);
+
+
 
 
 export default interviewRouter;

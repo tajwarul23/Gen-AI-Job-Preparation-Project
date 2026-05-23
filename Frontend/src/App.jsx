@@ -12,10 +12,15 @@ import ProtectedLayout from "./features/Layout/ProtectedLayout.jsx";
 import Test from "./test.jsx"
 import ResumeBuilder from "./features/interview/pages/ResumeBuilder.jsx";
 import HomePage from "./features/Home/HomePage.jsx";
-import InterviewReportSkeleton from "./features/interview/pages/InterviewReportSkeleton.jsx";
+
+import { Toaster } from "react-hot-toast";
+
+import ResumeViewer from "./features/interview/pages/ResumeViewer.jsx";
+import AllResumes from "./features/interview/pages/AllResumes.jsx";
 const App = () => {
   return (
     <div className="min-h-screen bg-app">
+      <Toaster position="top-right"/>
  <Router>
       <Routes>
 
@@ -36,6 +41,8 @@ const App = () => {
             <Route path="/interview/allReports" element={<AllReports />} />
             <Route path="/interview/:interviewId" element={<InterviewReport />} /> 
             <Route path="/test" element={<Test/>}/>
+            <Route path="/resume/:resumeId" element={<ResumeViewer/>}/>
+            <Route path="/resume/allResume" element={<AllResumes/>}/>
 
           </Route>
 

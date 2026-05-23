@@ -1,9 +1,10 @@
 import pdfParse from "pdf-parse-new";
 import { generateInterviewReport } from "../services/ai.service.js";
 import { interviewReportModel } from "../Models/interviewReport.model.js";
+import { success } from "zod";
 
 /**
- * @description Controller to generate interview report base on user selfDescription jobDescription resume
+ * @description Controller to generate interview report base on user's selfDescription,jobDescription & resume
  */
 export const generateInterviewReportController = async (req, res) => {
   try {
@@ -48,13 +49,13 @@ export const getInterviewReportByIdController = async(req, res)=>{
     if(!interviewReport){
       return res.status(404).json({message:"Interview Report not found"})
     }
-    res.status(200).json({
+   return res.status(200).json({
       message:"Interview report fetched successfully",
       interviewReport
     })
   } catch (error) {
    console.log("error in generateInterviewReportByIdController", error.message);
-    
+    return res.status(404).json({message:"Error in getting interview report", success:false})
   }
 }
 
@@ -65,12 +66,12 @@ export const getInterviewReportByIdController = async(req, res)=>{
 export const getAllInterviewReportController = async(req, res)=>{
   try {
   const allReport = await interviewReportModel.find({user:req.user.id}).sort({createdAt:-1});
-    if(!allReport){
+    if(!allReport.length){
       return res.status(404).json({message:"No reports found"})
     }
     return res.status(200).json({message:"Fetched all interviewReport", allReport})
   } catch (error) {
     console.log("Error in getAllInterviewReportController", error.message);
-    
+    return res.status(404).json({message:"Error in getting interview report", success:false})
   }
 }

@@ -3,7 +3,7 @@ import TechnicalQuestion from "./TechnicalQuestion";
 import BehavioralQuestion from "./BehavioralQuestion";
 import Roadmap from "./Roadmap";
 import { useInterview } from "../Hooks/useInterview";
-import { useNavigate, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import MatchScore from "../Components/MatchScore";
 import SkillGaps from "../Components/SkillGaps";
 import InterviewReportSkeleton from "./InterviewReportSkeleton";
@@ -12,7 +12,7 @@ const InterviewReport = () => {
   const [activeTab, setActiveTab] = useState("technical");
   const { report, getReportById, loading } = useInterview();
   const { interviewId } = useParams();
-  const navigate = useNavigate();
+  
   useEffect(() => {
     if (interviewId) {
       getReportById(interviewId);

@@ -3,126 +3,20 @@ dotenv.config();
 import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
+import {
+  interviewReportGeminiSchema,
+  interviewReportSchema,
+} from "../Schemas/interviewReportSchema.js";
+import {
+  resumeGeminiSchema,
+  ResumeReportSchema,
+} from "../Schemas/resumeReportSchema.js";
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GOOGLE_GENAI_API_KEY,
 });
 
-// ─── Zod Schema (for validation after response) ───────────────────────────────
-
-const interviewReportSchema = z.object({
-  title: z.string(),
-  matchScore: z.number(),
-  technicalQuestions: z.array(
-    z.object({
-      question: z.string(),
-      intention: z.string(),
-      answer: z.string(),
-    }),
-  ),
-  behavioralQuestions: z.array(
-    z.object({
-      question: z.string(),
-      intention: z.string(),
-      answer: z.string(),
-    }),
-  ),
-  skillGaps: z.array(
-    z.object({
-      skill: z.string(),
-      severity: z.enum(["low", "medium", "high"]),
-    }),
-  ),
-  preparationPlan: z.array(
-    z.object({
-      day: z.number(),
-      focus: z.string(),
-      tasks: z.array(z.string()),
-    }),
-  ),
-});
-
-// ─── Gemini Native Schema (plain strings instead of SchemaType enum) ──────────
-
-const questionSchema = {
-  type: "object",
-  properties: {
-    question: { type: "string" },
-    intention: { type: "string" },
-    answer: { type: "string" },
-  },
-  required: ["question", "intention", "answer"],
-};
-
-const interviewReportGeminiSchema = {
-  type: "object",
-  properties: {
-    title: {
-      type: "string",
-      description:
-        "The title of the job for which the interview report is generated",
-    },
-    matchScore: {
-      type: "number",
-      description:
-        "A score between 0 to 100 indicating how well the candidate's profile matches the job description",
-    },
-    technicalQuestions: {
-      type: "array",
-      description:
-        "Technical questions that can be asked in the interview along with their intention",
-      items: questionSchema,
-    },
-    behavioralQuestions: {
-      type: "array",
-      description:
-        "Behavioral questions that can be asked in the interview along with their intention",
-      items: questionSchema,
-    },
-    skillGaps: {
-      type: "array",
-      description:
-        "List of skill gaps in the candidate's profile along with their severity",
-      items: {
-        type: "object",
-        properties: {
-          skill: { type: "string" },
-          severity: {
-            type: "string",
-            enum: ["low", "medium", "high"],
-          },
-        },
-        required: ["skill", "severity"],
-      },
-    },
-    preparationPlan: {
-      type: "array",
-      description:
-        "A concrete 30 day, day-wise preparation plan to help the candidate succeed in the interview, while designing the roadmap give 60% focus on closing the skill gaps as much as possible and 40% focus on the overall tech stack, system design, DSA, OOP, Aptitude ",
-      items: {
-        type: "object",
-        properties: {
-          day: { type: "number" },
-          focus: { type: "string" },
-          tasks: {
-            type: "array",
-            items: { type: "string" },
-          },
-        },
-        required: ["day", "focus", "tasks"],
-      },
-    },
-  },
-  required: [
-    "matchScore",
-    "technicalQuestions",
-    "behavioralQuestions",
-    "skillGaps",
-    "preparationPlan",
-  ],
-};
-
-// ─── Main Function ────────────────────────────────────────────────────────────
+// ─── Generate interview report Function ────────────────────────────────────────────────────────────
 
 export const generateInterviewReport = async ({
   resume,
@@ -161,6 +55,91 @@ Based on the above information, generate:
   } catch (error) {
     if (error instanceof z.ZodError) {
       console.error("Response validation failed:", error.errors);
+      throw new Error("AI response did not match the expected schema");
+    }
+    console.error("Error generating interview report:", error);
+    throw error;
+  }
+};
+
+//------ Generate resume function--------------------------
+export const generateResume = async (resumeData) => {
+  const {
+    fullName,
+    email,
+    phone,
+    location,
+    portfolioUrl,
+    linkedinUrl,
+    githubProfileLink,
+    summary,
+    experiences,
+    degree,
+    university,
+    skills,
+    certifications,
+    projects,
+  } = resumeData;
+  const prompt = `You are a professional resume writer and ATS optimization expert.
+  using the structured data below do the following:
+  1. Write a compelling professional summary (3-4 sentences) if not provided or improve the existing one.
+2. Rewrite each job achievement as a strong action-verb bullet point (quantify where possible).
+3. Rewrite each project description to be impactful and technical.
+4. Return ONLY a valid JSON object. No explanation, no markdown, no code fences.
+IMPORTANT RULES:
+- Always include https:// in ALL URLs (linkedin, github, portfolio, project links)
+- If a URL is not provided, return an empty string "" — never return "N/A"
+- Never invent URLs — copy them exactly from the input
+5. Give a properly calculated ATS Score from 0 to 100
+6. Give a standard and professional title for the resume
+---RESUME DATA----
+
+PERSONAL INFO
+Name : ${fullName}
+Email: ${email}
+Phone: ${phone}
+Location: ${location}
+LinkedIn:${linkedinUrl},
+Github: ${githubProfileLink},
+Portfolio: ${portfolioUrl},
+Personal Summary: ${summary || "if not provided, generate one."}
+
+EXPERIENCES : ${
+    experiences.length
+      ? experiences.map(
+          (exp, i) =>
+            `${i + 1}. Company : ${exp.company} Job Duration: ${exp.duration} Job Location: ${exp.expLocation} Achievements: ${exp.achievements}`,
+        )
+      : "No experience Provided"
+  }
+
+  EDUCATIONS: Degree:${degree} University:${university}
+
+
+  SKILLS: ${skills.length ? skills.map((s) => `Skill Name:${s.name} Description:${s.description}`) : "No skills provided"}
+
+  CERTIFICATIONS: ${certifications.length ? certifications.map((c) => `Name: ${c.name} Issuer: ${c.issuer} IssueDate: ${c.issueDate} credentialURL :${c.credentialUrl} `) : "No certifications provided"}
+  
+  PROJECTS: ${projects.length ? projects.map((p) => `Project Name: ${p.name} LiveLink: ${p.liveLink} Github Repo: ${p.githubLink} project Description: ${p.description}`) : "No project provided"}
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-3.1-flash-lite",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: resumeGeminiSchema,
+      },
+    });
+    const parsed = JSON.parse(response.text);
+    const validated = ResumeReportSchema.parse(parsed);
+    // console.log(validated);
+    return validated;
+    
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error("Response validation failed:", error);
       throw new Error("AI response did not match the expected schema");
     }
     console.error("Error generating interview report:", error);

@@ -41,9 +41,9 @@ const handleRegister = async ({ userName, email, password }) => {
   const handleLogout = async () => {
     setLoading(true);
     try {
-      navigate("/");
       const data = await logout();
-      console.log(data);
+      navigate("/");
+      // console.log(data);
       setUser(null);
     } catch (error) {
       throw error
@@ -56,7 +56,9 @@ const handleRegister = async ({ userName, email, password }) => {
       setLoading(true)
       try {
         const data = await getMe();
-        setUser(data.user);
+        if(data?.user){
+          setUser(data.user)
+        }
       } catch (error) {
         console.log("Error in useAuth", error.message);
 

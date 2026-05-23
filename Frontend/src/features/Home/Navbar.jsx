@@ -6,6 +6,7 @@ const navLinks = [
   { to: "/resume-builder",      label: "Resume Builder" },
   { to: "/resume-analyzer",     label: "Resume Analyzer" },
   { to: "/interview/allReports", label: "Reports" },
+  { to: "/resume/allResume", label: "Resumes" },
 ];
 
 const Navbar = () => {

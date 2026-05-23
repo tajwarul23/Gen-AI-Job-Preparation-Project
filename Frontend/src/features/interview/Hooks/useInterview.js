@@ -12,7 +12,7 @@ export const useInterview = () => {
   
   const context = useContext(InterviewContext);
   if (!context) {
-    throw new Error("useInterview must be used withing an InterviewProvider");
+    throw new Error("useInterview must be used within an InterviewProvider");
   }
 
   const { loading, setLoading, report, setReport, reports, setReports } =
@@ -32,7 +32,7 @@ export const useInterview = () => {
         resumeFile,
       });
       setReport(response.interviewReport);
-      console.log(report);
+      // console.log(report);
       
       return response.interviewReport;
     } catch (error) {
