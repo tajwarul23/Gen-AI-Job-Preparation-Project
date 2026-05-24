@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin:"http://192.168.0.100:5173",
+    origin:["https://preplab-project.vercel.app/","http://192.168.0.100:5173"],
     credentials:true
 }))
 
