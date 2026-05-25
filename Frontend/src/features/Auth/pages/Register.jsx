@@ -34,18 +34,18 @@ const Register = () => {
   }, [error]);
   const onSubmit = async (data) => {
     try {
-      
       const res = await handleRegister(data);
-      toast.success(res.message);
+      if (res) {
+        toast.success(res.message);
 
-      navigate(from, { replace: true });
+        navigate(from, { replace: true });
+      }
     } catch (error) {
       console.log(error);
       const message = error.response?.data?.message || "Something went wrong";
 
       setError("root", { message });
     }
-    
   };
 
   return (

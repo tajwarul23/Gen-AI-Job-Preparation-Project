@@ -25,20 +25,16 @@ export const registerUserController = async (req, res) => {
     }
     // if(!validator.isEmail(email))
     const isUserAlreadyExists = await userModel.findOne({
-      $or: [{ userName }, { email }],
+      $or: [ { email }],
     });
     if (isUserAlreadyExists) {
-      if (isUserAlreadyExists.userName === userName)
-        return res.status(400).json({
-          message: "Account already exists with this user name",
-          success: false,
-        });
-      else {
+  
+      
         return res.status(400).json({
           message: "Account already exists with this Email",
           success: false,
         });
-      }
+      
     }
 
     const hash = await bcrypt.hash(password, 10);
@@ -67,7 +63,7 @@ export const registerUserController = async (req, res) => {
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     });
 
-    res.status(201).json({
+   return res.status(201).json({
       message: "Registration successful!",
       success: true,
       user: { id: user._id, email: user.email, userName: user.userName },
@@ -75,7 +71,7 @@ export const registerUserController = async (req, res) => {
   } catch (error) {
     console.log("Error in registering user", error.message);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error in registering user",
       success: false,
       err: error.message,
@@ -91,7 +87,8 @@ export const registerUserController = async (req, res) => {
 export const loginUserController = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await userModel.findOne({ email });
+ try {
+   const user = await userModel.findOne({ email });
   if (!user) {
     return res.status(400).json({
       message: "Invalid email or password",
@@ -124,11 +121,16 @@ export const loginUserController = async (req, res) => {
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
   });
 
-  res.status(200).json({
+ return res.status(200).json({
     message: "User logged in successfully",
     success: true,
     user: { id: user._id, email: user.email, userName: user.userName },
   });
+ } catch (error) {
+   console.log("error in login user", error.message);
+  return res.status(400).json({message:"Error logging user"});
+  
+ }
 };
 
 /**
@@ -151,11 +153,11 @@ export const logoutUserController = async (req, res) => {
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     });
-    // ✅ add this
-    res.status(200).json({ message: "Logged out successfully", success: true });
+    
+    return res.status(200).json({ message: "Logged out successfully", success: true });
   } catch (error) {
-    res.status(404).json({ message: "Error logging Out" });
     console.log("Error in logout", error.message);
+    return res.status(404).json({ message: "Error logging Out" });
   }
 };
 /**
@@ -164,9 +166,10 @@ export const logoutUserController = async (req, res) => {
  * @access Private
  */
 export const getMeController = async (req, res) => {
-  const user = await userModel.findById(req.user.id);
+try {
+    const user = await userModel.findById(req.user.id);
 
-  res.status(200).json({
+  return res.status(200).json({
     message: "Fetched the user details",
     user: {
       id: user._id,
@@ -174,6 +177,10 @@ export const getMeController = async (req, res) => {
       email: user.email,
     },
   });
+} catch (error) {
+  console.log("Error in getMeController", error.message);
+  return res.status(404).json({ message: "Error Fetching user data" });
+}
 };
 
 /**
