@@ -56,6 +56,7 @@ export const registerUserController = async (req, res) => {
     console.log("client url",process.env.CLIENT_URL);
     console.log("email",process.env.EMAIL_USER);
     console.log("Client url", process.env.CLIENT_URL);
+    console.log("user info", email);
     
     
     //send verification mail
