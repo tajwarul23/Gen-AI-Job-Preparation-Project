@@ -29,6 +29,7 @@
     "parse": "^8.6.0",
     "pdf-parse-new": "^2.1.0",
     "puppeteer-core": "^25.0.4",
+    "resend": "^6.12.3",
     "streamifier": "^0.1.1",
     "zod": "^4.4.1",
     "zod-to-json-schema": "^3.25.2"
