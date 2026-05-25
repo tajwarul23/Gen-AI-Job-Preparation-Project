@@ -51,7 +51,8 @@ export const registerUserController = async (req, res) => {
       verificationToken,
       verificationTokenExpiry,
     });
-
+    console.log(process.env.CLIENT_URL);
+    
     //send verification mail
     const verificationUrl = `${process.env.CLIENT_URL}/verify-email?verificationToken=${verificationToken}`;
 
