@@ -7,15 +7,13 @@ import InterviewReportSkeleton from "./InterviewReportSkeleton";
 const AllResumes = () => {
   const { getAllResume, resumes, loading, error } = useResume();
   useEffect(() => {
-    if (!resumes || resumes.length === 0) {
-      getAllResume();
-    }
+   getAllResume();
   }, []);
 
   useEffect(() => {
     if (error) toast.error(error);
   }, [error]);
-if (loading && !resumes) return <InterviewReportSkeleton />;
+if (loading && resumes===null) return <InterviewReportSkeleton />;
 
   return (
     <div className="min-h-screen text-white font-display">
@@ -30,13 +28,13 @@ if (loading && !resumes) return <InterviewReportSkeleton />;
             Your Resumes History
           </h1>
 
-          <p className="text-muted mt-3">Total Reports: {resumes.length}</p>
+          <p className="text-muted mt-3">Total Reports: {resumes?.length || 0}</p>
         </div>
 
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {resumes?.map((r, i) => (
-            <ResumeCard resume={r} key={i} />
+            <ResumeCard resume={r._id} key={i} />
           ))}
         </div>
       </div>

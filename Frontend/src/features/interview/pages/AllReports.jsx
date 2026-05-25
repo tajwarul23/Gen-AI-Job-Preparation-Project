@@ -6,14 +6,12 @@ import ReportCard from "../Components/ReportCard";
 
 const AllReports = () => {
   const { reports, loading, getAllReport } = useInterview();
-  
+
   useEffect(() => {
-      if (!reports || reports.length === 0) {
     getAllReport();
-  }
   }, []);
 
-  if (loading && !reports) {
+  if (loading && reports === null) {
     return <AllReportSkeleton />;
   }
 
@@ -30,13 +28,13 @@ const AllReports = () => {
             Your Analysis History
           </h1>
 
-          <p className="text-muted mt-3">Total Reports: {reports.length}</p>
+          <p className="text-muted mt-3">Total Reports: {reports?.length || 0}</p>
         </div>
 
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-          {reports?.map((r,i) => (
-            <ReportCard r={r} key={i}/>
+          {reports?.map((r, i) => (
+            <ReportCard r={r._id} key={i} />
           ))}
         </div>
       </div>
