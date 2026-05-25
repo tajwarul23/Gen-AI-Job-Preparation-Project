@@ -1,12 +1,8 @@
-import puppeteer from "puppeteer";
 import { generateResume } from "../services/ai.service.js";
 import resumeTemplate from "../Templates/resumeTemplate.js";
 import generatePDF from "../services/generatePDF.js";
-import fs from "fs";
-import path from "path";
 import uploadPDF from "../services/uploadPDF.js";
 import { ResumeModel } from "../Models/resume.model.js";
-import { success } from "zod";
 
 /**
  * @description controller to generate resume based on user form data
@@ -139,15 +135,19 @@ export const deleteResumeById = async (req, res) => {
       _id: resumeId,
       user: req.user.id,
     });
-    
+
     if (!resume) {
       return res
         .status(400)
         .json({ message: "Resume not found", success: false });
     }
-    return res.status(200).json({message:"Resume Deleted Successfully", resume, success:true})
+    return res
+      .status(200)
+      .json({ message: "Resume Deleted Successfully", resume, success: true });
   } catch (error) {
-        console.log("error in delete resume by id", error.message);
-    res.status(401).json({ message: "Failed to delete resume", success: false });
+    console.log("error in delete resume by id", error.message);
+    res
+      .status(401)
+      .json({ message: "Failed to delete resume", success: false });
   }
 };

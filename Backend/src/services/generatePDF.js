@@ -1,39 +1,29 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
 
 const generatePDF = async (html) => {
-  const browser = await puppeteer.launch({
-    headless: true,
-      executablePath:
-      process.env.NODE_ENV === "production"
-        ? process.env.PUPPETEER_EXECUTABLE_PATH
-        : puppeteer.executablePath(),
-    ignoreDefaultArgs: ["--disable-extensions"],
-    args: [
-      "--no-sandbox",
-      "--use-gl=egl",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-      "--single-process",
-      "--no-zygote"
-    ],
-    ignoreHTTPSErrors: true,
-  });
+  let browser;
+
   try {
+    browser = await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+    });
+
     const page = await browser.newPage();
-    await page.setUserAgent(
-      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36",
-    );
+
     await page.setContent(html, { waitUntil: "networkidle0" });
 
-    //generate pdf
+    
+    await page.setViewport({ width: 794, height: 1123 });
+
     const pdfBuffer = await page.pdf({
       format: "A4",
-
       printBackground: true,
     });
 
-    //generate thumbnail - screenshot of first page
-    await page.setViewport({ width: 794, height: 1123 });
     const thumbnailBuffer = await page.screenshot({
       type: "jpeg",
       quality: 80,
@@ -41,13 +31,12 @@ const generatePDF = async (html) => {
     });
 
     return { pdfBuffer, thumbnailBuffer };
+
   } catch (error) {
-    console.log("Could not create a browser instance =>", error);
-    //  res.send("Something went wrong while generating the resume pdf..!")
+    console.error("Could not create browser instance:", error);
+    throw error;
   } finally {
-    if (browser) {
-      await browser.close();
-    }
+    if (browser) await browser.close();
   }
 };
 

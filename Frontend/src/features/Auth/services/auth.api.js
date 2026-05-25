@@ -6,7 +6,7 @@ import axios from "axios";
 //creating an instance of axios that is constant for API calling
 
 const api = axios.create({
-  baseURL: "https://preplab.onrender.com",
+  baseURL: "http://192.168.0.100:3000",
   withCredentials: true,
 });
 

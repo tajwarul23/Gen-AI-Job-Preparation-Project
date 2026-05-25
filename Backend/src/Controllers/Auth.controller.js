@@ -46,7 +46,8 @@ export const registerUserController = async (req, res) => {
     { expiresIn: "1d" },
   );
 
-  res.cookie("token", token, {httpOnly:true, secure:true, sameSite:"None"});
+  res.cookie("token", token);
+  // res.cookie("token", token, {httpOnly:true, secure:true, sameSite:"None"});
 
   res.status(201).json({
     message: "User registered successfully",
@@ -83,16 +84,14 @@ export const loginUserController = async (req, res) => {
     process.env.JWT_SECRET,
     { expiresIn: "1d" },
   );
+  res.cookie("token", token);
+  // res.cookie("token", token, {httpOnly:true, secure:true, sameSite:"None"});
 
-  res.cookie("token", token, {httpOnly:true, secure:true, sameSite:"None"});
-
-  res
-    .status(200)
-    .json({
-      message: "User logged in successfully",
-      success: true,
-      user: { id: user._id, email: user.email, userName: user.userName },
-    });
+  res.status(200).json({
+    message: "User logged in successfully",
+    success: true,
+    user: { id: user._id, email: user.email, userName: user.userName },
+  });
 };
 
 /**
@@ -100,33 +99,35 @@ export const loginUserController = async (req, res) => {
  * @description Logout a  user, by token blacklisting and clearing his cookie
  * @access Public
  */
-export const logoutUserController = async (req, res)=>{
-    const token = req.cookies.token;
-    // console.log("Token = ",token);
-    
-    if(token){
-      await TokenBlacklistModel.create({token});
+export const logoutUserController = async (req, res) => {
+  const token = req.cookies.token;
+  // console.log("Token = ",token);
 
-    }
-    res.clearCookie("token", {
-  httpOnly: true,
-  secure: true,
-  sameSite: "None"
-});
-    res.status(200).json({message:"user logged out successfully"})
-}
+  if (token) {
+    await TokenBlacklistModel.create({ token });
+  }
+  // res.clearCookie("token", {
+  //   httpOnly: true,
+  //   secure: true,
+  //   sameSite: "None",
+  // });
+  res.clearCookie("token");
+  res.status(200).json({ message: "user logged out successfully" });
+};
 /**
  * @name getMeController
  * @description get the current logged in user details,
  * @access Private
  */
-export const getMeController = async (req, res)=>{
-    const user = await userModel.findById(req.user.id);
+export const getMeController = async (req, res) => {
+  const user = await userModel.findById(req.user.id);
 
-    res.status(200).json({message:"Fetched the user details", user:{
-      id:user._id,
+  res.status(200).json({
+    message: "Fetched the user details",
+    user: {
+      id: user._id,
       userName: user.userName,
-      email : user.email
-    }})
-
-}
+      email: user.email,
+    },
+  });
+};
