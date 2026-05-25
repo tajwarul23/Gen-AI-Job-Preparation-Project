@@ -1,21 +1,19 @@
 import puppeteer from "puppeteer";
 
 const generatePDF = async (html) => {
-  let browser;
-  try {
-     browser = await puppeteer.launch({
-      headless: true,
-       
-      ignoreDefaultArgs: ["--disable-extensions"],
-      args: [
-        "--no-sandbox",
-        "--use-gl=egl",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-      ],
-      ignoreHTTPSErrors: true,
-    });
+  const browser = await puppeteer.launch({
+    headless: true,
 
+    ignoreDefaultArgs: ["--disable-extensions"],
+    args: [
+      "--no-sandbox",
+      "--use-gl=egl",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+    ],
+    ignoreHTTPSErrors: true,
+  });
+  try {
     const page = await browser.newPage();
     await page.setUserAgent(
       "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36",
@@ -40,7 +38,7 @@ const generatePDF = async (html) => {
     return { pdfBuffer, thumbnailBuffer };
   } catch (error) {
     console.log("Could not create a browser instance =>", error);
-   res.send("Something went wrong while generating the resume pdf..!")
+    //  res.send("Something went wrong while generating the resume pdf..!")
   } finally {
     if (browser) {
       await browser.close();
