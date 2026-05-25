@@ -1,8 +1,9 @@
 import puppeteer from "puppeteer";
 
 const generatePDF = async (html) => {
+  let browser;
   try {
-    const browser = await puppeteer.launch({
+     browser = await puppeteer.launch({
       headless: true,
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
