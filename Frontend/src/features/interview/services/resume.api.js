@@ -1,10 +1,9 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://gen-ai-job-preparation-project.onrender.com",
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
-
 export const createResumeAPI = async (data) => {
   const response = await api.post("/api/resume/", data);
   return response.data;

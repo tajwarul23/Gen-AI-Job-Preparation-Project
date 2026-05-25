@@ -8,6 +8,7 @@ import { registerSchema } from "../../../Schema/registerSchema.js";
 import { useState } from "react";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { FaRegEye } from "react-icons/fa6";
+import toast from "react-hot-toast"
 
 const Register = () => {
   const { loading, handleRegister } = useAuth();
@@ -30,8 +31,10 @@ const Register = () => {
   const from = location.state?.from?.pathname || "/";
   const onSubmit = async (data) => {
     try {
-      await handleRegister(data);
-      navigate(from, { replace: true });
+      const res = await handleRegister(data);
+      toast.success(res.message)
+      
+      // navigate(from, { replace: true });
     } catch (error) {
       const message = error.response?.data?.message || "Something went wrong";
 

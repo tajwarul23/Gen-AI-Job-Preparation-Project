@@ -1,5 +1,5 @@
 import express from "express";
-import { getMeController, loginUserController, logoutUserController, registerUserController } from "../Controllers/Auth.controller.js";
+import { getMeController, loginUserController, logoutUserController, registerUserController, verifyEmail } from "../Controllers/Auth.controller.js";
 import { verifyToken } from "../Middlewares/Auth.middleware.js";
 const authRouter = express.Router();
 
@@ -29,6 +29,15 @@ authRouter.get("/logout", logoutUserController)
  * @access Private
  */
 authRouter.get("/get-me",verifyToken,getMeController)
+
+/**
+ * @route GET /api/auth/very-email
+ * @description send a verification email to the user email
+ * @access Private
+ */
+authRouter.get("/verify-email",verifyEmail)
+
+
 
 
 export default authRouter;

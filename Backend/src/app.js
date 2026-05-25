@@ -4,12 +4,16 @@ import cookieParser from "cookie-parser";
 import cors from "cors"
 import interviewRouter from "./Routes/interview.route.js";
 import resumeRouter from "./Routes/resume.route.js"
+import { tr } from "zod/v4/locales";
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
+
+const allowedOrigins = process.env.NODE_ENV === "production" ? ["https://preplab-ai.vercel.app"] : "http://192.168.0.100:5173";
+
 app.use(cors({
-    origin:["https://preplab-ai.vercel.app"],
+    origin:allowedOrigins,
     credentials:true
 }))
 

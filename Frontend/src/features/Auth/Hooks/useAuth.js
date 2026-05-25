@@ -30,7 +30,8 @@ const handleRegister = async ({ userName, email, password }) => {
   setLoading(true);
   try {
     const data = await register({ userName, email, password });
-    setUser(data.user);
+    // setUser(data.user);
+    return data;
   } catch (error) {
     throw  error; 
   } finally {

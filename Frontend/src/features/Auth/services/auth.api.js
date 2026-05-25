@@ -6,7 +6,7 @@ import axios from "axios";
 //creating an instance of axios that is constant for API calling
 
 const api = axios.create({
-  baseURL: "https://gen-ai-job-preparation-project.onrender.com",
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
 
@@ -29,9 +29,14 @@ export const login = async ({ email, password }) => {
 
 export const logout = async () => {
   
-    const response = await api.get("/api/auth/logout");
+    const response = await api.post("/api/auth/logout");
     return response.data;
   
+};
+
+export const verifyEmail = async (token) => {
+  const response = await api.get(`/api/auth/verify-email?verificationToken=${token}`);
+  return response.data;
 };
 
 export const getMe = async () => {

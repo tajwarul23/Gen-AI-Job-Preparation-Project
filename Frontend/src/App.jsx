@@ -17,6 +17,7 @@ import { Toaster } from "react-hot-toast";
 
 import ResumeViewer from "./features/interview/pages/ResumeViewer.jsx";
 import AllResumes from "./features/interview/pages/AllResumes.jsx";
+import VerifyEmail from "./features/Auth/pages/VerifyEmail.jsx";
 const App = () => {
   return (
     <div className="min-h-screen bg-app">
@@ -27,7 +28,7 @@ const App = () => {
         {/* Public Auth Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
+        <Route path="/verify-email" element={<VerifyEmail />} />
         {/* Layout with Navbar  */}
         <Route element={<MainLayout />}>
 
