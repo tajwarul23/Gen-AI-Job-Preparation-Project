@@ -81,6 +81,8 @@ export const registerUserController = async (req, res) => {
       success: true,
     });
   } catch (error) {
+    console.log("Error in registering user", error.message);
+    
     res.status(500).json({
       message: "Error in registering user",
       success: false,
@@ -227,6 +229,8 @@ export const verifyEmail = async (req, res) => {
        user: { _id: user._id, userName: user.userName, email: user.email }
     });
   } catch (error) {
+    console.log("Error in verifying email", error.message);
+    
     res.status(500).json({
       message: "Error verifying email",
       success: false,

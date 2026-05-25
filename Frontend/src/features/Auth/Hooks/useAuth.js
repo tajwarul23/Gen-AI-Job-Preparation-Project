@@ -70,7 +70,7 @@ const handleRegister = async ({ userName, email, password }) => {
     };
 
     getAndSetUser();
-  }, [setUser, setLoading]);
+  }, []);
 
   return { user, loading, handleRegister, handleLogin, handleLogout };
 };
