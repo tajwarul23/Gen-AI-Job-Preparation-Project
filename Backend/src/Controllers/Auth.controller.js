@@ -52,27 +52,26 @@ export const registerUserController = async (req, res) => {
       password: hash,
       verificationToken,
       verificationTokenExpiry,
-      isVerified:true
+      isVerified: true,
     });
 
     const token = jwt.sign(
-  { id: user._id, userName: user.userName },
-  process.env.JWT_SECRET,
-  { expiresIn: "1d" }
-);
+      { id: user._id, userName: user.userName },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" },
+    );
 
-res.cookie("token", token, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-});
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    });
 
-res.status(201).json({
-  message: "Registration successful!",
-  success: true,
-  user: { id: user._id, email: user.email, userName: user.userName },
-});
- 
+    res.status(201).json({
+      message: "Registration successful!",
+      success: true,
+      user: { id: user._id, email: user.email, userName: user.userName },
+    });
   } catch (error) {
     console.log("Error in registering user", error.message);
 
@@ -138,21 +137,26 @@ export const loginUserController = async (req, res) => {
  * @access Public
  */
 export const logoutUserController = async (req, res) => {
-  const token = req.cookies.token;
-  // console.log("Token = ",token);
+  try {
+    const token = req.cookies.token;
+    // console.log("Token = ",token);
 
-  if (token) {
-    await TokenBlacklistModel.create({ token });
+    if (token) {
+      await TokenBlacklistModel.create({ token });
+    }
+
+    // res.clearCookie("token");
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    });
+    // ✅ add this
+    res.status(200).json({ message: "Logged out successfully", success: true });
+  } catch (error) {
+    res.status(404).json({ message: "Error logging Out" });
+    console.log("Error in logout", error.message);
   }
-
-  // res.clearCookie("token");
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-  });
-  // ✅ add this
-  res.status(200).json({ message: "Logged out successfully", success: true });
 };
 /**
  * @name getMeController
