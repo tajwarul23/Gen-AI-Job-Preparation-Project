@@ -6,6 +6,7 @@ import { useResume } from "../Hooks/useResume";
 const ResumeCard = ({ resume }) => {
   const navigate = useNavigate();
   const handleViewPDF = (resumeId) => {
+  console.log(resumeId);
     navigate(`/resume/${resumeId}`);
   };
   const { deleteResumeById } = useResume();
