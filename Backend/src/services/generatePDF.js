@@ -5,7 +5,7 @@ const generatePDF = async (html) => {
   try {
      browser = await puppeteer.launch({
       headless: true,
-       executablePath: puppeteer.executablePath(),
+       
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
         "--no-sandbox",
@@ -40,7 +40,7 @@ const generatePDF = async (html) => {
     return { pdfBuffer, thumbnailBuffer };
   } catch (error) {
     console.log("Could not create a browser instance =>", error);
-    throw error;
+   res.send("Something went wrong while generating the resume pdf..!")
   } finally {
     if (browser) {
       await browser.close();
