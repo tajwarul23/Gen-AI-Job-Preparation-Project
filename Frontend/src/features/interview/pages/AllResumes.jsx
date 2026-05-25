@@ -7,14 +7,15 @@ import InterviewReportSkeleton from "./InterviewReportSkeleton";
 const AllResumes = () => {
   const { getAllResume, resumes, loading, error } = useResume();
   useEffect(() => {
-    getAllResume();
+    if (!resumes || resumes.length === 0) {
+      getAllResume();
+    }
   }, []);
 
   useEffect(() => {
     if (error) toast.error(error);
   }, [error]);
-  if (loading) return (<InterviewReportSkeleton/>)
- 
+if (loading && !resumes) return <InterviewReportSkeleton />;
 
   return (
     <div className="min-h-screen text-white font-display">

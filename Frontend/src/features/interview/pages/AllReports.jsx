@@ -8,10 +8,12 @@ const AllReports = () => {
   const { reports, loading, getAllReport } = useInterview();
   
   useEffect(() => {
+      if (!reports || reports.length === 0) {
     getAllReport();
+  }
   }, []);
 
-  if (loading || !reports) {
+  if (loading && !reports) {
     return <AllReportSkeleton />;
   }
 
@@ -33,7 +35,7 @@ const AllReports = () => {
 
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-          {reports.map((r,i) => (
+          {reports?.map((r,i) => (
             <ReportCard r={r} key={i}/>
           ))}
         </div>

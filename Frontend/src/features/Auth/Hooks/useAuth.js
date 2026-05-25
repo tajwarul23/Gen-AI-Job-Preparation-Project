@@ -67,7 +67,7 @@ export const useAuth = () => {
       } catch (error) {
         setError(error?.response?.data?.message || "Something Went Wrong..!");
 
-        console.log("Error in useAuth", error.message);
+        console.log("Error in getUser", error.message);
 
         setUser(null);
       } finally {
