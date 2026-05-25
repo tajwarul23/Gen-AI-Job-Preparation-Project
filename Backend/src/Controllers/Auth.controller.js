@@ -62,7 +62,8 @@ export const registerUserController = async (req, res) => {
     //send verification mail
     const verificationUrl = `${process.env.CLIENT_URL}/verify-email?verificationToken=${verificationToken}`;
 
-    await transporter.sendMail({
+try {
+      await transporter.sendMail({
       from: `"Your App Name" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Verify Your Email Address",
@@ -75,7 +76,12 @@ export const registerUserController = async (req, res) => {
         <p>Or copy this link: ${verificationUrl}</p>
       `,
     });
+console.log("Email sent successfully");
 
+} catch (error) {
+  console.log("error sending email", error.message);
+  
+}
     res.status(201).json({
       message:
         "Registration successful! Please check your email to verify your account.If the email is not sent to your inbox don't forget to check the Spam Folder also.",
