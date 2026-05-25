@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import { TokenBlacklistModel } from "../Models/blacklist.mode.js";
 import crypto from "crypto";
 import { date } from "zod";
-import { transporter } from "../services/transporter.js";
+import { Resend } from 'resend';
 
 /**
  * @name registerUserController
