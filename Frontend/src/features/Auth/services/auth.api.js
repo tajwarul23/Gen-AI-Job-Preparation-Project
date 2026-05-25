@@ -6,7 +6,7 @@ import axios from "axios";
 //creating an instance of axios that is constant for API calling
 
 const api = axios.create({
-  baseURL: "https://gen-ai-job-preparation-project.onrender.com",
+  baseURL: "https://preplab.onrender.com",
   withCredentials: true,
 });
 
