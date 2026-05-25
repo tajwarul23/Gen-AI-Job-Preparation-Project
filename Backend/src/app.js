@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin:["https://preplab-project.vercel.app"],
+    origin:["https://preplab-ai.vercel.app"],
     credentials:true
 }))
 
