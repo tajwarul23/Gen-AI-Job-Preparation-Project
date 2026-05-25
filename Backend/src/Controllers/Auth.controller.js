@@ -1,3 +1,5 @@
+import dotenv from "dotenv"
+dotenv.config();
 import bcrypt from "bcryptjs";
 import { userModel } from "../Models/user.model.js";
 import jwt from "jsonwebtoken";
@@ -51,7 +53,8 @@ export const registerUserController = async (req, res) => {
       verificationToken,
       verificationTokenExpiry,
     });
-    console.log(process.env.CLIENT_URL);
+    console.log("client url",process.env.CLIENT_URL);
+    console.log("email",process.env.EMAIL_USER);
     
     //send verification mail
     const verificationUrl = `${process.env.CLIENT_URL}/verify-email?verificationToken=${verificationToken}`;
