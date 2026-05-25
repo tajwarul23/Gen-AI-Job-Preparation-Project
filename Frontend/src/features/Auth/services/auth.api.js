@@ -32,25 +32,18 @@ export const login = async ({ email, password }) => {
 };
 
 export const logout = async () => {
-  
-    const response = await api.post("/api/auth/logout");
-    return response.data;
-  
+  const response = await api.post("/api/auth/logout");
+  return response.data;
 };
 
 export const verifyEmail = async (token) => {
-  const response = await api.get(`/api/auth/verify-email?verificationToken=${token}`);
+  const response = await api.get(
+    `/api/auth/verify-email?verificationToken=${token}`,
+  );
   return response.data;
 };
 
 export const getMe = async () => {
-  
-try {
-      const response = await api.get("/api/auth/get-me");
-    return response.data;
-} catch (error) {
-  console.log(error);
-  
-}
-  
+  const response = await api.get("/api/auth/get-me");
+  return response.data;
 };

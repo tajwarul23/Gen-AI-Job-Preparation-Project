@@ -5,12 +5,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { loginSchema } from "../../../Schema/loginSchema.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { FaRegEye } from "react-icons/fa6";
+import toast from "react-hot-toast";
 
 const Login = () => {
-  const { loading, handleLogin } = useAuth();
+  const { loading, handleLogin, error } = useAuth();
 
   const {
     register,
@@ -21,12 +22,15 @@ const Login = () => {
     resolver: zodResolver(loginSchema),
     mode: "onTouched",
   });
-
+ useEffect(() => {
+    if (error) toast.error(error);
+  }, [error]);
   const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data) => {
     try {
-      await handleLogin(data);
+     const res = await handleLogin(data);
+     toast.success(res);
     } catch (error) {
       const message = error.response?.data?.message || "Something went wrong";
 

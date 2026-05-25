@@ -5,13 +5,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { registerSchema } from "../../../Schema/registerSchema.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { FaRegEye } from "react-icons/fa6";
-import toast from "react-hot-toast"
+import toast from "react-hot-toast";
 
 const Register = () => {
-  const { loading, handleRegister } = useAuth();
+  const { loading, handleRegister, error } = useAuth();
   const navigate = useNavigate();
 
   const {
@@ -29,17 +29,23 @@ const Register = () => {
   const location = useLocation();
 
   const from = location.state?.from?.pathname || "/";
+  useEffect(() => {
+    if (error) toast.error(error);
+  }, [error]);
   const onSubmit = async (data) => {
     try {
-      const res = await handleRegister(data);
-      toast.success(res.message)
       
+      const res = await handleRegister(data);
+      toast.success(res.message);
+
       navigate(from, { replace: true });
     } catch (error) {
+      console.log(error);
       const message = error.response?.data?.message || "Something went wrong";
 
       setError("root", { message });
     }
+    
   };
 
   return (
