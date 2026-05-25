@@ -52,38 +52,27 @@ export const registerUserController = async (req, res) => {
       password: hash,
       verificationToken,
       verificationTokenExpiry,
+      isVerified:true
     });
-    console.log("client url", process.env.CLIENT_URL);
-    console.log("email", process.env.EMAIL_USER);
-    console.log("Client url", process.env.CLIENT_URL);
-    console.log("user info", email);
 
-    //send verification mail
-    const verificationUrl = `${process.env.CLIENT_URL}/verify-email?verificationToken=${verificationToken}`;
+    const token = jwt.sign(
+  { id: user._id, userName: user.userName },
+  process.env.JWT_SECRET,
+  { expiresIn: "1d" }
+);
 
-    try {
-      await resend.emails.send({
-        from: "onboarding@resend.dev",
-        to: email,
-        subject: "Verify Your Email Address",
-        html: `
-  <h2>Welcome, ${userName} to PrepLab..!</h2>
-        <p>Click the button below to verify your email. This link expires in <strong>2 hours</strong>.</p>
-        <a href="${verificationUrl}" style="padding:10px 20px; background:#4F46E5; color:white; border-radius:5px; text-decoration:none;">
-          Verify Email
-        </a>
-        <p>Or copy this link: ${verificationUrl}</p>
-  `,
-      });
-      console.log("Email sent successfully");
-    } catch (error) {
-      console.log("error sending email", error.message);
-    }
-    res.status(201).json({
-      message:
-        "Registration successful! Please check your email to verify your account.If the email is not sent to your inbox don't forget to check the Spam Folder also.",
-      success: true,
-    });
+res.cookie("token", token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+});
+
+res.status(201).json({
+  message: "Registration successful!",
+  success: true,
+  user: { id: user._id, email: user.email, userName: user.userName },
+});
+ 
   } catch (error) {
     console.log("Error in registering user", error.message);
 

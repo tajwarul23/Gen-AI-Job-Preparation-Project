@@ -34,7 +34,7 @@ const Register = () => {
       const res = await handleRegister(data);
       toast.success(res.message)
       
-      // navigate(from, { replace: true });
+      navigate(from, { replace: true });
     } catch (error) {
       const message = error.response?.data?.message || "Something went wrong";
 
