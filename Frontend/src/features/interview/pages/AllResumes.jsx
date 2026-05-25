@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useResume } from "../Hooks/useResume";
 import ResumeCard from "./ResumeCard";
 import toast from "react-hot-toast";
+import InterviewReportSkeleton from "./InterviewReportSkeleton";
 
 const AllResumes = () => {
   const { getAllResume, resumes, loading, error } = useResume();
@@ -12,13 +13,8 @@ const AllResumes = () => {
   useEffect(() => {
     if (error) toast.error(error);
   }, [error]);
-  if (loading) return <main>Loading All the resumes...</main>;
-  if (!resumes.length)
-    return (
-      <main>
-        <h1 className="text-7xl text-ink">No resume Found..!</h1>
-      </main>
-    );
+  if (loading) return (<InterviewReportSkeleton/>)
+ 
 
   return (
     <div className="min-h-screen text-white font-display">
@@ -38,7 +34,7 @@ const AllResumes = () => {
 
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-          {resumes.map((r, i) => (
+          {resumes?.map((r, i) => (
             <ResumeCard resume={r} key={i} />
           ))}
         </div>
