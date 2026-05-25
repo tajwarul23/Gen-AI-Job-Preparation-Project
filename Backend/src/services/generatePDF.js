@@ -5,6 +5,7 @@ const generatePDF = async (html) => {
   try {
      browser = await puppeteer.launch({
       headless: true,
+       executablePath: puppeteer.executablePath(),
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
         "--no-sandbox",
