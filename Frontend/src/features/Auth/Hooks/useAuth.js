@@ -65,10 +65,11 @@ export const useAuth = () => {
           setUser(data.user);
         }
       } catch (error) {
-        setError(error?.response?.data?.message || "Something Went Wrong..!");
-
-        console.log("Error in getUser", error.message);
-
+        // Don't show error for 401 (unauthorized) - user just not logged in
+        if (error?.response?.status !== 401) {
+          setError(error?.response?.data?.message || "Something Went Wrong..!");
+          console.log("Error in getUser", error.message);
+        }
         setUser(null);
       } finally {
         setLoading(false);
