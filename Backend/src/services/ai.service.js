@@ -74,8 +74,7 @@ export const generateResume = async (resumeData) => {
     githubProfileLink,
     summary,
     experiences,
-    degree,
-    university,
+    education,
     skills,
     certifications,
     projects,
@@ -113,8 +112,7 @@ EXPERIENCES : ${
       : "No experience Provided"
   }
 
-  EDUCATIONS: Degree:${degree} University:${university}
-
+  EDUCATIONS: ${education.length ? education.map((edu, i) => `${i + 1}. Degree: ${edu.degree} Institution: ${edu.institution}${edu.result ? ` Result: ${edu.result}` : ""}`).join(" | ") : "No education provided"}
 
   SKILLS: ${skills.length ? skills.map((s) => `Skill Name:${s.name} Description:${s.description}`) : "No skills provided"}
 
@@ -122,7 +120,6 @@ EXPERIENCES : ${
   
   PROJECTS: ${projects.length ? projects.map((p) => `Project Name: ${p.name} LiveLink: ${p.liveLink} Github Repo: ${p.githubLink} project Description: ${p.description}`) : "No project provided"}
   `;
-
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3.1-flash-lite",
@@ -145,4 +142,4 @@ EXPERIENCES : ${
     console.error("Error generating interview report:", error);
     throw error;
   }
-};
+}

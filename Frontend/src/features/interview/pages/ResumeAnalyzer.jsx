@@ -37,6 +37,8 @@ const ResumeAnalyzer = () => {
         resumeFile: data.resume,
       });
 
+      
+
       navigate(`/interview/${report._id}`);
     } catch (error) {
       console.log(error);

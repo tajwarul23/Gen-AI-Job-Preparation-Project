@@ -21,7 +21,9 @@ import VerifyEmail from "./features/Auth/pages/VerifyEmail.jsx";
 const App = () => {
   return (
     <div className="min-h-screen bg-app">
-      <Toaster position="top-right"/>
+      <Toaster position="top-right"  toastOptions={{
+    duration: 3000, // 3 seconds
+  }} />
  <Router>
       <Routes>
 

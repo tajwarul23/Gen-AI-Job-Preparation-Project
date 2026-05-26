@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://gen-ai-job-preparation-project.onrender.com",
-  withCredentials: true,
+baseURL: "https://gen-ai-job-preparation-project.onrender.com",
+withCredentials: true,
 });
 // const api = axios.create({
 //   baseURL: import.meta.env.VITE_API_URL,

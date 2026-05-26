@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import { TokenBlacklistModel } from "../Models/blacklist.mode.js";
 import crypto from "crypto";
 import { date } from "zod";
-import resend from "../services/transporter.js";
+
 
 /**
  * @name registerUserController
@@ -14,6 +14,11 @@ import resend from "../services/transporter.js";
  * @access Public
  */
 export const registerUserController = async (req, res) => {
+  res.set({
+  'Cache-Control': 'no-cache, no-store, must-revalidate',
+  'Pragma': 'no-cache',
+  'Expires': '0'
+});
   const { userName, email, password } = req.body;
 
   try {
@@ -24,12 +29,9 @@ export const registerUserController = async (req, res) => {
       });
     }
     // if(!validator.isEmail(email))
-    const isUserAlreadyExists = await userModel.findOne({
-      $or: [ { email }],
+    const isUserAlreadyExists = await userModel.findOne({ email
     });
     if (isUserAlreadyExists) {
-  
-      
         return res.status(400).json({
           message: "Account already exists with this Email",
           success: false,
@@ -59,12 +61,12 @@ export const registerUserController = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production"?"true":"false",
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     });
 
    return res.status(201).json({
-      message: "Registration successful!",
+      message: `Welcome to PrepLab, ${userName}! Your account has been created successfully.`,
       success: true,
       user: { id: user._id, email: user.email, userName: user.userName },
     });
@@ -85,6 +87,11 @@ export const registerUserController = async (req, res) => {
  * @access Public
  */
 export const loginUserController = async (req, res) => {
+  res.set({
+  'Cache-Control': 'no-cache, no-store, must-revalidate',
+  'Pragma': 'no-cache',
+  'Expires': '0'
+});
   const { email, password } = req.body;
 
  try {
@@ -92,6 +99,7 @@ export const loginUserController = async (req, res) => {
   if (!user) {
     return res.status(400).json({
       message: "Invalid email or password",
+      success: false,
     });
   }
   if (!user.isVerified) {
@@ -122,13 +130,13 @@ export const loginUserController = async (req, res) => {
   });
 
  return res.status(200).json({
-    message: "User logged in successfully",
+    message: `Welcome back, ${user.userName}!`,
     success: true,
     user: { id: user._id, email: user.email, userName: user.userName },
   });
  } catch (error) {
    console.log("error in login user", error.message);
-  return res.status(400).json({message:"Error logging user"});
+  return res.status(400).json({message:"Error logging user", success: false});
   
  }
 };
@@ -139,6 +147,11 @@ export const loginUserController = async (req, res) => {
  * @access Public
  */
 export const logoutUserController = async (req, res) => {
+  res.set({
+  'Cache-Control': 'no-cache, no-store, must-revalidate',
+  'Pragma': 'no-cache',
+  'Expires': '0'
+});
   try {
     const token = req.cookies.token;
     // console.log("Token = ",token);
@@ -146,7 +159,10 @@ export const logoutUserController = async (req, res) => {
     if (token) {
       await TokenBlacklistModel.create({ token });
     }
-
+    if(!token){
+      return res.status(400).json({ message: "No token provided", success: false });
+    }
+    const userName = req.user?.userName || "User";
     // res.clearCookie("token");
     res.clearCookie("token", {
       httpOnly: true,
@@ -154,10 +170,10 @@ export const logoutUserController = async (req, res) => {
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     });
     
-    return res.status(200).json({ message: "Logged out successfully", success: true });
+    return res.status(200).json({ message: `See you later, ${userName}!`, success: true });
   } catch (error) {
     console.log("Error in logout", error.message);
-    return res.status(404).json({ message: "Error logging Out" });
+    return res.status(404).json({ message: "Error logging Out", success: false });
   }
 };
 /**
@@ -166,11 +182,24 @@ export const logoutUserController = async (req, res) => {
  * @access Private
  */
 export const getMeController = async (req, res) => {
+  res.set({
+  'Cache-Control': 'no-cache, no-store, must-revalidate',
+  'Pragma': 'no-cache',
+  'Expires': '0'
+});
+    res.set({
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
 try {
     const user = await userModel.findById(req.user.id);
 
+    if(!user){
+        return res.status(404).json({message:"User not found", success:false});
+    }
   return res.status(200).json({
-    message: "Fetched the user details",
+    message: `Fetching details for ${user.userName}`,
     user: {
       id: user._id,
       userName: user.userName,
@@ -179,7 +208,7 @@ try {
   });
 } catch (error) {
   console.log("Error in getMeController", error.message);
-  return res.status(404).json({ message: "Error Fetching user data" });
+  return res.status(500).json({ message: "Error Fetching user data", success: false });
 }
 };
 
@@ -189,6 +218,7 @@ try {
  * @access public
  */
 export const verifyEmail = async (req, res) => {
+
   const { verificationToken } = req.query;
   console.log("Token received", verificationToken);
 
@@ -224,7 +254,7 @@ export const verifyEmail = async (req, res) => {
 
     await user.save();
     res.status(200).json({
-      message: "Email verified successfully! You can now log in.",
+      message: `Email verified successfully! You can now log in, ${user.userName}.`,
       success: true,
       user: { _id: user._id, userName: user.userName, email: user.email },
     });

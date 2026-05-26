@@ -8,7 +8,7 @@ export const useAuth = () => {
   const { user, setUser, loading, setLoading, error, setError } = context;
   const navigate = useNavigate();
   const location = useLocation();
-
+  
   const from = location.state?.from?.pathname || "/";
 
   const handleLogin = async ({ email, password }) => {
@@ -16,9 +16,11 @@ export const useAuth = () => {
     setError(null);
     try {
       const data = await login({ email, password });
-      setUser(data.user);
-
+     if(data?.success){
+       setUser(data.user);
       navigate(from, { replace: true });
+      return data;
+     }
     } catch (error) {
       setError(error?.response?.data?.message || "Something Went Wrong..!");
     } finally {
@@ -31,8 +33,11 @@ export const useAuth = () => {
     setError(null);
     try {
       const data = await register({ userName, email, password });
-      setUser(data.user);
-      return data;
+      if(data?.success){
+        setUser(data.user);
+        navigate(from, { replace: true });
+        return data;
+      }
     } catch (error) {
       setError(error?.response?.data?.message || "Something Went Wrong..!");
     } finally {
@@ -45,9 +50,11 @@ export const useAuth = () => {
     setError(null);
     try {
       const data = await logout();
-      navigate("/");
+     if(data?.success){
+       navigate("/");
       setUser(null);
       return data;
+     }
       // console.log(data);
     } catch (error) {
       setError(error?.response?.data?.message || "Something Went Wrong..!");
@@ -65,7 +72,7 @@ export const useAuth = () => {
           setUser(data.user);
         }
       } catch (error) {
-        // Don't show error for 401 (unauthorized) - user just not logged in
+        
         if (error?.response?.status !== 401) {
           setError(error?.response?.data?.message || "Something Went Wrong..!");
           console.log("Error in getUser", error.message);
@@ -78,6 +85,5 @@ export const useAuth = () => {
 
     getAndSetUser();
   }, []);
-
   return { user, loading, handleRegister, handleLogin, handleLogout, error };
 };

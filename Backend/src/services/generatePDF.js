@@ -5,18 +5,26 @@ const generatePDF = async (html) => {
   let browser;
 
   try {
-    browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
-      headless: chromium.headless,
-    });
+    const isProduction = process.env.NODE_ENV === "production";
+
+    browser = await puppeteer.launch(
+      isProduction
+        ? {
+            args: chromium.args,
+            defaultViewport: chromium.defaultViewport,
+            executablePath: await chromium.executablePath(),
+            headless: chromium.headless,
+          }
+        : {
+            executablePath:
+              "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+            headless: true,
+            args: ["--no-sandbox"],
+          }
+    );
 
     const page = await browser.newPage();
-
     await page.setContent(html, { waitUntil: "networkidle0" });
-
-    
     await page.setViewport({ width: 794, height: 1123 });
 
     const pdfBuffer = await page.pdf({
@@ -31,7 +39,6 @@ const generatePDF = async (html) => {
     });
 
     return { pdfBuffer, thumbnailBuffer };
-
   } catch (error) {
     console.error("Could not create browser instance:", error);
     throw error;

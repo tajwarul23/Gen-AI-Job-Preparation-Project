@@ -31,8 +31,11 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     try {
-      await handleLogin(data);
-      toast.success("Login successful!");
+      const res = await handleLogin(data);
+      if (res?.success) {
+        toast.success(res.message || "Login successful!");
+        navigate(from, { replace: true });
+      }
     } catch (error) {
       const message = error.response?.data?.message || "Something went wrong";
       setError("root", { message });

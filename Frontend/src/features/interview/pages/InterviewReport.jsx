@@ -7,23 +7,35 @@ import {  useParams } from "react-router-dom";
 import MatchScore from "../Components/MatchScore";
 import SkillGaps from "../Components/SkillGaps";
 import InterviewReportSkeleton from "./InterviewReportSkeleton";
+import toast from "react-hot-toast";
 
 const InterviewReport = () => {
   const [activeTab, setActiveTab] = useState("technical");
-  const { report, getReportById, loading } = useInterview();
+  const { report, getReportById, loading,error} = useInterview();
   const { interviewId } = useParams();
   
   useEffect(() => {
-    if (interviewId) {
-      getReportById(interviewId);
+ 
+    if (!interviewId) {
+      toast.error("Invalid interview id");
+      return;
     }
+    getReportById(interviewId);
+
   }, [interviewId]);
 
-  if (loading || !report) {
+  if (loading) {
     return (
       <InterviewReportSkeleton/>
     );
   }
+   if(error){
+     return(<div className="text-red-400 text-4xl text-center">{error}</div>)
+  }
+  if(!report){
+    return(<div className="text-ink text-4xl text-center">No report found..!</div>)
+  }
+ 
 
   return (
     <div className="min-h-screen  text-white font-display">
@@ -79,11 +91,11 @@ const InterviewReport = () => {
                   {report?.title}
                 </h1>
                 <p className="text-sm text-gray-500">
-                  {new Date(report?.createdAt).toLocaleDateString("en-US", {
+                  {report?.createdAt?new Date(report?.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
-                  })}
+                  }):"Unknown Date"}
                 </p>
               </div>
               <div className="flex gap-2 flex-wrap items-center">

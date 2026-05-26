@@ -1,7 +1,13 @@
 import { FiArrowUpRight } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import { useAuth } from "../Auth/Hooks/useAuth";
 
+import AllResumes from "../interview/pages/AllResumes";
 const LastBanner = () => {
+  const {user} = useAuth();
+  if(user){
+    return(<AllResumes/>)
+  }
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex flex-col justify-center items-center border border-violet/40 p-10 rounded-2xl shadow-[0_15px_40px_-25px_rgba(124,90,247,0.25)]">

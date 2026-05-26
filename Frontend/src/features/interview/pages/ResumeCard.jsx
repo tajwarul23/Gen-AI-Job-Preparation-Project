@@ -1,21 +1,37 @@
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { RiDeleteBin6Line } from "react-icons/ri";
+// import { RiDeleteBin6Line } from "react-icons/ri";
 import { useResume } from "../Hooks/useResume";
+import { useState } from "react";
+
 
 const ResumeCard = ({ resume }) => {
+  const [downloading, setDownloading] = useState(false);
+
   const navigate = useNavigate();
   const handleViewPDF = (resumeId) => {
-  console.log(resumeId);
+    console.log(resumeId);
     navigate(`/resume/${resumeId}`);
   };
-  const { deleteResumeById } = useResume();
-  const handleDelete = (resumeId) => {
-    deleteResumeById(resumeId);
+
+  const { deleteResumeById, setLoading } = useResume();
+  const handleDelete = async (resumeId) => {
+    setLoading(true);
+    try {
+      await deleteResumeById(resumeId);
+      toast.success("Resume Deleted..!");
+      
+    } catch (error) {
+      toast.error("Failed to delete");
+      console.log("Error in delete resume", error.message);
+    } finally {
+      setLoading(false);
+    }
   };
   const handleDownload = async () => {
+    setDownloading(true);
     try {
-      const response = await fetch(resume.resumeUrl);
+      const response = await fetch(resume?.resumeUrl);
 
       if (!response.ok) {
         throw new Error("Failed to download");
@@ -40,7 +56,9 @@ const ResumeCard = ({ resume }) => {
         window.URL.revokeObjectURL(url);
       }, 100);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Something went wrong");
+      toast.error(error?.message || "Something went wrong");
+    } finally {
+      setDownloading(false);
     }
   };
   return (
@@ -76,8 +94,16 @@ const ResumeCard = ({ resume }) => {
             <button
               className="bg-violet p-1 rounded-sm text-sm text-ink font-display cursor-pointer hover:scale-95"
               onClick={handleDownload}
+              disabled={downloading}
             >
-              Download PDF
+              {downloading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Downloading...
+                </>
+              ) : (
+                "Download PDF"
+              )}
             </button>
           </div>
         </div>
@@ -98,16 +124,18 @@ const ResumeCard = ({ resume }) => {
             })}
           </span>
         </p>
-        <div className="">
+        {/* <div className="">
           <button
             onClick={() => {
-              handleDelete(resume._id);
+              handleDelete(resume._id)
+              
             }}
             className="text-red-500 text-lg cursor-pointer"
           >
             <RiDeleteBin6Line />
           </button>
-        </div>
+       
+        </div> */}
       </div>
     </div>
   );

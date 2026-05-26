@@ -76,9 +76,8 @@ const ResumeBuilder = () => {
       portfolioUrl: "",
       summary: "",
       experiences: [],
-      degree: "",
-      university: "",
-      skills: [],
+      education: [{ degree: "", institution: "", result: "" }],
+      skills: [{ name: "", description: "" }],
       certifications: [],
       projects: [{ name: "", githubLink: "", liveLink: "", description: "" }],
     },
@@ -88,6 +87,15 @@ const ResumeBuilder = () => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "experiences",
+  });
+  //education fields
+  const {
+    fields: educationFields,
+    append: appendEducation,
+    remove: removeEducation,
+  } = useFieldArray({
+    control,
+    name: "education",
   });
 
   //projects fields
@@ -138,11 +146,11 @@ const ResumeBuilder = () => {
         Generating…
       </>
     );
-    
-  }
-  else if(isSubmitSuccessful && !error) buttonContent="✅Resume ready — Redirecting";
-  else if(error) buttonContent = "⚠️Failed to Generate resume. Please try again Later";
-  else buttonContent ="Generate Resume"
+  } else if (isSubmitSuccessful && !error)
+    buttonContent = "✅Resume ready — Redirecting";
+  else if (error)
+    buttonContent = "⚠️Failed to Generate resume. Please try again Later";
+  else buttonContent = "Generate Resume";
   return (
     <div className="max-w-7xl mx-auto">
       <div className="mt-10">
@@ -161,6 +169,7 @@ const ResumeBuilder = () => {
         <div className="bg-surface border border-line rounded-2xl p-7 w-full max-w-[860px]">
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
             {/*   */}
+            
             {/* ── Personal Info ── */}
             <Section title="Personal Info">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-[10px]">
@@ -211,7 +220,7 @@ const ResumeBuilder = () => {
                   maxLength={300}
                   {...register("linkedinUrl")}
                   type="url"
-                  placeholder="LinkedIn URL"
+                  placeholder="LinkedIn URL(optional)"
                   autoComplete="url"
                   className={inputClass}
                 />
@@ -221,7 +230,7 @@ const ResumeBuilder = () => {
                   maxLength={300}
                   {...register("portfolioUrl")}
                   type="url"
-                  placeholder="Portfolio URL"
+                  placeholder="Portfolio URL(optional)"
                   autoComplete="url"
                   className={inputClass}
                 />
@@ -234,7 +243,7 @@ const ResumeBuilder = () => {
                   maxLength={300}
                   {...register("githubProfileLink")}
                   type="url"
-                  placeholder="gitHub URL"
+                  placeholder="GitHub URL(optional)"
                   autoComplete="url"
                   className={inputClass}
                 />
@@ -252,6 +261,83 @@ const ResumeBuilder = () => {
                 />
                 <CharCount current={summaryVal.length} max={500} />
               </Field>
+            </Section>
+
+            {/* Skills */}
+            <Section title="Skills">
+              {skillFields.length === 0 && (
+                <p className="font-mono text-[12px] text-[#5a5a78] text-center py-2">
+                  No Skills added — click below to add one
+                </p>
+              )}
+
+              {skillFields.map((field, index) => {
+                const descriptionValue =
+                  watch(`skills.${index}.description`) || "";
+                return (
+                  <div
+                    key={field.id}
+                    className="bg-[#0f0f17] border border-[#252535] rounded-xl p-4 flex flex-col gap-[10px]"
+                  >
+                    {/* header */}
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-mono text-[11px] text-[#3a3a55] uppercase tracking-widest">
+                        Skill #{index + 1}
+                      </span>
+
+                      {skillFields.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeSkill(index)}
+                          className="font-mono text-[11px] text-[#5a5a78] hover:text-[#f7a090] transition-colors duration-150 cursor-pointer"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+
+                    <Field
+                      label="Skill Name"
+                      error={errors.skills?.[index]?.name?.message}
+                    >
+                      <input
+                        maxLength={300}
+                        {...register(`skills.${index}.name`)}
+                        placeholder="Skill Name"
+                        className={inputClass}
+                      />
+                    </Field>
+
+                    <Field
+                      label="Skill Description"
+                      error={errors.skills?.[index]?.description?.message}
+                    >
+                      <textarea
+                        {...register(`skills.${index}.description`)}
+                        placeholder="Skill Description"
+                        rows={4}
+                        className={textareaClass}
+                      />
+                      <CharCount current={descriptionValue.length} max={300} />
+                    </Field>
+                  </div>
+                );
+              })}
+
+              {/* Add project */}
+              <button
+                type="button"
+                onClick={() =>
+                  appendSkill({
+                    name: "",
+                    description: "",
+                  })
+                }
+                className="w-full border border-dashed border-[#2a2a38] hover:border-[rgba(124,106,247,0.4)] text-[#5a5a78] hover:text-[#a99af7] font-mono text-[12px] rounded-[10px] py-3 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
+              >
+                <span className="text-[16px] leading-none">+</span>
+                Add another Skill
+              </button>
             </Section>
 
             {/* ── Work Experience ── */}
@@ -366,98 +452,87 @@ const ResumeBuilder = () => {
 
             {/* ── Education ── */}
             <Section title="Education">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-[10px]">
-                <Field label="Degree & Major" error={errors.degree?.message}>
-                  <input
-                    maxLength={300}
-                    {...register("degree")}
-                    placeholder="Degree & Major"
-                    className={inputClass}
-                  />
-                </Field>
-                <Field label="University" error={errors.university?.message}>
-                  <input
-                    maxLength={300}
-                    {...register("university")}
-                    placeholder="University"
-                    className={inputClass}
-                  />
-                </Field>
-              </div>
-            </Section>
-            {/* Skills */}
-
-            <Section title="Skills">
-              {skillFields.length === 0 && (
+              {educationFields.length === 0 && (
                 <p className="font-mono text-[12px] text-[#5a5a78] text-center py-2">
-                  No Skills added — click below to add one
+                  No Education added — click below to add one
                 </p>
               )}
+              {educationFields.map((field, index) => (
+                <div
+                  key={field.id}
+                  className="bg-[#0f0f17] border border-[#252535] rounded-xl p-4 flex flex-col gap-[10px]"
+                >
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-mono text-[11px] text-[#3a3a55] uppercase tracking-widest">
+                      Education #{index + 1}
+                    </span>
 
-              {skillFields.map((field, index) => {
-                const descriptionValue =
-                  watch(`skills.${index}.description`) || "";
-                return (
-                  <div
-                    key={field.id}
-                    className="bg-[#0f0f17] border border-[#252535] rounded-xl p-4 flex flex-col gap-[10px]"
-                  >
-                    {/* header */}
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-mono text-[11px] text-[#3a3a55] uppercase tracking-widest">
-                        Skill #{index + 1}
-                      </span>
-
+                    {educationFields.length > 1 && (
                       <button
                         type="button"
-                        onClick={() => removeSkill(index)}
-                        className="font-mono text-[11px] text-[#5a5a78] hover:text-[#f7a090] transition-colors duration-150 cursor-pointer"
+                        onClick={() => removeEducation(index)}
+                        className="font-mono text-[11px] text-[#5a5a78] hover:text-[#f7a090] cursor-pointer"
                       >
                         Remove
                       </button>
-                    </div>
+                    )}
+                  </div>
 
+                  {/* Fields */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-[10px]">
                     <Field
-                      label="Skill Name"
-                      error={errors.skills?.[index]?.name?.message}
+                      label="Degree & Major"
+                      error={errors.education?.[index]?.degree?.message}
                     >
                       <input
                         maxLength={300}
-                        {...register(`skills.${index}.name`)}
-                        placeholder="Skill Name"
+                        {...register(`education.${index}.degree`)}
+                        placeholder="Degree & Major"
                         className={inputClass}
                       />
                     </Field>
 
                     <Field
-                      label="Skill Description"
-                      error={errors.skills?.[index]?.description?.message}
+                      label="Institution"
+                      error={errors.education?.[index]?.institution?.message}
                     >
-                      <textarea
-                        {...register(`skills.${index}.description`)}
-                        placeholder="Skill Description"
-                        rows={4}
-                        className={textareaClass}
+                      <input
+                        maxLength={300}
+                        {...register(`education.${index}.institution`)}
+                        placeholder="Institution"
+                        className={inputClass}
                       />
-                      <CharCount current={descriptionValue.length} max={300} />
+                    </Field>
+
+                    <Field
+                      label="Result"
+                      error={errors.education?.[index]?.result?.message}
+                    >
+                      <input
+                        maxLength={300}
+                        {...register(`education.${index}.result`)}
+                        placeholder="Result Optional (e.g. GPA, Honors)"
+                        className={inputClass}
+                      />
                     </Field>
                   </div>
-                );
-              })}
+                </div>
+              ))}
 
-              {/* Add project */}
+              {/* Add button */}
               <button
                 type="button"
                 onClick={() =>
-                  appendSkill({
-                    name: "",
-                    description: "",
+                  appendEducation({
+                    degree: "",
+                    institution: "",
+                    result: "",
                   })
                 }
-                className="w-full border border-dashed border-[#2a2a38] hover:border-[rgba(124,106,247,0.4)] text-[#5a5a78] hover:text-[#a99af7] font-mono text-[12px] rounded-[10px] py-3 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
+                className="cursor-pointer w-full border border-dashed border-[#2a2a38] hover:border-[rgba(124,106,247,0.4)] text-[#5a5a78] hover:text-[#a99af7] font-mono text-[12px] rounded-[10px] py-3 transition-all duration-200"
               >
-                <span className="text-[16px] leading-none">+</span>
-                Add another Skill
+                + Add Education
               </button>
             </Section>
 
@@ -672,7 +747,9 @@ const ResumeBuilder = () => {
               type="submit"
               disabled={isSubmitting}
               className="mt-2 w-full bg-violet hover:bg-[#7c72f7] active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold text-[15px] tracking-wide rounded-xl py-4 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
-            >{buttonContent}</button>
+            >
+              {buttonContent}
+            </button>
 
             {/* Global form error summary (only on submit) */}
             {Object.keys(errors).length > 0 && (

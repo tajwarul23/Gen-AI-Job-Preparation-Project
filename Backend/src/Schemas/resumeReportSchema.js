@@ -17,13 +17,22 @@ const CertificationSchema = z.object({
   name: z.string().min(1, "Certification Name is required"),
   issuer: z.string().min(1, "Certification issuer name is required"),
   issueDate: z.string().min(1, "Certificate issue date is required"),
-  credentialUrl: z.string().url("invalid url"),
+  credentialUrl: z.string()
+  .url("Enter a valid URL")
+  .optional()
+  .or(z.literal("")),
 });
 
 const ProjectSchema = z.object({
   name: z.string().min(1, "Project name is required"),
-  githubLink: z.string().url("Invalid Github URL"),
-  liveLink: z.string().url("Invalid live link"),
+  githubLink: z.string()
+  .url("Enter a valid URL")
+  .optional()
+  .or(z.literal("")),
+  liveLink: z.string()
+  .url("Enter a valid URL")
+  .optional()
+  .or(z.literal("")),
   description: z.string().min(1, "Project description is required"),
 });
 
@@ -38,13 +47,29 @@ export const ResumeReportSchema = z.object({
     .max(20, "Phone number is too long")
     .regex(/^[+\d\s\-().]+$/, "Only digits, spaces, +, -, () allowed"),
   location: z.string().min(1, "Location is required"),
-  portfolioUrl: z.string().url().min(1, "Portfolio URL is required"),
-  linkedinUrl: z.string().url().min(1, "Linkedin URL is required"),
-  githubProfileLink: z.string().url().min(1, "gitHub url is required"),
+  portfolioUrl: z.string()
+  .url("Enter a valid URL")
+  .optional()
+  .or(z.literal("")),
+  linkedinUrl: z.string()
+  .url("Enter a valid URL")
+  .optional()
+  .or(z.literal("")),
+  githubProfileLink: z.string()
+  .url("Enter a valid URL")
+  .optional()
+  .or(z.literal("")),
   summary: z.string(),
   atsScore:z.number().min(1).max(100),
-  degree: z.string().min(1, "Degree is required"),
-  university: z.string().min(1, "Institution is required"),
+ education: z
+     .array(
+       z.object({
+         degree: z.string().min(1, "Degree is required"),
+         institution: z.string().min(1, "Institution is required"),
+         result: z.string().optional(), 
+       })
+     )
+     .min(1, "Add at least one education entry"),
 
   experiences: z.array(ExperienceSchema).default([]),
   skills: z.array(SkillSchema).default([]),
@@ -101,15 +126,17 @@ export const resumeGeminiSchema = {
       },
     },
 
-    degree: {
-      type: "string",
-      description: "Completed degree of the resume owner",
-    },
-    university: {
-      type: "string",
-      description:
-        "University name from which the resume owner completed the mentioned degree",
-    },
+   education: {
+      type: "array",
+      items: {type: "object",
+      properties: {
+        degree: { type: "string" },
+        institution: { type: "string" },
+        result: { type: "string" },
+      },
+      required: ["degree", "institution"],
+    }
+  },
 
     skills: {
       type: "array",
@@ -158,8 +185,8 @@ export const resumeGeminiSchema = {
     "email",
     "phone",
     "location",
-    "degree",
-    "university",
+    "education",
+    "summary",
     "experiences",
     "skills",
     "certifications",

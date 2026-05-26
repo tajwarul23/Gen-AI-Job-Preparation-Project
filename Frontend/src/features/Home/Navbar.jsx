@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../Auth/Hooks/useAuth";
+import toast from "react-hot-toast";
 
 const navLinks = [
   { to: "/resume-builder",      label: "Resume Builder" },
@@ -12,6 +13,10 @@ const navLinks = [
 const Navbar = () => {
   const { user, handleLogout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const handleLogoutClick = async () => {
+    const res = await handleLogout();
+    toast.success(res?.message || "Logged out successfully!");
+  }
 
   const linkClass = ({ isActive }) =>
     `cursor-pointer text-lg transition-colors duration-200 ${
@@ -42,24 +47,18 @@ const Navbar = () => {
         <div className="hidden lg:flex gap-4 shrink-0">
           {user ? (
             <button
-              onClick={handleLogout}
+              onClick={handleLogoutClick}
               className="rounded-xl border border-line px-4 py-2 text-lg text-muted font-mono
                          cursor-pointer hover:text-ink transition-colors duration-200"
             >
               Logout
             </button>
           ) : (
-            <Link
-              to="/login"
-              className="rounded-xl border border-line px-4 py-2 text-lg text-muted font-mono
-                         hover:text-ink transition-colors duration-200"
-            >
-              Login
-            </Link>
-          )}
-          <button className="rounded-xl bg-violet px-4 py-2 text-white text-lg cursor-pointer">
+            <Link to={"/register"} className="rounded-xl bg-violet px-4 py-2 text-white text-lg cursor-pointer">
             Get Started
-          </button>
+          </Link>
+          )}
+         
         </div>
 
         {/* ── Hamburger button — visible on mobile/tablet only ── */}
@@ -107,26 +106,21 @@ const Navbar = () => {
           {user ? (
             <button
               onClick={() => { handleLogout(); setMenuOpen(false); }}
-              className="text-left text-lg text-muted hover:text-ink transition-colors duration-200 cursor-pointer"
+              className="text-left text-lg text-muted   hover:text-ink transition-colors duration-200 cursor-pointer"
             >
               Logout
             </button>
           ) : (
-            <Link
-              to="/login"
-              className="text-lg text-muted hover:text-ink transition-colors duration-200"
-              onClick={() => setMenuOpen(false)}
-            >
-              Login
-            </Link>
-          )}
-
-          <Link
+             <Link
+             to={"/register"}
             className="mt-1 rounded-xl bg-violet px-4 py-2 text-white text-lg text-left w-fit cursor-pointer"
-            onClick={() => setMenuOpen(false)}
+            
           >
             Get Started
           </Link>
+          )}
+
+         
 
         </div>
       </div>

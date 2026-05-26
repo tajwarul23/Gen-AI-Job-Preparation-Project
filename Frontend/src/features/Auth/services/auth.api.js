@@ -9,6 +9,10 @@ import axios from "axios";
 //   baseURL: import.meta.env.VITE_API_URL,
 //   withCredentials: true,
 // });
+// const api = axios.create({
+//   baseURL: "http://192.168.0.100:3000",
+//   withCredentials: true,
+// });
 const api = axios.create({
   baseURL: "https://gen-ai-job-preparation-project.onrender.com",
   withCredentials: true,

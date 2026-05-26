@@ -142,17 +142,21 @@ ${data.experiences && data.experiences.length > 0 ? `
 
 <!-- ══ EDUCATION ════════════════════════════════════════════ -->
 
-${data.degree || data.institution ? `
+${data.education && data.education.length > 0 ? `
 <div class="section">
   <div class="section-title">Education</div>
+  ${data?.education?.map(edu => `
   <div class="edu-entry">
     <div class="entry-header">
-      <div>
-        <div class="entry-title">${data.degree}</div>
-        <div class="entry-sub">${data.university}</div>
+      <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+        <div>
+          <div class="entry-title">${edu?.degree}</div>
+          <div class="entry-sub">${edu?.institution}</div>
+        </div>
+        ${edu?.result ? `<div class="entry-sub">${edu?.result}</div>` : ""}
       </div>
     </div>
-  </div>
+  </div>`).join("")}
 </div>` : ""}
 
 <!-- ══ SKILLS ═══════════════════════════════════════════════ -->

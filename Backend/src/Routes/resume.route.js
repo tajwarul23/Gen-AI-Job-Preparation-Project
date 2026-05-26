@@ -2,6 +2,7 @@ import express from "express";
 import { verifyToken } from "../Middlewares/Auth.middleware.js";
 import {
   createResume,
+  deleteResumeById,
   getAllResume,
   getResumeById,
 } from "../Controllers/resume.controller.js";
@@ -34,6 +35,6 @@ resumeRouter.get("/:resumeId", verifyToken, getResumeById);
  * @description delete specific resume by id
  * @access Private
  */
-resumeRouter.delete("/:resumeId", verifyToken, getResumeById);
+resumeRouter.delete("/:resumeId", verifyToken, deleteResumeById);
 
 export default resumeRouter;

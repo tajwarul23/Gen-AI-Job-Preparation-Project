@@ -13,9 +13,9 @@ const resumeSchema = new mongoose.Schema(
     email: { type: String, required: true },
     phone: { type: String, required: true },
     location: { type: String, required: true },
-    portfolioUrl: { type: String, required: true },
-    linkedinUrl: { type: String, required: true },
-    githubProfileLink: { type: String, required: true },
+    portfolioUrl: { type: String},
+    linkedinUrl: { type: String },
+    githubProfileLink: { type: String },
     summary: { type: String, required: true },
 
     atsScore: { type: Number, required: true },
@@ -30,8 +30,13 @@ const resumeSchema = new mongoose.Schema(
       },
     ],
 
-    degree: String,
-    university: String,
+    education: [
+      {
+        degree: String,   
+        institution: String,
+        result: String,
+      },
+    ],
 
     skills: [{ name: String, description: String }],
 
