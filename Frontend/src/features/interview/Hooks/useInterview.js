@@ -40,6 +40,9 @@ export const useInterview = () => {
         setReport(response.interviewReport);
         return response.interviewReport;
       }
+      if(!response?.success){
+        setError(error?.response?.data?.message || "AI generation Failed Please Try again later..!");
+      }
     } catch (error) {
       console.log("Error in generateReport", error.message);
       setError(error?.response?.data?.message || "Something went wrong");
