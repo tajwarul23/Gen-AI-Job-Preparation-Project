@@ -5,12 +5,13 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+   const [isInitializing, setIsInitializing] = useState(true);
 
   const value = useMemo(
-    () => ({ user, setUser, loading, setLoading, error, setError }),
-    [user, loading, error]
+    () => ({ user, setUser, loading, setLoading, error, setError,isInitializing, setIsInitializing }),
+    [user, loading, error, isInitializing]
   );
 
   return (

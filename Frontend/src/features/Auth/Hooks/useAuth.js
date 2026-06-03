@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  const { user, setUser, loading, setLoading, error, setError } = context;
+  const { user, setUser, loading, setLoading, error, setError,  isInitializing, setIsInitializing,  } = context;
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -64,7 +64,7 @@ export const useAuth = () => {
   };
   useEffect(() => {
     const getAndSetUser = async () => {
-      setLoading(true);
+      setIsInitializing(true);
       setError(null);
       try {
         const data = await getMe();
@@ -79,7 +79,7 @@ export const useAuth = () => {
         }
         setUser(null);
       } finally {
-        setLoading(false);
+        setIsInitializing(false);
       }
     };
 
