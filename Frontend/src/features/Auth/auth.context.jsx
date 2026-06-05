@@ -1,6 +1,7 @@
 import { createContext, useState, useMemo } from "react";
 import { getMe } from "./services/auth.api.js";
 import { useEffect } from "react";
+import { success } from "zod";
 
 export const AuthContext = createContext();
 
@@ -35,10 +36,9 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (error) {
         if (error?.response?.status !== 401) {
-          setError(error?.response?.data?.message || "Something Went Wrong..!");
-          console.log("Error in getUser", error.message);
+          setUser(null);
+         return;
         }
-        setUser(null);
         setError(error?.response?.data?.message || "Something Went Wrong..!");
         console.log("Error in getUser", error.message);
 
