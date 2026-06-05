@@ -32,11 +32,11 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
+           <Route path="*" element={<NotFound/>}/>
         {/* Layout with Navbar  */}
         <Route element={<MainLayout />}>
 
         <Route path="/" element={<HomePage />} />
-           <Route path="*" element={<NotFound/>}/>
           {/* Protected Routes */}
           <Route element={<ProtectedLayout />}>
             
