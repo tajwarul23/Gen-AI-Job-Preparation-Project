@@ -36,7 +36,7 @@ const App = () => {
         <Route element={<MainLayout />}>
 
         <Route path="/" element={<HomePage />} />
-          
+           <Route path="*" element={<NotFound/>}/>
           {/* Protected Routes */}
           <Route element={<ProtectedLayout />}>
             
@@ -44,7 +44,7 @@ const App = () => {
             <Route path="/resume-analyzer"element={<ResumeAnalyzer />} />
             <Route path="/interview/allReports" element={<AllReports />} />
             <Route path="/interview/:interviewId" element={<InterviewReport />} /> 
-            <Route path="*" element={<NotFound/>}/>
+           
             <Route path="/resume/:resumeId" element={<ResumeViewer/>}/>
             <Route path="/resume/allResume" element={<AllResumes/>}/>
 
