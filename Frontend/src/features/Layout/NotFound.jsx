@@ -10,12 +10,14 @@ const NotFound = () => {
           The page you're looking for doesn't exist or has been moved.
         </p>
 
-        <Link
+        <div className="mt-5">
+            <Link
           to={"/"}
-          className="mt-5 rounded-xl bg-violet px-4 py-2 text-white text-lg text-left w-fit cursor-pointer"
+          className=" rounded-xl bg-violet px-4 py-2 text-white text-lg text-left w-fit cursor-pointer"
         >
           Go to Home
         </Link>
+        </div>
       </div>
     </div>
   );
