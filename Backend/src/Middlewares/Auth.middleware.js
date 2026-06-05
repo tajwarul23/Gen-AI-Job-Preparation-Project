@@ -5,7 +5,7 @@ export const verifyToken = async(req, res, next) => {
   const token = req.cookies.token;
 
   if (!token) {
-    return res.status(401).json({ message: "Token not provided" });
+    return res.status(401).json({ message: "Please Login to visit the page" });
   }
   const isTokenBlackListed = await  TokenBlacklistModel.findOne({token});
   if(isTokenBlackListed){
