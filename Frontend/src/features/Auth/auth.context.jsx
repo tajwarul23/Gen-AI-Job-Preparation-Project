@@ -25,29 +25,28 @@ export const AuthProvider = ({ children }) => {
     [user, loading, error, isInitializing],
   );
 
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      setIsInitializing(true);
-      setError(null);
-      try {
-        const data = await getMe();
-        if (data?.user) {
-          setUser(data.user);
-        }
-      } catch (error) {
-        if (error?.response?.status !== 401) {
-          setUser(null);
-         return;
-        }
-        setError(error?.response?.data?.message || "Something Went Wrong..!");
-        console.log("Error in getUser", error.message);
+useEffect(() => {
+  const fetchCurrentUser = async () => {
+    setIsInitializing(true);
 
-        setUser(null);
-      } finally {
-        setIsInitializing(false);
+    try {
+      const data = await getMe();
+      setUser(data?.user || null);
+    } catch (error) {
+      setUser(null);
+
+      if (error?.response?.status !== 401) {
+        setError(
+          error?.response?.data?.message || "Something Went Wrong..!"
+        );
+        console.log("Error in getUser:", error);
       }
-    };
-    fetchCurrentUser();
-  }, []);
+    } finally {
+      setIsInitializing(false);
+    }
+  };
+
+  fetchCurrentUser();
+}, []);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
