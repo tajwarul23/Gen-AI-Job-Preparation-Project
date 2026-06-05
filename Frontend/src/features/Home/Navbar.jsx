@@ -54,7 +54,7 @@ const Navbar = () => {
               Logout
             </button>
           ) : (
-            <Link to={"/register"} className="rounded-xl bg-violet px-4 py-2 text-white text-lg cursor-pointer">
+            <Link to={"/login"} className="rounded-xl bg-violet px-4 py-2 text-white text-lg cursor-pointer">
             Get Started
           </Link>
           )}

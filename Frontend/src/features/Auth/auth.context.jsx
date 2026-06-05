@@ -34,6 +34,11 @@ export const AuthProvider = ({ children }) => {
           setUser(data.user);
         }
       } catch (error) {
+        if (error?.response?.status !== 401) {
+          setError(error?.response?.data?.message || "Something Went Wrong..!");
+          console.log("Error in getUser", error.message);
+        }
+        setUser(null);
         setError(error?.response?.data?.message || "Something Went Wrong..!");
         console.log("Error in getUser", error.message);
 
