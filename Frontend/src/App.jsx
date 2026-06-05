@@ -18,6 +18,7 @@ import { Toaster } from "react-hot-toast";
 import ResumeViewer from "./features/interview/pages/ResumeViewer.jsx";
 import AllResumes from "./features/interview/pages/AllResumes.jsx";
 import VerifyEmail from "./features/Auth/pages/VerifyEmail.jsx";
+import NotFound from "./features/Layout/NotFound.jsx";
 const App = () => {
   return (
     <div className="min-h-screen bg-app">
@@ -43,7 +44,7 @@ const App = () => {
             <Route path="/resume-analyzer"element={<ResumeAnalyzer />} />
             <Route path="/interview/allReports" element={<AllReports />} />
             <Route path="/interview/:interviewId" element={<InterviewReport />} /> 
-            <Route path="/test" element={<Test/>}/>
+            <Route path="*" element={<NotFound/>}/>
             <Route path="/resume/:resumeId" element={<ResumeViewer/>}/>
             <Route path="/resume/allResume" element={<AllResumes/>}/>
 

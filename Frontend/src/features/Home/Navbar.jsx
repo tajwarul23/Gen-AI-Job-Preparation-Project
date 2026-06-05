@@ -112,7 +112,7 @@ const Navbar = () => {
             </button>
           ) : (
              <Link
-             to={"/register"}
+             to={"/login"}
             className="mt-1 rounded-xl bg-violet px-4 py-2 text-white text-lg text-left w-fit cursor-pointer"
             
           >
