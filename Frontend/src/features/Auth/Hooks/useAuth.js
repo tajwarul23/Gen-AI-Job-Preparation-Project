@@ -62,28 +62,28 @@ export const useAuth = () => {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    const getAndSetUser = async () => {
-      setIsInitializing(true);
-      setError(null);
-      try {
-        const data = await getMe();
-        if (data?.user) {
-          setUser(data.user);
-        }
-      } catch (error) {
+  // useEffect(() => {
+  //   const getAndSetUser = async () => {
+  //     setIsInitializing(true);
+  //     setError(null);
+  //     try {
+  //       const data = await getMe();
+  //       if (data?.user) {
+  //         setUser(data.user);
+  //       }
+  //     } catch (error) {
         
-        if (error?.response?.status !== 401) {
-          setError(error?.response?.data?.message || "Something Went Wrong..!");
-          console.log("Error in getUser", error.message);
-        }
-        setUser(null);
-      } finally {
-        setIsInitializing(false);
-      }
-    };
+  //       if (error?.response?.status !== 401) {
+  //         setError(error?.response?.data?.message || "Something Went Wrong..!");
+  //         console.log("Error in getUser", error.message);
+  //       }
+  //       setUser(null);
+  //     } finally {
+  //       setIsInitializing(false);
+  //     }
+  //   };
 
-    getAndSetUser();
-  }, []);
+  //   getAndSetUser();
+  // }, []);
   return { user, loading, handleRegister, handleLogin, handleLogout, error,isInitializing };
 };
