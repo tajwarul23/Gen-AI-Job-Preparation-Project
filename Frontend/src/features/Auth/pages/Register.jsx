@@ -231,7 +231,7 @@ const Register = () => {
                 
                  {googleLoading ? (
                       <>
-                        <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                        <div className="w-5 h-5 border-2 border-gray-300 border-t-black rounded-full animate-spin" />
                         Logging in with Google...
                       </>
                     ) : (
