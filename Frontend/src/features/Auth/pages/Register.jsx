@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
 
 const Register = () => {
-  const { loading, handleRegister, error, handleGoogleLogin } = useAuth();
+  const { loading, handleRegister, error, handleGoogleLogin,googleLoading } = useAuth();
   const navigate = useNavigate();
 
     const handleGoogleLoginClick = async () => {
@@ -229,7 +229,7 @@ const Register = () => {
               >
                 <FcGoogle className="text-2xl" />
                 
-                 {loading ? (
+                 {googleLoading ? (
                       <>
                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                         Logging in with Google...
