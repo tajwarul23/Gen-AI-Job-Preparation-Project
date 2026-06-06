@@ -4,8 +4,13 @@ import cookieParser from "cookie-parser";
 import cors from "cors"
 import interviewRouter from "./Routes/interview.route.js";
 import resumeRouter from "./Routes/resume.route.js"
-import { tr } from "zod/v4/locales";
+
 const app = express();
+
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  next();
+});
 
 app.use(express.json());
 app.use(cookieParser());

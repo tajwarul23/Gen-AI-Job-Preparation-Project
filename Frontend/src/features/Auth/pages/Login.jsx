@@ -19,8 +19,11 @@ const Login = () => {
   const { signInWithGoogle } = useFirebaseAuth();
   const handleGoogleLoginClick = async () => {
     try {
-      await signInWithGoogle();
+    const data =  await signInWithGoogle();
+    console.log("Firebase Response", data);
       await fetchCurrentUser();
+      
+      
       toast.success("Login successful!");
       navigate(from, { replace: true });
     } catch (error) {
