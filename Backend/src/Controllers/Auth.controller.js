@@ -313,6 +313,8 @@ export const firebaseAuthController = async (req, res) => {
       user: { id: user._id, email: user.email, userName: user.userName },
     });
   } catch (error) {
+    console.log("Error in firebase", error.message);
+    
     return res.status(401).json({ message: "Invalid Firebase token", success: false });
   }
 };
