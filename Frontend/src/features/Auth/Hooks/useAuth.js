@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { AuthContext } from "../auth.context.jsx";
 import { login, register, logout } from "../services/auth.api.js";
-import { useLocation, useNavigate } from "react-router-dom";
+
 import { useFirebaseAuth } from "./useFirebaseAuth.js";
 
 
@@ -18,7 +18,7 @@ export const useAuth = () => {
     isInitializing,
     fetchCurrentUser,
   } = context;
-  const navigate = useNavigate();
+  
   
 
   
@@ -81,7 +81,7 @@ export const useAuth = () => {
       
       if(data?.success){
           setUser(null);
-      navigate("/");
+      
       return data;
       }
     } catch (error) {

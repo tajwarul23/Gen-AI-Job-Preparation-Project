@@ -10,10 +10,25 @@ import { FaRegEyeSlash } from "react-icons/fa6";
 import { FaRegEye } from "react-icons/fa6";
 import toast from "react-hot-toast";
 
+import { FcGoogle } from "react-icons/fc";
+
 const Register = () => {
-  const { loading, handleRegister, error } = useAuth();
+  const { loading, handleRegister, error, handleGoogleLogin } = useAuth();
   const navigate = useNavigate();
 
+    const handleGoogleLoginClick = async () => {
+    try {
+    const res =  await handleGoogleLogin();
+    if (res?.success) {
+        toast.success(res.message || "Login successful!");
+        navigate(from, { replace: true });
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+      console.log(error);
+      
+    }
+  };
   const {
     register,
     handleSubmit,
@@ -208,6 +223,21 @@ const Register = () => {
             </Link>
           </h1>
         </form>
+                  <button
+                onClick={handleGoogleLoginClick}
+                className="cursor-pointer w-full flex items-center justify-center gap-3 bg-white text-gray-700 border border-gray-300 rounded-lg px-4 py-3 shadow-sm mt-5 hover:bg-gray-100 hover:shadow-md transition-all duration-200 font-medium"
+              >
+                <FcGoogle className="text-2xl" />
+                
+                 {loading ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Logging in with Google...
+                      </>
+                    ) : (
+                      <span>Continue with Google</span>
+                    )}
+              </button>
       </div>
     </main>
   );

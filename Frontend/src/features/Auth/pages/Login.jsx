@@ -157,7 +157,7 @@ const Login = () => {
         </form>
           <button
         onClick={handleGoogleLoginClick}
-        className="cursor-pointer w-full flex items-center justify-center gap-3 bg-white text-gray-700 border border-gray-300 rounded-lg px-4 py-3 shadow-sm mt-5 hover:bg-gray-500 hover:shadow-md transition-all duration-200 font-medium"
+        className="cursor-pointer w-full flex items-center justify-center gap-3 bg-white text-gray-700 border border-gray-300 rounded-lg px-4 py-3 shadow-sm mt-5 hover:bg-gray-100 hover:shadow-md transition-all duration-200 font-medium"
       >
         <FcGoogle className="text-2xl" />
         

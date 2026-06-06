@@ -17,8 +17,8 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const handleLogoutClick = async () => {
-    const res = await handleLogout();
     navigate("/");
+    const res = await handleLogout();
     toast.success(res?.message || "Logged out successfully!");
   };
 
@@ -52,7 +52,13 @@ const Navbar = () => {
             loading ? (
               <div className="flex items-center gap-2">
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Logging out...</span>
+                <button
+                
+                className="rounded-xl border border-line px-4 py-2 text-lg text-muted font-mono
+                   cursor-pointer hover:text-ink transition-colors duration-200"
+              >
+                Logging Out
+              </button>
               </div>
             ) : (
               <button
@@ -121,7 +127,12 @@ const Navbar = () => {
             loading ? (
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 border-2 border-muted border-t-transparent rounded-full animate-spin" />
-                <span className="text-lg text-muted">Logging out...</span>
+                 <button
+               
+                className="text-left text-lg text-muted hover:text-ink transition-colors duration-200 cursor-pointer"
+              >
+                Logging out
+              </button>
               </div>
             ) : (
               <button
