@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
       googleLoading,
       setGoogleLoading,
     }),
-    [user, loading, error, isInitializing, fetchCurrentUser],
+    [user, loading, error, isInitializing, fetchCurrentUser, googleLoading],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

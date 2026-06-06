@@ -51,12 +51,12 @@ const Navbar = () => {
           {user ? (
             loading ? (
               <div className="flex items-center gap-2">
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 <button
                 
                 className="rounded-xl border border-line px-4 py-2 text-lg text-muted font-mono
                    cursor-pointer hover:text-ink transition-colors duration-200"
               >
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 Logging Out
               </button>
               </div>
