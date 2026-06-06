@@ -25,6 +25,8 @@ const Login = () => {
       navigate(from, { replace: true });
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
+      console.log(error);
+      
     }
   };
   const from = location.state?.from?.pathname || "/";
