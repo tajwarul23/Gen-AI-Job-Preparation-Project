@@ -19,9 +19,9 @@ export const useAuth = () => {
     fetchCurrentUser,
   } = context;
   const navigate = useNavigate();
-  const location = useLocation();
+  
 
-  const from = location.state?.from?.pathname || "/";
+  
 
   const handleLogin = async ({ email, password }) => {
     setLoading(true);
