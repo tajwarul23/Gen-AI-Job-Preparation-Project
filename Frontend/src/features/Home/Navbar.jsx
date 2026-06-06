@@ -3,7 +3,6 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../Auth/Hooks/useAuth";
 import toast from "react-hot-toast";
 
-
 const navLinks = [
   { to: "/resume-builder", label: "Resume Builder" },
   { to: "/resume-analyzer", label: "Resume Analyzer" },
@@ -50,15 +49,15 @@ const Navbar = () => {
         <div className="hidden lg:flex gap-4 shrink-0">
           {user ? (
             loading ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center gap-2">
                 <button
-                
-                className="rounded-xl border border-line px-4 py-2 text-lg text-muted font-mono
-                   cursor-pointer hover:text-ink transition-colors duration-200"
-              >
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Logging Out
-              </button>
+                  className="rounded-xl border border-line px-4 py-2 text-lg text-muted font-mono
+             cursor-pointer hover:text-ink transition-colors duration-200
+             flex items-center gap-2"
+                >
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Logging Out
+                </button>
               </div>
             ) : (
               <button
@@ -126,13 +125,10 @@ const Navbar = () => {
           {user ? (
             loading ? (
               <div className="flex items-center gap-2">
+                <button className="text-left text-lg flex items-center gap-2  text-muted hover:text-ink transition-colors duration-200 cursor-pointer">
                 <div className="w-4 h-4 border-2 border-muted border-t-transparent rounded-full animate-spin" />
-                 <button
-               
-                className="text-left text-lg text-muted hover:text-ink transition-colors duration-200 cursor-pointer"
-              >
-                Logging out
-              </button>
+                  Logging out
+                </button>
               </div>
             ) : (
               <button
