@@ -2,8 +2,7 @@ import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../Auth/Hooks/useAuth";
 import toast from "react-hot-toast";
-import axios from "axios";
-import { useFirebaseAuth } from "../Auth/Hooks/useFirebaseAuth";
+
 
 const navLinks = [
   { to: "/resume-builder", label: "Resume Builder" },
@@ -13,23 +12,13 @@ const navLinks = [
 ];
 
 const Navbar = () => {
-  const { user, handleLogout, setUser } = useAuth();
+  const { user, handleLogout, loading } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const { signOutFromFirebase } = useFirebaseAuth();
 
-  const handleGoogleLogoutClick = async () => {
-    await signOutFromFirebase(); // Firebase
-    await axios.post(
-      "https://gen-ai-job-preparation-project.onrender.com/api/auth/logout",
-      {},
-      { withCredentials: true },
-    );
-    setUser(null);
-    navigate("/");
-  };
   const handleLogoutClick = async () => {
     const res = await handleLogout();
+    navigate("/");
     toast.success(res?.message || "Logged out successfully!");
   };
 
@@ -60,13 +49,20 @@ const Navbar = () => {
         {/* ── Desktop right buttons — hidden on mobile/tablet ── */}
         <div className="hidden lg:flex gap-4 shrink-0">
           {user ? (
-            <button
-              onClick={handleGoogleLogoutClick}
-              className="rounded-xl border border-line px-4 py-2 text-lg text-muted font-mono
-                         cursor-pointer hover:text-ink transition-colors duration-200"
-            >
-              Logout
-            </button>
+            loading ? (
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Logging out...</span>
+              </div>
+            ) : (
+              <button
+                onClick={handleLogoutClick}
+                className="rounded-xl border border-line px-4 py-2 text-lg text-muted font-mono
+                   cursor-pointer hover:text-ink transition-colors duration-200"
+              >
+                Logout
+              </button>
+            )
           ) : (
             <Link
               to={"/login"}
@@ -122,15 +118,22 @@ const Navbar = () => {
 
           {/* Auth buttons */}
           {user ? (
-            <button
-              onClick={() => {
-                handleLogout();
-                setMenuOpen(false);
-              }}
-              className="text-left text-lg text-muted   hover:text-ink transition-colors duration-200 cursor-pointer"
-            >
-              Logout
-            </button>
+            loading ? (
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-muted border-t-transparent rounded-full animate-spin" />
+                <span className="text-lg text-muted">Logging out...</span>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  handleLogoutClick();
+                  setMenuOpen(false);
+                }}
+                className="text-left text-lg text-muted hover:text-ink transition-colors duration-200 cursor-pointer"
+              >
+                Logout
+              </button>
+            )
           ) : (
             <Link
               to={"/login"}

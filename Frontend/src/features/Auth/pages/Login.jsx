@@ -9,23 +9,21 @@ import { useEffect, useState } from "react";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { FaRegEye } from "react-icons/fa6";
 import toast from "react-hot-toast";
-import { useFirebaseAuth } from "../Hooks/useFirebaseAuth.js";
+
 
 import { FcGoogle } from "react-icons/fc";
 const Login = () => {
-  const { loading, handleLogin, error, fetchCurrentUser } = useAuth();
+  const { loading, handleLogin, error, handleGoogleLogin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { signInWithGoogle } = useFirebaseAuth();
+  
   const handleGoogleLoginClick = async () => {
     try {
-    const data =  await signInWithGoogle();
-    console.log("Firebase Response", data);
-      await fetchCurrentUser();
-      
-      
-      toast.success("Login successful!");
-      navigate(from, { replace: true });
+    const res =  await handleGoogleLogin();
+    if (res?.success) {
+        toast.success(res.message || "Login successful!");
+        navigate(from, { replace: true });
+      }
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
       console.log(error);
@@ -157,14 +155,23 @@ const Login = () => {
             </Link>
           </h1>
         </form>
-      </div>
-      <button
+          <button
         onClick={handleGoogleLoginClick}
         className="w-full flex items-center justify-center gap-3 bg-white text-gray-700 border border-gray-300 rounded-lg px-4 py-3 shadow-sm hover:bg-gray-50 hover:shadow-md transition-all duration-200 font-medium"
       >
         <FcGoogle className="text-2xl" />
-        <span>Continue with Google</span>
+        
+         {loading ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Logging in with Google...
+              </>
+            ) : (
+              <span>Continue with Google</span>
+            )}
       </button>
+      </div>
+    
     </main>
   );
 };

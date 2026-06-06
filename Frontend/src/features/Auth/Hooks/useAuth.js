@@ -1,14 +1,26 @@
-import { useContext} from "react";
+import { useContext } from "react";
 import { AuthContext } from "../auth.context.jsx";
 import { login, register, logout } from "../services/auth.api.js";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useFirebaseAuth } from "./useFirebaseAuth.js";
+
 
 export const useAuth = () => {
+  const { signInWithGoogle, signOutFromFirebase } = useFirebaseAuth();
   const context = useContext(AuthContext);
-  const { user, setUser, loading, setLoading, error, setError,  isInitializing,fetchCurrentUser } = context;
+  const {
+    user,
+    setUser,
+    loading,
+    setLoading,
+    error,
+    setError,
+    isInitializing,
+    fetchCurrentUser,
+  } = context;
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const from = location.state?.from?.pathname || "/";
 
   const handleLogin = async ({ email, password }) => {
@@ -16,11 +28,27 @@ export const useAuth = () => {
     setError(null);
     try {
       const data = await login({ email, password });
-     if(data?.success){
-       setUser(data.user);
-      navigate(from, { replace: true });
+      if (data?.success) {
+        console.log(data);
+
+        setUser(data.user);
+      }
       return data;
-     }
+    } catch (error) {
+      setError(error?.response?.data?.message || "Something Went Wrong..!");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await signInWithGoogle();
+      if (data?.success) {
+        setUser(data.user);
+      }
+      return data;
     } catch (error) {
       setError(error?.response?.data?.message || "Something Went Wrong..!");
     } finally {
@@ -33,9 +61,8 @@ export const useAuth = () => {
     setError(null);
     try {
       const data = await register({ userName, email, password });
-      if(data?.success){
+      if (data?.success) {
         setUser(data.user);
-        navigate(from, { replace: true });
         return data;
       }
     } catch (error) {
@@ -49,41 +76,33 @@ export const useAuth = () => {
     setLoading(true);
     setError(null);
     try {
+      await signOutFromFirebase();
       const data = await logout();
-     if(data?.success){
-       navigate("/");
-      setUser(null);
+      
+      if(data?.success){
+          setUser(null);
+      navigate("/");
       return data;
-     }
-      // console.log(data);
+      }
     } catch (error) {
       setError(error?.response?.data?.message || "Something Went Wrong..!");
     } finally {
       setLoading(false);
     }
   };
-  // useEffect(() => {
-  //   const getAndSetUser = async () => {
-  //     setIsInitializing(true);
-  //     setError(null);
-  //     try {
-  //       const data = await getMe();
-  //       if (data?.user) {
-  //         setUser(data.user);
-  //       }
-  //     } catch (error) {
-        
-  //       if (error?.response?.status !== 401) {
-  //         setError(error?.response?.data?.message || "Something Went Wrong..!");
-  //         console.log("Error in getUser", error.message);
-  //       }
-  //       setUser(null);
-  //     } finally {
-  //       setIsInitializing(false);
-  //     }
-  //   };
 
-  //   getAndSetUser();
-  // }, []);
-  return { user,fetchCurrentUser , loading, handleRegister, handleLogin, handleLogout, error,isInitializing };
+ 
+
+  return {
+    user,
+    fetchCurrentUser,
+    loading,
+    handleRegister,
+    handleLogin,
+    handleLogout,
+    error,
+    isInitializing,
+    handleGoogleLogin,
+    
+  };
 };
