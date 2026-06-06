@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  const { user, setUser, loading, setLoading, error, setError,  isInitializing  } = context;
+  const { user, setUser, loading, setLoading, error, setError,  isInitializing,fetchCurrentUser } = context;
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -85,5 +85,5 @@ export const useAuth = () => {
 
   //   getAndSetUser();
   // }, []);
-  return { user, loading, handleRegister, handleLogin, handleLogout, error,isInitializing };
+  return { user,fetchCurrentUser , loading, handleRegister, handleLogin, handleLogout, error,isInitializing };
 };

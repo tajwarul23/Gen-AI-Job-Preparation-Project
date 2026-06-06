@@ -9,11 +9,24 @@ import { useEffect, useState } from "react";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { FaRegEye } from "react-icons/fa6";
 import toast from "react-hot-toast";
+import { useFirebaseAuth } from "../Hooks/useFirebaseAuth.js";
 
+import { FcGoogle } from "react-icons/fc";
 const Login = () => {
-  const { loading, handleLogin, error } = useAuth();
+  const { loading, handleLogin, error, fetchCurrentUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { signInWithGoogle } = useFirebaseAuth();
+  const handleGoogleLoginClick = async () => {
+    try {
+      await signInWithGoogle();
+      await fetchCurrentUser();
+      toast.success("Login successful!");
+      navigate(from, { replace: true });
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
+  };
   const from = location.state?.from?.pathname || "/";
   const {
     register,
@@ -24,7 +37,7 @@ const Login = () => {
     resolver: zodResolver(loginSchema),
     mode: "onTouched",
   });
- useEffect(() => {
+  useEffect(() => {
     if (error) toast.error(error);
   }, [error]);
   const [showPassword, setShowPassword] = useState(false);
@@ -83,10 +96,12 @@ const Login = () => {
               />
 
               {showPassword ? (
-                <button type="button" onClick={() => setShowPassword(!showPassword)}>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
                   {" "}
                   <FaRegEye
-                    
                     className="absolute right-4 top-1/2 -translate-y-1/2
     text-muted cursor-pointer"
                   />
@@ -138,6 +153,13 @@ const Login = () => {
           </h1>
         </form>
       </div>
+      <button
+        onClick={handleGoogleLoginClick}
+        className="w-full flex items-center justify-center gap-3 bg-white text-gray-700 border border-gray-300 rounded-lg px-4 py-3 shadow-sm hover:bg-gray-50 hover:shadow-md transition-all duration-200 font-medium"
+      >
+        <FcGoogle className="text-2xl" />
+        <span>Continue with Google</span>
+      </button>
     </main>
   );
 };

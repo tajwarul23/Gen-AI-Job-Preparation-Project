@@ -268,3 +268,51 @@ export const verifyEmail = async (req, res) => {
     });
   }
 };
+
+import admin from "../config/firebase.config.js";
+
+export const firebaseAuthController = async (req, res) => {
+  const { idToken } = req.body;
+  if (!idToken)
+    return res.status(400).json({ message: "ID token required", success: false });
+
+  try {
+    const decoded = await admin.auth().verifyIdToken(idToken);
+    const { uid, email, name } = decoded;
+
+    let user = await userModel.findOne({ email });
+
+    if (!user) {
+      user = await userModel.create({
+        userName: name || email.split("@")[0],
+        email,
+        firebaseUid: uid,
+        isVerified: true,
+      });
+    } else if (!user.firebaseUid) {
+      user.firebaseUid = uid;
+      user.isVerified = true;
+      await user.save();
+    }
+
+    const token = jwt.sign(
+      { id: user._id, userName: user.userName },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    });
+
+    return res.status(200).json({
+      message: `Welcome, ${user.userName}!`,
+      success: true,
+      user: { id: user._id, email: user.email, userName: user.userName },
+    });
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid Firebase token", success: false });
+  }
+};

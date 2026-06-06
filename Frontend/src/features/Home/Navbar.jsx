@@ -1,22 +1,37 @@
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../Auth/Hooks/useAuth";
 import toast from "react-hot-toast";
+import axios from "axios";
+import { useFirebaseAuth } from "../Auth/Hooks/useFirebaseAuth";
 
 const navLinks = [
-  { to: "/resume-builder",      label: "Resume Builder" },
-  { to: "/resume-analyzer",     label: "Resume Analyzer" },
+  { to: "/resume-builder", label: "Resume Builder" },
+  { to: "/resume-analyzer", label: "Resume Analyzer" },
   { to: "/interview/allReports", label: "Reports" },
   { to: "/resume/allResume", label: "Resumes" },
 ];
 
 const Navbar = () => {
-  const { user, handleLogout } = useAuth();
+  const { user, handleLogout, setUser } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const { signOutFromFirebase } = useFirebaseAuth();
+
+  const handleGoogleLogoutClick = async () => {
+    await signOutFromFirebase(); // Firebase
+    await axios.post(
+      "https://gen-ai-job-preparation-project.onrender.com/api/auth/logout",
+      {},
+      { withCredentials: true },
+    );
+    setUser(null);
+    navigate("/");
+  };
   const handleLogoutClick = async () => {
     const res = await handleLogout();
     toast.success(res?.message || "Logged out successfully!");
-  }
+  };
 
   const linkClass = ({ isActive }) =>
     `cursor-pointer text-lg transition-colors duration-200 ${
@@ -26,7 +41,6 @@ const Navbar = () => {
   return (
     <div className="font-mono">
       <nav className="relative z-10 flex h-16 items-center justify-between border-b border-line px-6 lg:px-8">
-
         {/* ── Logo ── */}
         <Link to="/" className="text-3xl font-bold font-mono shrink-0">
           <span className="text-violet">⬡</span>
@@ -47,18 +61,20 @@ const Navbar = () => {
         <div className="hidden lg:flex gap-4 shrink-0">
           {user ? (
             <button
-              onClick={handleLogoutClick}
+              onClick={handleGoogleLogoutClick}
               className="rounded-xl border border-line px-4 py-2 text-lg text-muted font-mono
                          cursor-pointer hover:text-ink transition-colors duration-200"
             >
               Logout
             </button>
           ) : (
-            <Link to={"/login"} className="rounded-xl bg-violet px-4 py-2 text-white text-lg cursor-pointer">
-            Get Started
-          </Link>
+            <Link
+              to={"/login"}
+              className="rounded-xl bg-violet px-4 py-2 text-white text-lg cursor-pointer"
+            >
+              Get Started
+            </Link>
           )}
-         
         </div>
 
         {/* ── Hamburger button — visible on mobile/tablet only ── */}
@@ -68,32 +84,34 @@ const Navbar = () => {
           aria-label="Toggle menu"
         >
           {/* 3 bars — animate into X when open */}
-          <span className={`block w-6 h-0.5 bg-ink transition-all duration-300 origin-center
+          <span
+            className={`block w-6 h-0.5 bg-ink transition-all duration-300 origin-center
             ${menuOpen ? "rotate-45 translate-y-2" : ""}`}
           />
-          <span className={`block w-6 h-0.5 bg-ink transition-all duration-300
+          <span
+            className={`block w-6 h-0.5 bg-ink transition-all duration-300
             ${menuOpen ? "opacity-0" : ""}`}
           />
-          <span className={`block w-6 h-0.5 bg-ink transition-all duration-300 origin-center
+          <span
+            className={`block w-6 h-0.5 bg-ink transition-all duration-300 origin-center
             ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
           />
         </button>
-
       </nav>
 
       {/* ── Mobile drawer — slides down when open ── */}
-      <div className={`lg:hidden overflow-hidden transition-all duration-300
+      <div
+        className={`lg:hidden overflow-hidden transition-all duration-300
         ${menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
       >
         <div className="flex flex-col gap-1 px-6 py-4 border-b border-line bg-surface">
-
           {/* Nav links */}
           {navLinks.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               className={linkClass}
-              onClick={() => setMenuOpen(false)}  // close on navigate
+              onClick={() => setMenuOpen(false)} // close on navigate
             >
               {link.label}
             </NavLink>
@@ -105,26 +123,24 @@ const Navbar = () => {
           {/* Auth buttons */}
           {user ? (
             <button
-              onClick={() => { handleLogout(); setMenuOpen(false); }}
+              onClick={() => {
+                handleLogout();
+                setMenuOpen(false);
+              }}
               className="text-left text-lg text-muted   hover:text-ink transition-colors duration-200 cursor-pointer"
             >
               Logout
             </button>
           ) : (
-             <Link
-             to={"/login"}
-            className="mt-1 rounded-xl bg-violet px-4 py-2 text-white text-lg text-left w-fit cursor-pointer"
-            
-          >
-            Get Started
-          </Link>
+            <Link
+              to={"/login"}
+              className="mt-1 rounded-xl bg-violet px-4 py-2 text-white text-lg text-left w-fit cursor-pointer"
+            >
+              Get Started
+            </Link>
           )}
-
-         
-
         </div>
       </div>
-
     </div>
   );
 };

@@ -37,6 +37,12 @@ authRouter.get("/get-me",verifyToken,getMeController)
  */
 authRouter.get("/verify-email",verifyEmail)
 
+/**
+ * @route post /api/auth/firebase
+ * @description firebase authentication
+ * @access Public
+ */
+authRouter.post("/firebase", firebaseAuthController);
 
 
 

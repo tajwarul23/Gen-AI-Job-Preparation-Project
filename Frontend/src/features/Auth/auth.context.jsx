@@ -1,7 +1,5 @@
-import { createContext, useState, useMemo } from "react";
+import { createContext, useState, useMemo, useEffect, useCallback } from "react";
 import { getMe } from "./services/auth.api.js";
-import { useEffect } from "react";
-
 
 export const AuthContext = createContext();
 
@@ -11,22 +9,8 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [isInitializing, setIsInitializing] = useState(true);
 
-  const value = useMemo(
-    () => ({
-      user,
-      setUser,
-      loading,
-      setLoading,
-      error,
-      setError,
-      isInitializing,
-      setIsInitializing,
-    }),
-    [user, loading, error, isInitializing],
-  );
-
-useEffect(() => {
-  const fetchCurrentUser = async () => {
+  
+  const fetchCurrentUser = useCallback(async () => {
     setIsInitializing(true);
 
     try {
@@ -39,14 +23,35 @@ useEffect(() => {
         setError(
           error?.response?.data?.message || "Something Went Wrong..!"
         );
-        console.log("Error in getUser:", error);
       }
     } finally {
       setIsInitializing(false);
     }
-  };
+  }, []);
 
-  fetchCurrentUser();
-}, []);
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  // initial load
+  useEffect(() => {
+    fetchCurrentUser();
+  }, [fetchCurrentUser]);
+
+  const value = useMemo(
+    () => ({
+      user,
+      setUser,
+      loading,
+      setLoading,
+      error,
+      setError,
+      isInitializing,
+      setIsInitializing,
+      fetchCurrentUser, 
+    }),
+    [user, loading, error, isInitializing, fetchCurrentUser]
+  );
+
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
