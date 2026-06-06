@@ -1,5 +1,5 @@
 import express from "express";
-import { getMeController, loginUserController, logoutUserController, registerUserController, verifyEmail } from "../Controllers/Auth.controller.js";
+import { getMeController, loginUserController, logoutUserController, registerUserController, verifyEmail, firebaseAuthController } from "../Controllers/Auth.controller.js";
 import { verifyToken } from "../Middlewares/Auth.middleware.js";
 const authRouter = express.Router();
 
