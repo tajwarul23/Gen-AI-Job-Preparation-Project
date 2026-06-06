@@ -5,11 +5,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { resumeAnalyzerSchema } from "../../../Schema/resumeAnalyzerSchema.js";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import InterviewReportSkeleton from "./InterviewReportSkeleton.jsx";
+import toast from "react-hot-toast";
 
 const ResumeAnalyzer = () => {
-  const { generateReport, loading } = useInterview();
+  const { generateReport, loading, error } = useInterview();
 
   const navigate = useNavigate();
 
@@ -23,6 +24,10 @@ const ResumeAnalyzer = () => {
     resolver: zodResolver(resumeAnalyzerSchema),
     mode: "onTouched",
   });
+
+useEffect(() => {
+    if (error) toast.error(error);
+  }, [error]);
 
   const file = watch("resume");
   const selfDescription = watch("selfDescription") || "";
