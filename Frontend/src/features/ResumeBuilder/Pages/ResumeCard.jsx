@@ -1,9 +1,7 @@
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-// import { RiDeleteBin6Line } from "react-icons/ri";
-import { useResume } from "../Hooks/useResume";
-import { useState } from "react";
 
+import { useState } from "react";
 
 const ResumeCard = ({ resume }) => {
   const [downloading, setDownloading] = useState(false);
@@ -14,20 +12,6 @@ const ResumeCard = ({ resume }) => {
     navigate(`/resume/${resumeId}`);
   };
 
-  const { deleteResumeById, setLoading } = useResume();
-  const handleDelete = async (resumeId) => {
-    setLoading(true);
-    try {
-      await deleteResumeById(resumeId);
-      toast.success("Resume Deleted..!");
-      
-    } catch (error) {
-      toast.error("Failed to delete");
-      console.log("Error in delete resume", error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
   const handleDownload = async () => {
     setDownloading(true);
     try {
