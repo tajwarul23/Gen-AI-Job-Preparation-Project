@@ -10,13 +10,15 @@ import AllReports from "./features/interview/pages/AllReports.jsx";
 import MainLayout from "./features/Layout/MainLayout.jsx";
 import ProtectedLayout from "./features/Layout/ProtectedLayout.jsx";
 
-import ResumeBuilder from "./features/interview/pages/ResumeBuilder.jsx";
+import ResumeBuilder from "./features/ResumeBuilder/Pages/ResumeBuilder.jsx";
+
 import HomePage from "./features/Home/HomePage.jsx";
 
 import { Toaster } from "react-hot-toast";
 
-import ResumeViewer from "./features/interview/pages/ResumeViewer.jsx";
-import AllResumes from "./features/interview/pages/AllResumes.jsx";
+
+import ResumeViewer from "./features/ResumeBuilder/Pages/ResumeViewer.jsx";
+import AllResumes from "./features/ResumeBuilder/Pages/AllResumes.jsx";
 import VerifyEmail from "./features/Auth/pages/VerifyEmail.jsx";
 import NotFound from "./features/Layout/NotFound.jsx";
 const App = () => {
