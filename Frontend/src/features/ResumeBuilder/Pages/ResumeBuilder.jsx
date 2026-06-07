@@ -1,7 +1,7 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { resumeBuilderSchema } from "../../../Schema/resumeBuilderSchema.js";
-import { useResume } from "../../interview/Hooks/useResume.js";
+import { useResume } from "../Hooks/useResume.js";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";

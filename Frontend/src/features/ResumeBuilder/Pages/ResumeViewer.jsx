@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useResume } from "../../interview/Hooks/useResume";
+import { useResume } from "../Hooks/useResume";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import ResumeViewerSkeleton from "../Components/ResumeViewerSkeleton";
+import ResumeViewerSkeleton from "./ResumeViewerSkeleton";
 
 const ResumeViewer = () => {
   const { resume, getResumeById, loading, error } = useResume();

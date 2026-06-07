@@ -2,7 +2,7 @@ import { FiArrowUpRight } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useAuth } from "../Auth/Hooks/useAuth";
 
-import AllResumes from "../interview/pages/AllResumes";
+import AllResumes from "../ResumeBuilder/Pages/AllResumes";
 const LastBanner = () => {
   const {user} = useAuth();
   if(user){
