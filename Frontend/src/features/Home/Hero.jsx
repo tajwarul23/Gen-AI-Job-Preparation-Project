@@ -43,7 +43,7 @@ const Hero = () => {
             className="rounded-xl bg-violet px-5 py-1.5 text-white text-lg cursor-pointer font-display"
             to={"/resume-analyzer"}
           >
-            Analyze my resume →
+            Analyze Resume →
           </Link>
           <Link
             className="text-muted border rounded-xl border-line px-5 py-1.5 font-mono
