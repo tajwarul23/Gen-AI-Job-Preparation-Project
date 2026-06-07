@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { useInterview } from "../Hooks/useInterview";
+import { useInterview } from "../Hooks/useInterview.js";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

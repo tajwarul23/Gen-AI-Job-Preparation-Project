@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { useResume } from "../Hooks/useResume";
+import { useResume } from "../../interview/Hooks/useResume";
 import ResumeCard from "./ResumeCard";
 import toast from "react-hot-toast";
-import AllReportSkeleton from "./AllReportSkeleton";
+import AllReportSkeleton from "../../interview/pages/AllReportSkeleton";
 import { Link } from "react-router-dom";
 
 const AllResumes = () => {

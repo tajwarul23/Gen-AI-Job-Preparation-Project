@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useResume } from "../Hooks/useResume";
+import { useResume } from "../../interview/Hooks/useResume";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import ResumeViewerSkeleton from "../Components/ResumeViewerSkeleton";

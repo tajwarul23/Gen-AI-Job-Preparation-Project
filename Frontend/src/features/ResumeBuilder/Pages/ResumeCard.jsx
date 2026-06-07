@@ -1,7 +1,7 @@
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 // import { RiDeleteBin6Line } from "react-icons/ri";
-import { useResume } from "../Hooks/useResume";
+import { useResume } from "../../interview/Hooks/useResume";
 import { useState } from "react";
 
 
