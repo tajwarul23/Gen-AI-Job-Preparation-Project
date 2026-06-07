@@ -5,7 +5,7 @@ import {
   deleteResumeByIdAPI,
   getAllResumeAPI,
   getResumeByIdAPI,
-} from "../services/resume.api";
+} from "../Services/resume.api.js";
 
 export const useResume = () => {
   const context = useContext(ResumeContext);
