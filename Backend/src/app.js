@@ -24,7 +24,8 @@ app.use(cors({
     credentials:true
 }))
 
-app.get("/", (req, res) => {
+//for ping
+app.get("/ping", (req, res) => {
    res.send("Backend works");
 });
 //auth Router
