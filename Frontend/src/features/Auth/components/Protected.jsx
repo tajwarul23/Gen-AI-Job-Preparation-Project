@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../Hooks/useAuth.js"
+import SpinLoader from "../../../Shared/SpinLoader.jsx";
 
 
 const Protected = ({children}) => {
@@ -8,9 +9,7 @@ const Protected = ({children}) => {
     
     if (isInitializing || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-violet border-t-transparent rounded-full animate-spin" />
-      </div>
+      <SpinLoader/>
     );
   }
     if(!user){

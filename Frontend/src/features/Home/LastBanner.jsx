@@ -1,12 +1,45 @@
+
 import { FiArrowUpRight } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useAuth } from "../Auth/Hooks/useAuth";
 
-import AllResumes from "../ResumeBuilder/Pages/AllResumes";
+
+
+
+
 const LastBanner = () => {
   const {user} = useAuth();
   if(user){
-    return(<AllResumes/>)
+      return (
+       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div className="border-t border-line mb-10 max-w-md mx-auto" />
+
+  <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div>
+      <p className="text-violet uppercase font-mono tracking-wider text-sm">
+        // Analysis Library
+      </p>
+
+      <h2 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-black leading-none text-ink scale-y-90">
+        Your Saved Reports
+      </h2>
+
+      <p className="mt-4 text-muted max-w-xl">
+        You already have analyses stored in your workspace. Review,
+        update, or continue working on them anytime.
+      </p>
+    </div>
+
+    <Link
+      to="/interview/allReports"
+      className="inline-flex items-center justify-center gap-2 bg-violet text-ink px-6 py-3 rounded-xl font-display hover:opacity-90 transition-all"
+    >
+      View All Reports
+      <FiArrowUpRight className="text-lg" />
+    </Link>
+  </div>
+</div>
+    );
   }
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

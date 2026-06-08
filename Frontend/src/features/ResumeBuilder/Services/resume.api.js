@@ -5,7 +5,11 @@ baseURL: "https://gen-ai-job-preparation-project.onrender.com",
 withCredentials: true,
 });
 // const api = axios.create({
-//   baseURL: import.meta.env.VITE_API_URL,
+//   baseURL: "http://localhost:3000",
+//   withCredentials: true,
+// });
+// const api = axios.create({
+//   baseURL: "http://192.168.0.100:3000",
 //   withCredentials: true,
 // });
 export const createResumeAPI = async (data) => {
