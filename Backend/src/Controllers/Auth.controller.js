@@ -193,7 +193,7 @@ export const getMeController = async (req, res) => {
     'Expires': '0'
   });
 try {
-    const user = await userModel.findById(req.user.id);
+    const user = await userModel.findById(req.user.id).select("_id userName email");
 
     if(!user){
         return res.status(404).json({message:"User not found", success:false});

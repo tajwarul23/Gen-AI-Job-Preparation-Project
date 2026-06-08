@@ -4,8 +4,10 @@ import cookieParser from "cookie-parser";
 import cors from "cors"
 import interviewRouter from "./Routes/interview.route.js";
 import resumeRouter from "./Routes/resume.route.js"
-
+import compression from "compression"
 const app = express();
+
+app.use(compression())
 
 app.use((req, res, next) => {
   res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
