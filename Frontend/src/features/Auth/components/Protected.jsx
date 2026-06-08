@@ -3,10 +3,10 @@ import { useAuth } from "../Hooks/useAuth.js"
 
 
 const Protected = ({children}) => {
-    const {user, isInitializing } = useAuth();
+    const {user, isInitializing, loading } = useAuth();
     const location = useLocation();
     
-    if (isInitializing) {
+    if (isInitializing || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-violet border-t-transparent rounded-full animate-spin" />

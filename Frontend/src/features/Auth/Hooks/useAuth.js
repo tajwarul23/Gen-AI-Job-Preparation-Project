@@ -74,16 +74,13 @@ export const useAuth = () => {
     setError(null);
     try {
       await signOutFromFirebase();
-      const data = await logout();
+       await logout();
 
-      if (data?.success) {
-        setUser(null);
-
-        return data;
-      }
+    
     } catch (error) {
       setError(error?.response?.data?.message || "Something Went Wrong..!");
     } finally {
+      setUser(null);
       setLoading(false);
     }
   };
