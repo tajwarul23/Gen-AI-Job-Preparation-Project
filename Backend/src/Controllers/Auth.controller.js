@@ -187,11 +187,7 @@ export const getMeController = async (req, res) => {
   'Pragma': 'no-cache',
   'Expires': '0'
 });
-    res.set({
-    'Cache-Control': 'no-cache, no-store, must-revalidate',
-    'Pragma': 'no-cache',
-    'Expires': '0'
-  });
+
 try {
     const user = await userModel.findById(req.user.id).select("_id userName email");
 

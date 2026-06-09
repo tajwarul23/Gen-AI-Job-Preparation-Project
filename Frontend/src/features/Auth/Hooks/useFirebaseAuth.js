@@ -2,10 +2,6 @@ import { signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "../../../Config/firebase.js";
 import axios from "axios";
 
-// const api = axios.create({
-//   baseURL: "http://192.168.0.100:3000",
-//   withCredentials: true,
-// });
 export const useFirebaseAuth = () => {
   const signInWithGoogle = async () => {
     const result = await signInWithPopup(auth, googleProvider);

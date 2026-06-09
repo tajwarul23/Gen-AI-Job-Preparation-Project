@@ -5,18 +5,12 @@ import axios from "axios";
 
 //creating an instance of axios that is constant for API calling
 
-// const api = axios.create({
-//   baseURL: import.meta.env.VITE_API_URL,
-//   withCredentials: true,
-// });
+
 // const api = axios.create({
 //   baseURL: "http://localhost:3000",
 //   withCredentials: true,
 // });
-// const api = axios.create({
-//   baseURL: "http://192.168.0.100:3000",
-//   withCredentials: true,
-// });
+
 const api = axios.create({
   baseURL: "https://gen-ai-job-preparation-project.onrender.com",
   withCredentials: true,

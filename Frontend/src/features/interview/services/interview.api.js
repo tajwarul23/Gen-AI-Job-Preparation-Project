@@ -9,10 +9,7 @@ const api = axios.create({
 //   baseURL: "http://localhost:3000",
 //   withCredentials: true,
 // });
-// const api = axios.create({
-//   baseURL: "http://192.168.0.100:3000",
-//   withCredentials: true,
-// });
+
 
 export const generateInterviewReport = async({jobDescription, selfDescription, resumeFile}) =>{
     const formData = new FormData();

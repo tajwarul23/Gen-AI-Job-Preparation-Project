@@ -23,7 +23,11 @@ export const createResume = async (req, res) => {
     console.log("1. Got resume data:", !!resumeData);
 
     //getting response form gemini ai
+    const start = Date.now();
     const resumeByAi = await generateResume(resumeData);
+    const end = Date.now() - start;
+    console.log(`Response Time: ${end}ms`);
+    
     if(!resumeByAi){
       return res.status(500).json({
         message:"Failed to generate resume using AI. Please try again.",

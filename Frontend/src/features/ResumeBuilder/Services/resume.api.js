@@ -8,10 +8,7 @@ withCredentials: true,
 //   baseURL: "http://localhost:3000",
 //   withCredentials: true,
 // });
-// const api = axios.create({
-//   baseURL: "http://192.168.0.100:3000",
-//   withCredentials: true,
-// });
+
 export const createResumeAPI = async (data) => {
   const response = await api.post("/api/resume/", data);
   return response.data;
