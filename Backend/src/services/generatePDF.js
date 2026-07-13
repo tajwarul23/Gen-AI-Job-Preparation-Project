@@ -10,7 +10,7 @@ const MAX_PDFS_BEFORE_RESTART = 300;
 const getBrowser = async () => {
   const canReuse =
     browserInstance &&
-    browserInstance.isConnected() &&
+    browserInstance &&
     pdfsGeneratedSinceRestart < MAX_PDFS_BEFORE_RESTART;
 
   if (canReuse) return browserInstance;
