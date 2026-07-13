@@ -93,4 +93,3 @@ export const generatePDFFromPage = async (page, html) => {
 
 
 
-export default generatePDF;

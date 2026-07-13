@@ -1,6 +1,6 @@
 import { generateResume } from "../services/ai.service.js";
 import resumeTemplate from "../Templates/resumeTemplate.js";
-import generatePDF, { warmUpPage } from "../services/generatePDF.js";
+import { generatePDFFromPage, warmUpPage } from "../services/generatePDF.js";
 import uploadPDF from "../services/uploadPDF.js";
 import { ResumeModel } from "../Models/resume.model.js";
 import mongoose from "mongoose";
