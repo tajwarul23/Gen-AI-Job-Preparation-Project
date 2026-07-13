@@ -22,7 +22,7 @@ useEffect(() => {
   intervalRef.current = setInterval(async () => {
     pollAttemptsRef.current += 1;
 
-    // Give up after 30 seconds — something went wrong on the backend
+    
     if (pollAttemptsRef.current >= MAX_POLL_ATTEMPTS) {
       clearInterval(intervalRef.current);
       toast.error("Resume is taking too long to save. Please refresh the page.");

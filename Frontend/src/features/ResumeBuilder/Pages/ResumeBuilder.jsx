@@ -5,7 +5,7 @@ import { useResume } from "../Hooks/useResume.js";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import InterviewReportSkeleton from "../../interview/pages/InterviewReportSkeleton.jsx";
+
 // ── Sub-components ───────────────────────────────────────────────────────────
 const Field = ({ error, children }) => (
   <div className="flex flex-col gap-[6px]">
