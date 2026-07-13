@@ -141,13 +141,13 @@ const ResumeBuilder = () => {
 
   let buttonContent;
   if (isSubmitting) {
-    // buttonContent = (
-    //   <>
-    //     <span className="w-[18px] h-[18px] border-2 border-white/30 border-t-white rounded-full animate-spin" />
-    //     Generating…
-    //   </>
-    // );
-    <InterviewReportSkeleton/>
+    buttonContent = (
+      <>
+        <span className="w-[18px] h-[18px] border-2 border-white/30 border-t-white rounded-full animate-spin" />
+        Generating…
+      </>
+    );
+    
   } else if (isSubmitSuccessful && !error)
     buttonContent = "✅Resume ready — Redirecting";
   else if (error)
