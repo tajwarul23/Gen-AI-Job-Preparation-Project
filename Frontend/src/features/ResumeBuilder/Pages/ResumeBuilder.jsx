@@ -5,6 +5,7 @@ import { useResume } from "../Hooks/useResume.js";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import InterviewReportSkeleton from "../../interview/pages/InterviewReportSkeleton.jsx";
 // ── Sub-components ───────────────────────────────────────────────────────────
 const Field = ({ error, children }) => (
   <div className="flex flex-col gap-[6px]">
@@ -140,12 +141,13 @@ const ResumeBuilder = () => {
 
   let buttonContent;
   if (isSubmitting) {
-    buttonContent = (
-      <>
-        <span className="w-[18px] h-[18px] border-2 border-white/30 border-t-white rounded-full animate-spin" />
-        Generating…
-      </>
-    );
+    // buttonContent = (
+    //   <>
+    //     <span className="w-[18px] h-[18px] border-2 border-white/30 border-t-white rounded-full animate-spin" />
+    //     Generating…
+    //   </>
+    // );
+    <InterviewReportSkeleton/>
   } else if (isSubmitSuccessful && !error)
     buttonContent = "✅Resume ready — Redirecting";
   else if (error)
