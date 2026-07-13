@@ -57,6 +57,9 @@ const resumeSchema = new mongoose.Schema(
         description: String,
       },
     ],
+
+    isSaving:{type:Boolean, default:false},
+    saveFailed:{type:Boolean, default:false},
   },
   { timestamps: true },
 );
