@@ -1,6 +1,9 @@
-import { Link } from "react-router-dom";
-import { FaPlay } from "react-icons/fa";
+import {  useNavigate } from "react-router-dom";
+
+import { motion } from "motion/react";
+import { ArrowRight,  Sparkles,  } from "lucide-react";
 const Hero = () => {
+  const navigate = useNavigate();
   return (
     // ← overflow-hidden here stops glows from causing horizontal scroll
     <div className="relative overflow-x-hidden">
@@ -20,47 +23,57 @@ const Hero = () => {
       />
 
       {/* HERO SECTION */}
-      <section className="relative flex flex-col items-center pt-15  text-center px-4">
-        <div className="rounded-full border border-violet-border bg-violet-dim px-5 py-1 text-sm text-violet-text uppercase tracking-wider">
-          <span className="inline-block mr-4 w-2 h-2 bg-violet rounded-full animate-pulse" />
-          AI-Powered Interview Intelligence
-        </div>
+       <section className="relative pt-32 pb-20 px-6 max-w-7xl mx-auto text-center">
+  <motion.div 
+    initial={{ opacity: 0, y: 15 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6 }}
+    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet/10 border border-violet/20 text-violet text-xs font-mono mb-8 tracking-wider uppercase"
+  >
+    <span className="inline-block  w-2 h-2 bg-violet rounded-full animate-pulse" />
+     AI-Powered Interview Intelligence
+  </motion.div>
 
-        <h1 className="max-w-4xl text-4xl sm:text-5xl lg:text-7xl font-black leading-none text-ink font-display scale-y-75 mt-6">
-          Know exactly
-          <br />
-          <span className="text-violet-text">where you stand</span>
-          <br />
-          before the interview
-        </h1>
+  <motion.h1 
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.7, delay: 0.1 }}
+    className="text-4xl sm:text-6xl lg:text-7xl font-display font-extrabold tracking-tight leading-[1.1] mb-6 max-w-5xl mx-auto text-ink"
+  >
+    The Ultimate <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet via-purple to-violet">AI Interview</span> & Recruitment Intelligence Suite
+  </motion.h1>
 
-        <p className="text-muted font-display mt-4 max-w-xl text-sm sm:text-base">
-          Build, analyze, and optimize your resume with AI-powered feedback, job
-          fit scoring, and personalized growth recommendations.
-        </p>
+  <motion.p 
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.7, delay: 0.2 }}
+    className="text-muted text-lg sm:text-xl max-w-3xl mx-auto mb-10 leading-relaxed"
+  >
+    Bridging the gap between elite engineering talent and high-growth organizations with deep behavioral synthesis, ATS resume parsing, and high-fidelity technical evaluation.
+  </motion.p>
 
-        {/* buttons */}
-        <div className="flex flex-col sm:flex-row gap-6 mt-8 items-center">
-          <Link
-            className="rounded-xl bg-violet px-5 py-1.5 text-white text-lg cursor-pointer font-display"
-            to={"/resume-analyzer"}
-          >
-            Analyze Resume →
-          </Link>
-          <Link
-            className="text-muted border rounded-xl border-line px-5 py-1.5 font-mono
-                       hover:text-white transition-all duration-200 hover:border-linehov
-                       flex items-center gap-3"
-            to={"/resume-analyzer"}
-          >
-            <FaPlay />
-            <span>See Sample Report</span>
-          </Link>
-        </div>
-
-        {/* Divider */}
-        <div className="border-t w-full max-w-lg border-line mt-15 mx-auto" />
-      </section>
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.7, delay: 0.3 }}
+    className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
+  >
+    <button 
+    onClick={()=>{navigate("/login")}}
+      className="w-full sm:w-auto px-8 py-4 bg-violet hover:opacity-90 font-semibold rounded-lg transition-all shadow-[0_0_20px_rgba(106,247,200,0.25)] flex items-center justify-center gap-2 group cursor-pointer text-ink"
+    >
+      Find Your Next Role
+      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+    </button>
+    <button 
+     onClick={()=>{navigate("/login")}}
+      className="w-full sm:w-auto px-8 py-4 bg-surface hover:bg-overlay border border-line hover:border-linehov text-ink font-semibold rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+    >
+      Hire Smarter with AI
+      <Sparkles className="w-4 h-4 text-purple" />
+    </button>
+  </motion.div>
+</section>
 
       {/* Highlights */}
       <div className="flex flex-wrap justify-center gap-6 mt-16 px-4">
