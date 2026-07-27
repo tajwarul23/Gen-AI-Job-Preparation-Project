@@ -23,7 +23,7 @@ const uploadToCloudinary = (buffer, options) => {
    
 };
 
-const uploadPDF = async (pdfBuffer, thumbnailBuffer, fullName) => {
+export const uploadPDF = async (pdfBuffer, thumbnailBuffer, fullName) => {
   const sanitizedName = fullName
     ? fullName?.trim()?.toLowerCase()?.replace(/\s+/g, "_")
     : "resume";
@@ -55,4 +55,26 @@ const uploadPDF = async (pdfBuffer, thumbnailBuffer, fullName) => {
   };
 };
 
-export default uploadPDF;
+export const uploadCompanyLogo = async(logoBuffer, companyName) =>{
+  const sanitizedName = companyName?companyName.trim().toLowerCase().replace(/\s+/g, "_"):"company";
+   const publicId = `${sanitizedName}_${Date.now()}`;
+  const result = await uploadToCloudinary(logoBuffer,{
+    folder: "company-logos",
+    resource_type:"image",
+    publicId:publicId,
+    transformation:[
+         {
+      width: 400,
+      height: 400,
+      crop: "limit",
+      quality: "auto",
+      fetch_format: "auto",
+    },
+    ]
+  })
+
+  return {
+    logoUrl: result.secure_url,
+    publicId: result.public_id
+  }
+}

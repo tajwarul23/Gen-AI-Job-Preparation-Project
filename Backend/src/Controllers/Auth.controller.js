@@ -102,12 +102,7 @@ export const loginUserController = async (req, res) => {
       success: false,
     });
   }
-  if (!user.isVerified) {
-    return res.status(403).json({
-      message: "Please verify your email before logging in.",
-      success: false,
-    });
-  }
+
   const isPasswordValid = await bcrypt.compare(password, user.password);
 
   if (!isPasswordValid) {
@@ -132,7 +127,7 @@ export const loginUserController = async (req, res) => {
  return res.status(200).json({
     message: `Welcome back, ${user.userName}!`,
     success: true,
-    user: { id: user._id, email: user.email, userName: user.userName },
+    user: { id: user._id, email: user.email, userName: user.userName, role:user.role, company:user.company },
   });
  } catch (error) {
    console.log("error in login user", error.message);
@@ -154,14 +149,14 @@ export const logoutUserController = async (req, res) => {
 });
   try {
     const token = req.cookies.token;
-    // console.log("Token = ",token);
+      if(!token){
+      return res.status(400).json({ message: "No token provided", success: false });
+    }
 
     if (token) {
       await TokenBlacklistModel.create({ token });
     }
-    if(!token){
-      return res.status(400).json({ message: "No token provided", success: false });
-    }
+  
     const userName = req.user?.userName || "User";
     // res.clearCookie("token");
     res.clearCookie("token", {
@@ -189,7 +184,7 @@ export const getMeController = async (req, res) => {
 });
 
 try {
-    const user = await userModel.findById(req.user.id).select("_id userName email");
+    const user = await userModel.findById(req.user.id).select("_id userName email role company");
 
     if(!user){
         return res.status(404).json({message:"User not found", success:false});
@@ -200,6 +195,8 @@ try {
       id: user._id,
       userName: user.userName,
       email: user.email,
+      role: user.role,
+      company: user.company
     },
   });
 } catch (error) {
@@ -283,16 +280,15 @@ export const firebaseAuthController = async (req, res) => {
         userName: name || email.split("@")[0],
         email,
         firebaseUid: uid,
-        isVerified: true,
+        
       });
     } else if (!user.firebaseUid) {
       user.firebaseUid = uid;
-      user.isVerified = true;
       await user.save();
     }
 
     const token = jwt.sign(
-      { id: user._id, userName: user.userName },
+      { id: user._id, userName: user.userName, role: user.role, company:user.company },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -306,7 +302,7 @@ export const firebaseAuthController = async (req, res) => {
     return res.status(200).json({
       message: `Welcome, ${user.userName}!`,
       success: true,
-      user: { id: user._id, email: user.email, userName: user.userName },
+      user: { id: user._id, email: user.email, userName: user.userName, role: user.role, company: user.company },
     });
   } catch (error) {
     console.log("Error in firebase", error.message);

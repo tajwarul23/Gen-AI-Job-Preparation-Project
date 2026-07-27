@@ -4,6 +4,8 @@ import cookieParser from "cookie-parser";
 import cors from "cors"
 import interviewRouter from "./Routes/interview.route.js";
 import resumeRouter from "./Routes/resume.route.js"
+import companyRouter from "./Routes/company.route.js"
+import jobRouter from "./Routes/job.route.js"
 import compression from "compression"
 const app = express();
 
@@ -36,6 +38,12 @@ app.use("/api/interview", interviewRouter);
 
 //resume router
 app.use("/api/resume", resumeRouter)
+
+//company router
+app.use("/api/company", companyRouter)
+
+//job router
+app.use("/api/job", jobRouter)
 
 
 export default app;

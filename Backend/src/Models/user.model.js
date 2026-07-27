@@ -12,9 +12,7 @@ const userSchema = new mongoose.Schema({
     type: String,
   },
   firebaseUid: { type: String },
-  isVerified: { type: Boolean, default: false },
-  verificationToken: { type: String },
-  verificationTokenExpiry: { type: Date },
+  
 
   role:{
     type: String,
