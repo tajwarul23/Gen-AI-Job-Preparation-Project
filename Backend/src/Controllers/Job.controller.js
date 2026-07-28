@@ -61,7 +61,10 @@ export const createJobController = asyncHandler(async (req, res) => {
     throw new ApiError(400, "All fields are required");
   }
   const normalizedTitle = title.trim().toLowerCase();
-  const existedJob = await JobModel.findOne({ normalizedTitle });
+  const existedJob = await JobModel.findOne({
+    normalizedTitle,
+    company: dbCompany,
+  });
   if (existedJob) {
     throw new ApiError(401, "This job was already created..");
   }
@@ -204,27 +207,80 @@ export const getJobFeedController = asyncHandler(async (req, res) => {
     );
 });
 
-
 /**
  * @name getCompanyController
  * @description get company's all job
  * @access Private [company_admin || recruiter]
  */
-export const getCompanyJobFeedController = asyncHandler(async(req, res)=>{
-
+export const getCompanyJobFeedController = asyncHandler(async (req, res) => {
   const dbUser = await userModel.findById(req.user.id);
-  if(!dbUser){
+  if (!dbUser) {
     throw new ApiError(401, "No user found");
   }
-  
-  if(!dbUser.company){
+
+  if (!dbUser.company) {
     throw new ApiError(400, "User is not associated with any company");
   }
-  
+
   const jobs = await JobModel.find({
     company: dbUser.company,
-  }).sort({createdAt:-1}).lean();
+  })
+    .sort({ createdAt: -1 })
+    .lean();
 
-  return res.status(200).json(new ApiResponse(200, {count:jobs.length,jobs},  "Company Jobs fetched successfully"))
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { count: jobs.length, jobs },
+        "Company Jobs fetched successfully",
+      ),
+    );
+});
 
-})
+/**
+ * @name updateJobController
+ * @description update a specific job
+ * @access Private [company_admin || recruiter]
+ */
+
+export const updateJobController = asyncHandler(async (req, res) => {
+  const {
+    title,
+    location,
+    workMode,
+    employmentType,
+    experienceLevel,
+    status,
+    vacancy,
+    expiresAt,
+  } = req.body;
+  
+  
+  if (title !== undefined) req.job.title = title;
+  if (location !== undefined) req.job.location = location;
+  if (workMode !== undefined) req.job.workMode = workMode;
+  if (employmentType !== undefined) req.job.employmentType = employmentType;
+  if (experienceLevel !== undefined) req.job.experienceLevel = experienceLevel;
+  if (status !== undefined) req.job.status = status;
+  if (vacancy !== undefined) req.job.vacancy = vacancy;
+  if (expiresAt !== undefined) req.job.expiresAt = expiresAt;
+
+  await req.job.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, req.job, "Job updated successfully"));
+});
+
+/**
+ * @name deleteJobController
+ * @description delete a specific job
+ * @access Private [company_admin || recruiter]
+ */
+
+export const deleteJobController = asyncHandler(async (req, res) => {
+  await req.job.deleteOne();
+  return res.status(200).json(new ApiResponse(200, null, "Job deleted successfully"))
+});

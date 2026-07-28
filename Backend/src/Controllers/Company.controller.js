@@ -104,7 +104,7 @@ export const generateInviteController = asyncHandler(async (req, res) => {
 
 /**
  * @name joinCompanyController
- * @description RECRUITER only, creator become company_admin
+ * @description join the company with an invited link
  * @access Firebase auth needed
  */
 export const joinCompanyController = asyncHandler(async (req, res) => {
@@ -149,5 +149,13 @@ export const joinCompanyController = asyncHandler(async (req, res) => {
       new ApiResponse(200, updatedUser, `Joined ${company.name} successfully`),
     );
 });
-
 //updateCompanyController => when a company update's their name we have to update all their job opening's company name as we are storing company name on jobModel
+
+/**
+ * @name updateCompanyController
+ * @description update the company info
+ * @access Private (company admin only)
+ */
+export const updateCompanyController = asyncHandler(async(req, res)=>{
+  
+})

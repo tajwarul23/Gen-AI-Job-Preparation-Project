@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { TokenBlacklistModel } from "../Models/blacklist.mode.js";
+import { userModel } from "../Models/user.model.js";
 
 export const verifyToken = async(req, res, next) => {
   const token = req.cookies.token;
@@ -13,11 +14,17 @@ export const verifyToken = async(req, res, next) => {
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    
-    req.user = decoded;
+    const user = await userModel.findById(decoded.id).select("_id role company email userName")
+    if(!user){
+      return res.status(401).json({
+        message: "User no longer exists",
+      });
+    }
+    req.user = user;
     next();
   } catch (error) {
+    console.log("Error in auth middleware");
+    
     return res.status(401).json({ message: "Invalid Token" });
   }
 };
