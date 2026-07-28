@@ -1,5 +1,5 @@
 import { JobModel } from "../Models/job.model.js"
-import ApiError from "../Utils/ApiError";
+import ApiError from "../Utils/ApiError.js";
 
 export const requireCompanyScope = async(req, res, next)=>{
     try {

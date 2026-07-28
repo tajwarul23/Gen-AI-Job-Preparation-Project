@@ -90,7 +90,7 @@ export const createJobController = asyncHandler(async (req, res) => {
 
 /**
  * @name createJobController
- * @description Job feed for all candidate
+ * @description Job feed for all user
  * @access Private
  */
 export const getJobFeedController = asyncHandler(async (req, res) => {
@@ -203,3 +203,28 @@ export const getJobFeedController = asyncHandler(async (req, res) => {
       ),
     );
 });
+
+
+/**
+ * @name getCompanyController
+ * @description get company's all job
+ * @access Private [company_admin || recruiter]
+ */
+export const getCompanyJobFeedController = asyncHandler(async(req, res)=>{
+
+  const dbUser = await userModel.findById(req.user.id);
+  if(!dbUser){
+    throw new ApiError(401, "No user found");
+  }
+  
+  if(!dbUser.company){
+    throw new ApiError(400, "User is not associated with any company");
+  }
+  
+  const jobs = await JobModel.find({
+    company: dbUser.company,
+  }).sort({createdAt:-1}).lean();
+
+  return res.status(200).json(new ApiResponse(200, {count:jobs.length,jobs},  "Company Jobs fetched successfully"))
+
+})
