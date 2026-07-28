@@ -12,6 +12,7 @@ export const requireCompanyScope = async (req, res, next) => {
     if (String(job.company) !== String(req.user.company)) {
       throw new ApiError(403, "Not authorized for this job");
     }
+    
 
     req.job = job;
     next();

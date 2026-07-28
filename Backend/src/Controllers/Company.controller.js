@@ -1,4 +1,5 @@
 import { CompanyModel } from "../Models/company.model.js";
+import { JobModel } from "../Models/job.model.js";
 import { userModel } from "../Models/user.model.js";
 import { uploadCompanyLogo } from "../services/uploadPDF.js";
 import ApiError from "../Utils/ApiError.js";
@@ -50,9 +51,6 @@ export const createCompanyController = asyncHandler(async (req, res) => {
     },
     { new: true },
   );
-
-  
-  
 
   const newToken = jwt.sign(
     {
@@ -156,6 +154,68 @@ export const joinCompanyController = asyncHandler(async (req, res) => {
  * @description update the company info
  * @access Private (company admin only)
  */
-export const updateCompanyController = asyncHandler(async(req, res)=>{
-  
-})
+export const updateCompanyController = asyncHandler(async (req, res) => {
+  const {
+    companyName,
+    logoUrl,
+    aboutCompany,
+    country,
+    industry,
+  } = req.body;
+
+  const company = await CompanyModel.findById(req.user.company);
+
+  if (!company) {
+    throw new ApiError(404, "Company not found");
+  }
+
+  const companyNameChanged =
+    companyName !== undefined &&
+    companyName !== company.companyName;
+
+
+  if (companyName !== undefined) {
+    company.companyName = companyName;
+  }
+
+  if (logoUrl !== undefined) {
+    company.logoUrl = logoUrl;
+  }
+
+  if (aboutCompany !== undefined) {
+    company.aboutCompany = aboutCompany;
+  }
+
+  if (country !== undefined) {
+    company.country = country;
+  }
+
+  if (industry !== undefined) {
+    company.industry = industry;
+  }
+
+  await company.save();
+
+
+  if (companyNameChanged) {
+    await JobModel.updateMany(
+      {
+        company: company._id,
+      },
+      {
+        $set: {
+          companyName: company.companyName,
+        },
+      }
+    );
+  }
+
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      { company },
+      "Company updated successfully"
+    )
+  );
+});
