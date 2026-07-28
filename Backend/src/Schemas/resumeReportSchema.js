@@ -77,7 +77,7 @@ export const ResumeReportSchema = z.object({
   projects: z.array(ProjectSchema).default([]),
 });
 
-export const resumeGeminiSchema = {
+export const resumeGroqSchema = {
   type: "object",
   properties: {
     title: {
@@ -116,6 +116,7 @@ export const resumeGeminiSchema = {
           expLocation: { type: "string" },
           achievements: { type: "string" },
         },
+        
         required: [
           "jobTitle",
           "company",
@@ -123,6 +124,7 @@ export const resumeGeminiSchema = {
           "expLocation",
           "achievements",
         ],
+         additionalProperties: false,
       },
     },
 
@@ -132,9 +134,10 @@ export const resumeGeminiSchema = {
       properties: {
         degree: { type: "string" },
         institution: { type: "string" },
-        result: { type: "string" },
+        result: { type: ["string", "null"] },
       },
-      required: ["degree", "institution"],
+      required: ["degree", "institution", "result"],
+       additionalProperties: false,
     }
   },
 
@@ -147,6 +150,7 @@ export const resumeGeminiSchema = {
           description: { type: "string" },
         },
         required: ["name", "description"],
+         additionalProperties: false,
       },
     },
 
@@ -161,6 +165,7 @@ export const resumeGeminiSchema = {
           credentialUrl: { type: "string" },
         },
         required: ["name", "issuer", "issueDate", "credentialUrl"],
+         additionalProperties: false,
       },
     },
 
@@ -175,6 +180,7 @@ export const resumeGeminiSchema = {
           githubLink: { type: "string" },
         },
         required: ["name", "description", "liveLink", "githubLink"],
+         additionalProperties: false,
       },
     },
     atsScore:{type:"number", description:"Provide an ATS score Based on the resume details"}
@@ -191,6 +197,11 @@ export const resumeGeminiSchema = {
     "skills",
     "certifications",
     "projects",
-    "atsScore"
+    "atsScore",
+    "githubProfileLink",
+    "linkedinUrl",
+    "portfolioUrl"
+    
   ],
+   additionalProperties: false,
 };

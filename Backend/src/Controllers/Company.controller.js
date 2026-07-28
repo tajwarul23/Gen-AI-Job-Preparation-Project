@@ -51,7 +51,7 @@ export const createCompanyController = asyncHandler(async (req, res) => {
     { new: true },
   );
 
-  console.log("Updated User => ",updatedUser);
+  
   
 
   const newToken = jwt.sign(
@@ -150,3 +150,4 @@ export const joinCompanyController = asyncHandler(async (req, res) => {
     );
 });
 
+//updateCompanyController => when a company update's their name we have to update all their job opening's company name as we are storing company name on jobModel

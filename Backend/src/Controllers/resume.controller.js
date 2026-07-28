@@ -4,7 +4,7 @@ import { generatePDFFromPage, warmUpPage } from "../services/generatePDF.js";
 import {uploadPDF} from "../services/uploadPDF.js";
 import { ResumeModel } from "../Models/resume.model.js";
 import mongoose from "mongoose";
-import { success } from "zod";
+// import { success } from "zod";
 
 /**
  * @description controller to generate resume based on user form data

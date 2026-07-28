@@ -32,7 +32,7 @@ export const interviewReportSchema = z.object({
   ),
 });
 
-// ─── Gemini Native Schema (plain strings instead of SchemaType enum) ──────────
+// ─── Groq Native Schema (plain strings instead of SchemaType enum) ──────────
 
 const questionSchema = {
   type: "object",
@@ -42,9 +42,10 @@ const questionSchema = {
     answer: { type: "string" },
   },
   required: ["question", "intention", "answer"],
+  additionalProperties: false,
 };
 
-export const interviewReportGeminiSchema = {
+export const interviewReportGroqSchema = {
   type: "object",
   properties: {
     title: {
@@ -83,12 +84,13 @@ export const interviewReportGeminiSchema = {
           },
         },
         required: ["skill", "severity"],
+        additionalProperties: false,
       },
     },
     preparationPlan: {
       type: "array",
       description:
-        "A concrete 30 day, day-wise preparation plan to help the candidate succeed in the interview, while designing the roadmap give 60% focus on closing the skill gaps as much as possible and 40% focus on the overall tech stack, system design, DSA, OOP, Aptitude ",
+        "A concrete 7 day, day-wise preparation plan to help the candidate succeed in the interview, while designing the roadmap give 60% focus on closing the skill gaps as much as possible and 40% focus on the overall tech stack, system design, DSA, OOP, Aptitude ",
       items: {
         type: "object",
         properties: {
@@ -100,14 +102,18 @@ export const interviewReportGeminiSchema = {
           },
         },
         required: ["day", "focus", "tasks"],
+        additionalProperties:false
       },
+      
     },
   },
   required: [
+    "title",
     "matchScore",
     "technicalQuestions",
     "behavioralQuestions",
     "skillGaps",
     "preparationPlan",
   ],
+  additionalProperties: false,
 };
