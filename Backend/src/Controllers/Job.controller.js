@@ -147,6 +147,8 @@ export const getJobFeedController = asyncHandler(async (req, res) => {
     const searchTerm = q.trim().replace(/\s+/g, "");
     query.$text = {
       $search: q.trim(),
+      $caseSensitive: false,
+      $diacriticSensitive: false,
     };
   }
 
@@ -256,8 +258,7 @@ export const updateJobController = asyncHandler(async (req, res) => {
     vacancy,
     expiresAt,
   } = req.body;
-  
-  
+
   if (title !== undefined) req.job.title = title;
   if (location !== undefined) req.job.location = location;
   if (workMode !== undefined) req.job.workMode = workMode;
@@ -282,5 +283,7 @@ export const updateJobController = asyncHandler(async (req, res) => {
 
 export const deleteJobController = asyncHandler(async (req, res) => {
   await req.job.deleteOne();
-  return res.status(200).json(new ApiResponse(200, null, "Job deleted successfully"))
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Job deleted successfully"));
 });

@@ -1,5 +1,5 @@
 import express from "express";
-import { createCompanyController, generateInviteController, joinCompanyController } from "../Controllers/Company.controller.js";
+import { createCompanyController, generateInviteController, joinCompanyController, updateCompanyController, updateCompanyLogoController } from "../Controllers/Company.controller.js";
 import { authorizeRoles, verifyToken } from "../Middlewares/Auth.middleware.js";
 import upload from "../Middlewares/File.middleware.js";
 
@@ -24,6 +24,17 @@ companyRouter.post("/join", verifyToken,  joinCompanyController )
  */
 companyRouter.post("/invite", verifyToken, authorizeRoles("company_admin"), generateInviteController)
 
-
+/**
+ * @route POST /api/company/update
+ * @description update company info
+ * @access Private [only company admin]
+ */
+companyRouter.patch("/update", verifyToken, authorizeRoles("company_admin"), updateCompanyController)
+/**
+ * @route POST /api/company/updateLogo
+ * @description update company logo
+ * @access Private [only company admin]
+ */
+companyRouter.patch("/updateLogo", verifyToken, authorizeRoles("company_admin"),upload.single("logo"), updateCompanyLogoController)
 
 export default companyRouter;

@@ -6,6 +6,7 @@ import interviewRouter from "./Routes/interview.route.js";
 import resumeRouter from "./Routes/resume.route.js"
 import companyRouter from "./Routes/company.route.js"
 import jobRouter from "./Routes/job.route.js"
+import applicationRouter from "./Routes/application.route.js"
 import compression from "compression"
 const app = express();
 
@@ -44,6 +45,9 @@ app.use("/api/company", companyRouter)
 
 //job router
 app.use("/api/job", jobRouter)
+
+//application router
+app.use("/api/application", applicationRouter)
 
 
 export default app;

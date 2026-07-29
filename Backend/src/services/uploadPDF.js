@@ -23,35 +23,40 @@ const uploadToCloudinary = (buffer, options) => {
    
 };
 
-export const uploadPDF = async (pdfBuffer, thumbnailBuffer, fullName) => {
+export const uploadPDF = async (pdfBuffer, thumbnailBuffer = null, fullName) => {
   const sanitizedName = fullName
     ? fullName?.trim()?.toLowerCase()?.replace(/\s+/g, "_")
     : "resume";
   const publicId = `${sanitizedName}_${Date.now()}`;
 
-
-  const [pdfResult, thumbnailResult] = await Promise.all([
-      uploadToCloudinary(pdfBuffer, {
+  const uploads = [   uploadToCloudinary(pdfBuffer, {
     folder: "resumes",
     resource_type: "raw",
     public_id: publicId,
-  }),
+  })]
 
-  uploadToCloudinary(thumbnailBuffer, {
+ if(thumbnailBuffer){
+  uploads.push( uploadToCloudinary(thumbnailBuffer, {
     folder: "resumes/thumbnails",
     resource_type: "image",
     public_id: `${publicId}_thumb`,
     format: "jpg",
-  })
+  }))
+ }
 
-  ])
+ 
+
+  const results = await Promise.all(uploads);
+  const pdfResult = results[0];
+  const thumbnailResult = results[1];
+
 
 
   return {
     resumeUrl: pdfResult.secure_url,
     publicId: pdfResult.public_id,
-    thumbnailUrl: thumbnailResult.secure_url,      
-    thumbnailPublicId: thumbnailResult.public_id,  
+    thumbnailUrl: thumbnailResult?.secure_url,      
+    thumbnailPublicId: thumbnailResult?.public_id,  
   };
 };
 
@@ -76,5 +81,23 @@ export const uploadCompanyLogo = async(logoBuffer, companyName) =>{
   return {
     logoUrl: result.secure_url,
     publicId: result.public_id
+  }
+}
+
+export const deleteFromCloudinary = async(publicId)=>{
+  try {
+    if(!publicId){
+      return
+    }
+     console.log("Deleting: ", publicId);
+      
+       
+       const res = await cloudinary.uploader.destroy(publicId);
+       console.log(res);
+       
+    
+  } catch (error) {
+    console.log("Error in deleting file from cloudinary", error.message);
+    
   }
 }

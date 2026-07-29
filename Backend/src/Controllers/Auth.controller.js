@@ -117,6 +117,7 @@ export const loginUserController = async (req, res) => {
     process.env.JWT_SECRET,
     { expiresIn: "1d" },
   );
+  
   // res.cookie("token", token);
   res.cookie("token", token, {
     httpOnly: true,

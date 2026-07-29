@@ -14,6 +14,9 @@ const companySchema = new mongoose.Schema({
     logoUrl:{
         type:String
     },
+    logoPublicId:{
+        type:String
+    },
     aboutCompany:{
         type:String,
         trim: true,
