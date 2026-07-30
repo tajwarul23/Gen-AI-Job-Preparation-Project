@@ -117,3 +117,195 @@ export const interviewReportGroqSchema = {
   ],
   additionalProperties: false,
 };
+
+export const recruiterReportSchema = z.object({
+  matchScore: z.number().min(0).max(100),
+
+  hiringRecommendation: z.enum([
+    "strong_hire",
+    "hire",
+    "consider",
+    "weak_fit",
+    "reject"
+  ]),
+
+  executiveSummary: z.string(),
+
+  strengths: z.array(
+    z.object({
+      area: z.string(),
+      explanation: z.string()
+    })
+  ),
+
+  weaknesses:z.array(
+    z.object({
+      area: z.string(),
+      explanation: z.string()
+    })
+  ),
+
+  skillGaps: z.array(
+    z.object({
+      skill: z.string(),
+      severity: z.enum([
+        "low",
+        "medium",
+        "high",
+      ]),
+    })
+  ),
+
+  skillMatchAnalysis: z.object({
+    strongMatch: z.array(z.string()),
+    partialMatch: z.array(z.string()),
+    missing: z.array(z.string()),
+  }),
+
+  experienceEvaluation: z.string(),
+
+  
+
+  
+})
+
+export const recruiterReportGroqSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: [
+    "matchScore",
+    "hiringRecommendation",
+    "executiveSummary",
+    "strengths",
+    "weaknesses",
+    "skillGaps",
+    "skillMatchAnalysis",
+    "experienceEvaluation",
+    
+  ],
+  properties: {
+    matchScore: {
+      type: "number",
+      minimum: 0,
+      maximum: 100,
+    },
+
+    hiringRecommendation: {
+      type: "string",
+      enum: [
+        "strong_hire",
+        "hire",
+        "consider",
+        "weak_fit",
+        "reject",
+      ],
+    },
+
+    executiveSummary: {
+      type: "string",
+    },
+
+    strengths: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: [
+          "area",
+          "explanation",
+        ],
+        properties: {
+          area: {
+            type: "string",
+          },
+          explanation: {
+            type: "string",
+          },
+        },
+      },
+    },
+
+    weaknesses: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: [
+          "area",
+          "explanation",
+        ],
+        properties: {
+          area: {
+            type: "string",
+          },
+          explanation: {
+            type: "string",
+          },
+        },
+      },
+    },
+
+    skillGaps: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: [
+          "skill",
+          "severity",
+        ],
+        properties: {
+          skill: {
+            type: "string",
+          },
+          severity: {
+            type: "string",
+            enum: [
+              "low",
+              "medium",
+              "high",
+            ],
+          },
+        },
+      },
+    },
+
+    skillMatchAnalysis: {
+      type: "object",
+      additionalProperties: false,
+      required: [
+        "strongMatch",
+        "partialMatch",
+        "missing",
+      ],
+      properties: {
+        strongMatch: {
+          type: "array",
+          items: {
+            type: "string",
+          },
+        },
+
+        partialMatch: {
+          type: "array",
+          items: {
+            type: "string",
+          },
+        },
+
+        missing: {
+          type: "array",
+          items: {
+            type: "string",
+          },
+        },
+      },
+    },
+
+    experienceEvaluation: {
+      type: "string",
+    },
+
+    
+  },
+};

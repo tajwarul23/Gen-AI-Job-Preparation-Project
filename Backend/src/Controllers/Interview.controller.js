@@ -42,6 +42,7 @@ export const generateInterviewReportController = async (req, res) => {
       });
     }
     const interviewReport = await interviewReportModel.create({
+      source:"external_job",
       user: req.user.id,
       resume: resumeContent,
       selfDescription,

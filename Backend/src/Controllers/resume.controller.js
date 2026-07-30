@@ -4,6 +4,7 @@ import { generatePDFFromPage, warmUpPage } from "../services/generatePDF.js";
 import {uploadPDF} from "../services/uploadPDF.js";
 import { ResumeModel } from "../Models/resume.model.js";
 import mongoose from "mongoose";
+import {convert} from "html-to-text"
 // import { success } from "zod";
 
 /**
@@ -27,7 +28,10 @@ export const createResume = async (req, res) => {
       generateResume(resumeData),
       warmUpPage(),
     ]);
-
+    
+    
+    
+    
     if (!resumeByAi) {
       await warmPage.close(); 
       return res.status(500).json({
@@ -39,7 +43,9 @@ export const createResume = async (req, res) => {
     const resumeTitle = resumeByAi.title; 
 
     const html = resumeTemplate(resumeByAi);
-
+    const rawText = convert(html);
+    // console.log("RawText", rawText);
+    
     
     const { pdfBuffer, thumbnailBuffer } = await generatePDFFromPage(warmPage, html);
 
@@ -58,6 +64,7 @@ export const createResume = async (req, res) => {
       publicId: null,
       thumbnailUrl: null,
       thumbnailPublicId: null,
+      rawText,
       ...resumeByAi,
       atsScore: resumeByAi.atsScore,
       isSaving: true, 

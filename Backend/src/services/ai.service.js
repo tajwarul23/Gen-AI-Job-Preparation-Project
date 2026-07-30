@@ -6,6 +6,8 @@ import { zodToJsonSchema } from "zod-to-json-schema";
 import {
   interviewReportGroqSchema,
   interviewReportSchema,
+  recruiterReportGroqSchema,
+  recruiterReportSchema,
 } from "../Schemas/interviewReportSchema.js";
 import {
   resumeGroqSchema,
@@ -387,6 +389,132 @@ ${project.description}
   } catch (error) {
     if (error instanceof z.ZodError) {
       console.error("Response validation failed:", error);
+      throw new Error("AI response did not match the expected schema");
+    }
+    console.error("Error generating interview report:", error);
+    throw error;
+  }
+};
+
+/**
+ * @name generateRecruiterReport
+ * @description when a candidate applies for a job a recruiterReport is also get attached with the application to analyze
+ */
+export const generateRecruiterReport = async (
+  resume,
+  jobDescription,
+  skills,
+) => {
+  const formattedSkills = skills.join(",");
+  const prompt = `Generate a professional recruiter assessment report for the candidate based on the following information.
+
+Resume:
+${resume}
+
+Required Skills:
+${formattedSkills}
+
+Job Description:
+${jobDescription}
+
+Your role is to act as an experienced technical recruiter and hiring manager. Evaluate the candidate objectively and fairly. Base your assessment only on the information provided.
+
+Generate the report in the following format:
+
+1. Overall Match Score (0-100)
+   - Score the candidate's suitability for the role.
+
+2. Hiring Recommendation
+   - Choose exactly one:
+     - Strong_hire
+     - hire
+     - consider
+     - weak_fit
+     - reject
+
+3. Executive Summary
+   - Write a concise exactly 3 line summary explaining how well the candidate matches the role.
+
+4. Key Strengths
+   - List the candidate's strongest technical skills, projects, experience, and qualifications that align with the job requirements.
+
+5. Key Weaknesses
+   - List the most significant weaknesses or missing qualifications that may impact job performance.
+
+6. Missing Skills
+   - List the technologies, frameworks, tools, concepts, or experience the candidate lacks.
+   - Assign each missing skill a severity:
+     - High
+     - Medium
+     - Low
+   - Sort the list from highest severity to lowest.
+
+7. Skill Match Analysis
+   - Categorize the required skills into:
+     - Strong Match
+     - Partial Match
+     - Missing
+
+8. Experience Evaluation
+   - Evaluate whether the candidate's professional experience appears sufficient for the role and explain your reasoning.
+
+
+
+Important Guidelines:
+- Compare the candidate's resume and skills against the job description and required skills.
+- Analyze the candidate's projects, professional experience, certifications, education, and qualifications if they are mentioned in the resume.
+- Highlight relevant projects and experiences that demonstrate alignment with the role.
+- Do not invent or assume any projects, experience, certifications, skills, or qualifications that are not present in the provided information.
+- If there is insufficient evidence for a conclusion, explicitly state that it cannot be determined.
+- Keep the assessment objective, concise, and suitable for recruiters making hiring decisions.`;
+
+  try {
+    const response = await ai.chat.completions.create({
+      model: process.env.GROK_MODEL,
+      messages: [
+        {
+          role: "system",
+          content: `
+You are an expert technical recruiter.
+
+Analyze candidates against job requirements.
+
+Return ONLY valid JSON.
+Follow the exact field names from the provided JSON schema.
+Do not rename keys.
+Do not add extra fields.
+`,
+        },
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "recruiter_report",
+          strict: true,
+          schema: recruiterReportGroqSchema,
+        },
+      },
+      temperature: 0.7,
+      max_tokens: 2000,
+    });
+    console.log("response => ", response.choices[0].message.content);
+
+    let parsed;
+    try {
+      parsed = JSON.parse(response.choices[0].message.content);
+    } catch (error) {
+      throw new ApiError(501, "AI validation failed");
+    }
+    const validated = recruiterReportSchema.parse(parsed);
+
+    return validated;
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error("Response validation failed:", error.errors);
       throw new Error("AI response did not match the expected schema");
     }
     console.error("Error generating interview report:", error);

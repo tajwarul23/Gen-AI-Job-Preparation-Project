@@ -19,15 +19,26 @@ const applicationSchema = new mongoose.Schema(
       required: true,
     },
 
-    interviewReport: {
+    recruiterReport: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "interviewReports",
+      ref: "RecruiterReport",
     },
 
     status: {
+  type: String,
+  enum: [
+    "applied",
+    "reviewing",
+    "shortlisted",
+    "rejected",
+    "hired"
+  ],
+  default: "applied",
+},
+    recruiterReportStatus: {
       type: String,
-      enum: ["analyzing", "shortlisted", "rejected", "hired"],
-      default: "analyzing",
+      enum: [ "generating", "generated", "failed"],
+      default: "generating",
     },
     recruiterMessage: { type: String },
     statusUpdatedAt: { type: Date },
