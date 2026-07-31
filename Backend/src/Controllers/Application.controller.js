@@ -93,24 +93,66 @@ export const applyToJobController = asyncHandler(async (req, res) => {
 
 export const getCandidateApplicationsController = async (req, res) => {
   try {
-    const applications = await applicationModel.find({
-      candidate: req.user.id,
-    });
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
+    const { page = 1, limit = 10, status, sort = "newest", job } = req.query;
+
+    const filter = { candidate: req.user.id };
+
+    if (status) {
+      filter.status = status;
+    }
+
+    if (job) {
+      filter.job = job;
+    }
+
+    const sortOption = sort === "oldest" ? { createdAt: 1 } : { createdAt: -1 };
+
+    const skip = Number(page - 1) * Number(limit);
+
+    const [applications, totalApplications] = await Promise.all([
+      applicationModel
+        .find(filter)
+        .populate({
+          path: "candidate",
+          select: "userName email",
+        })
+        .populate({
+          path: "job",
+          select: "title description employmentType workMode",
+        })
+        .populate({
+          path: "resume",
+          select: "title resumeUrl thumbnailUrl",
+        })
+
+        .sort(sortOption)
+        .skip(skip)
+        .limit(Number(limit)),
+
+      applicationModel.countDocuments(filter),
+    ]);
+
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
           applications,
-          "Fetched all application of the user",
-        ),
-      );
-  } catch (error) {
-    console.log("Error in getCandidateApplicationsController", error.message);
-    throw new ApiError(
-      500,
-      "Something went wrong while fetching the application data",
+          pagination: {
+            totalApplications,
+            currentPage: Number(page),
+            totalPage: Math.ceil(totalApplications / Number(limit)),
+            limit: Number(limit),
+            hasNextPage:
+              Number(page) < Math.ceil(totalApplications / Number(limit)),
+            hasPreviousPage: Number(page) > 1,
+          },
+        },
+        "Applications Fetched successfully",
+      ),
     );
+  } catch (error) {
+    console.log("error in getCompanyApplicationController", error.message);
+    throw new ApiError(501, "Error getting company applications");
   }
 };
 
@@ -118,64 +160,67 @@ export const getCompanyApplicationsController = async (req, res) => {
   try {
     const { page = 1, limit = 10, status, job, sort = "newest" } = req.query;
 
-  const filter = { company: req.user.company };
+    const filter = { company: req.user.company };
 
-  if (status) {
-    filter.status = status;
-  }
+    if (status) {
+      filter.status = status;
+    }
 
-  if (job) {
-    filter.job = job;
-  }
+    if (job) {
+      filter.job = job;
+    }
 
-  const sortOption = sort === "oldest" ? { createdAt: 1 } : { createdAt: -1 };
+    const sortOption = sort === "oldest" ? { createdAt: 1 } : { createdAt: -1 };
 
-  const skip = Number(page - 1) * Number(limit);
+    const skip = Number(page - 1) * Number(limit);
 
-  const [applications, totalApplications] = await Promise.all([
-    applicationModel
-      .find(filter)
-      .populate({
-        path: "candidate",
-        select: "userName email",
-      })
-      .populate({
-        path: "job",
-        select: "title description employmentType workMode",
-      })
-      .populate({
-        path: "resume",
-        select: "title resumeUrl thumbnailUrl",
-      })
-      .populate({
-        path: "recruiterReport",
-        select:
-          "skillGaps weaknesses strengths executiveSummary hiringRecommendation matchScore",
-      })
-      .sort(sortOption)
-      .skip(skip)
-      .limit(Number(limit)),
+    const [applications, totalApplications] = await Promise.all([
+      applicationModel
+        .find(filter)
+        .populate({
+          path: "candidate",
+          select: "userName email",
+        })
+        .populate({
+          path: "job",
+          select: "title description employmentType workMode",
+        })
+        .populate({
+          path: "resume",
+          select: "title resumeUrl thumbnailUrl",
+        })
+        .populate({
+          path: "recruiterReport",
+          select:
+            "skillGaps weaknesses strengths executiveSummary hiringRecommendation matchScore",
+        })
+        .sort(sortOption)
+        .skip(skip)
+        .limit(Number(limit)),
 
-    applicationModel.countDocuments(filter),
-  ]);
+      applicationModel.countDocuments(filter),
+    ]);
 
-  return res.status(200).json(
-    new ApiResponse(200, {
-      applications,
-      pagination: {
-        totalApplications,
-        currentPage: Number(page),
-        totalPage: Math.ceil(totalApplications / Number(limit)),
-        limit: Number(limit),
-        hasNextPage:
-          Number(page) < Math.ceil(totalApplications / Number(limit)),
-        hasPreviousPage: Number(page) > 1,
-      },
-    }, "Applications Fetched successfully"),
-  );
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          applications,
+          pagination: {
+            totalApplications,
+            currentPage: Number(page),
+            totalPage: Math.ceil(totalApplications / Number(limit)),
+            limit: Number(limit),
+            hasNextPage:
+              Number(page) < Math.ceil(totalApplications / Number(limit)),
+            hasPreviousPage: Number(page) > 1,
+          },
+        },
+        "Applications Fetched successfully",
+      ),
+    );
   } catch (error) {
     console.log("error in getCompanyApplicationController", error.message);
-    throw new ApiError(501, "Error getting company applications")
-    
+    throw new ApiError(501, "Error getting company applications");
   }
 };
