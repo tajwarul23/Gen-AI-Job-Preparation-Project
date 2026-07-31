@@ -146,7 +146,7 @@ export const getJobFeedController = asyncHandler(async (req, res) => {
   if (q && q.trim()) {
     const searchTerm = q.trim().replace(/\s+/g, "");
     query.$text = {
-      $search: q.trim(),
+      $search: searchTerm,
       $caseSensitive: false,
       $diacriticSensitive: false,
     };

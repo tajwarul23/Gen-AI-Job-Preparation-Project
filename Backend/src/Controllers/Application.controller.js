@@ -61,14 +61,12 @@ export const applyToJobController = asyncHandler(async (req, res) => {
   generateRecruiterReport(resume.rawText, job.description, job.skills)
     .then(async (recruiterReport) => {
       const report = await RecruiterReportModel.create({
-        
-
         candidate: req.user.id,
         job: job._id,
         application: application._id,
         resume: resume._id,
 
-        ...recruiterReport
+        ...recruiterReport,
       });
 
       await applicationModel.findByIdAndUpdate(application._id, {
@@ -116,7 +114,68 @@ export const getCandidateApplicationsController = async (req, res) => {
   }
 };
 
-export const getCompanyApplicationsController = async(req, res)=>{
-  const applications = await applicationModel.find({company:req.user.company});
-  
-}
+export const getCompanyApplicationsController = async (req, res) => {
+  try {
+    const { page = 1, limit = 10, status, job, sort = "newest" } = req.query;
+
+  const filter = { company: req.user.company };
+
+  if (status) {
+    filter.status = status;
+  }
+
+  if (job) {
+    filter.job = job;
+  }
+
+  const sortOption = sort === "oldest" ? { createdAt: 1 } : { createdAt: -1 };
+
+  const skip = Number(page - 1) * Number(limit);
+
+  const [applications, totalApplications] = await Promise.all([
+    applicationModel
+      .find(filter)
+      .populate({
+        path: "candidate",
+        select: "userName email",
+      })
+      .populate({
+        path: "job",
+        select: "title description employmentType workMode",
+      })
+      .populate({
+        path: "resume",
+        select: "title resumeUrl thumbnailUrl",
+      })
+      .populate({
+        path: "recruiterReport",
+        select:
+          "skillGaps weaknesses strengths executiveSummary hiringRecommendation matchScore",
+      })
+      .sort(sortOption)
+      .skip(skip)
+      .limit(Number(limit)),
+
+    applicationModel.countDocuments(filter),
+  ]);
+
+  return res.status(200).json(
+    new ApiResponse(200, {
+      applications,
+      pagination: {
+        totalApplications,
+        currentPage: Number(page),
+        totalPage: Math.ceil(totalApplications / Number(limit)),
+        limit: Number(limit),
+        hasNextPage:
+          Number(page) < Math.ceil(totalApplications / Number(limit)),
+        hasPreviousPage: Number(page) > 1,
+      },
+    }, "Applications Fetched successfully"),
+  );
+  } catch (error) {
+    console.log("error in getCompanyApplicationController", error.message);
+    throw new ApiError(501, "Error getting company applications")
+    
+  }
+};

@@ -1,7 +1,8 @@
 import express from "express";
 import { authorizeRoles, verifyToken } from "../Middlewares/Auth.middleware.js";
 import upload from "../Middlewares/File.middleware.js";
-import { applyToJobController, getCandidateApplicationsController } from "../Controllers/Application.controller.js";
+import { applyToJobController, getCandidateApplicationsController, getCompanyApplicationsController } from "../Controllers/Application.controller.js";
+import { requireCompanyScope } from "../Middlewares/Role.middleware.js";
 
 const applicationRouter = express.Router();
 
@@ -20,6 +21,14 @@ applicationRouter.post("/:jobId", verifyToken, authorizeRoles("candidate"), uplo
  */
 
 applicationRouter.get("/", verifyToken, authorizeRoles("candidate"), getCandidateApplicationsController)
+
+/**
+ * @route GET/api/application/company?query [ex:GET /api/application/company?status=applied&job=687a2&page=1&limit=20&sort=newest]
+ * @deprecated get all application 
+ */
+applicationRouter.get("/company", verifyToken, authorizeRoles("company_admin", "recruiter"), getCompanyApplicationsController)
+
+
 
 
 export default applicationRouter;
