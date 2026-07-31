@@ -3,7 +3,7 @@ const asyncHandler = (func) => async (req, res, next) => {
   try {
     await func(req, res, next);
   } catch (error) {
-    console.error(`Error in ${func.name} => `, error.message);
+    console.error(`Error in [${func.name}] => `, error.message);
     
     res
       .status(error.statusCode || 500 || error.status)

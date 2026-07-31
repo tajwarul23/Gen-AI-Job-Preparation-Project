@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { applicationModel } from "../Models/application.model.js";
 import { interviewReportModel } from "../Models/interviewReport.model.js";
 import { JobModel } from "../Models/job.model.js";
@@ -97,11 +98,11 @@ export const getCandidateApplicationsController = async (req, res) => {
 
     const filter = { candidate: req.user.id };
 
-    if (status) {
+    if (status !== undefined) {
       filter.status = status;
     }
 
-    if (job) {
+    if (job !== undefined) {
       filter.job = job;
     }
 
@@ -156,17 +157,23 @@ export const getCandidateApplicationsController = async (req, res) => {
   }
 };
 
+/**
+ * @name getCompanyApplicationsController
+ * @description recruiter will get all the application details
+ * @access Private [company_admin || recruiter]
+ */
+
 export const getCompanyApplicationsController = async (req, res) => {
   try {
     const { page = 1, limit = 10, status, job, sort = "newest" } = req.query;
 
     const filter = { company: req.user.company };
 
-    if (status) {
+    if (status !== undefined) {
       filter.status = status;
     }
 
-    if (job) {
+    if (job !== undefined) {
       filter.job = job;
     }
 
@@ -224,3 +231,63 @@ export const getCompanyApplicationsController = async (req, res) => {
     throw new ApiError(501, "Error getting company applications");
   }
 };
+
+/**
+ * @name updateApplicationJobStatusController
+ * @description recruiter will update  the application details
+ * @access Private [company_admin || recruiter]
+ */
+
+export const updateApplicationJobStatusController = asyncHandler(
+  async (req, res) => {
+    const { applicationId } = req.params;
+    const { status } = req.body;
+    if (!status) {
+      throw new ApiError(401, "Status is required");
+    }
+
+    const allowedStatus = [
+      "applied",
+      "reviewing",
+      "shortlisted",
+      "rejected",
+      "hired",
+    ];
+
+    if (!allowedStatus.includes(status)) {
+      throw new ApiError(401, "Invalid status input");
+    }
+    if (!mongoose.isValidObjectId(applicationId)) {
+      throw new ApiError(400, "Invalid Id");
+    }
+    const application = await applicationModel
+      .findOne({
+        _id: applicationId,
+        company: req.user.company,
+      })
+      .select("company status statusUpdatedAt");
+
+    if (!application) {
+      throw new ApiError(404, "No application found");
+    }
+    if (String(application.company) !== String(req.user.company)) {
+      throw new ApiError(401, "Unauthorized access to the resource");
+    }
+
+    const prevIndex = allowedStatus.indexOf(application.status);
+    const newIndex = allowedStatus.indexOf(status);
+
+    if (newIndex <= prevIndex) {
+      throw new ApiError(403, "Invalid status transition");
+    }
+    application.status = status;
+    application.statusUpdatedAt = new Date();
+    await application.save();
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, application, "Job status updated successfully"),
+      );
+  },
+);
