@@ -1,9 +1,11 @@
 import express from "express";
 import { authorizeRoles, verifyToken } from "../Middlewares/Auth.middleware.js";
-import { createJobController, deleteJobController, getCompanyJobFeedController, getJobFeedController, updateJobController } from "../Controllers/Job.controller.js";
+import { createJobController, deleteJobController, generateJobDescriptionController, getCompanyJobFeedController, getJobFeedController, updateJobController } from "../Controllers/Job.controller.js";
 import { requireCompanyScope } from "../Middlewares/Role.middleware.js";
 
+
 const jobRouter = express.Router();
+
 
 /**
  * @route POST /api/job/create
@@ -11,6 +13,13 @@ const jobRouter = express.Router();
  * @access Private [company_admin || recruiter]
  */
 jobRouter.post("/create", verifyToken, authorizeRoles("company_admin", "recruiter"), createJobController);
+
+/**
+ * @route POST /api/job/generate-description
+ * @description route for ai generated description
+ * @access Private [company_admin || recruiter]
+ */
+jobRouter.post("/generate-description", verifyToken, authorizeRoles("company_admin", "recruiter"), generateJobDescriptionController)
 
 
 /**

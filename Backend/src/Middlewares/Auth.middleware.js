@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { TokenBlacklistModel } from "../Models/blacklist.mode.js";
 import { userModel } from "../Models/user.model.js";
+import { CompanyModel } from "../Models/company.model.js";
 
 export const verifyToken = async(req, res, next) => {
   const token = req.cookies.token;
@@ -21,6 +22,15 @@ export const verifyToken = async(req, res, next) => {
       });
     }
     req.user = user;
+    if(user.company){
+      const company = await CompanyModel.findById(req.user.company).select("_id companyName aboutCompany");
+      if(!company){
+          return res.status(404).json({
+        message: "Company not found",
+      });
+      }
+      req.company = company;
+    }
     next();
   } catch (error) {
     console.log("Error in auth middleware");

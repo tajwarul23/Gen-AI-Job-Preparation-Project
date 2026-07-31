@@ -7,10 +7,10 @@ const jobSchema = new mongoose.Schema(
       ref: "Company",
       required: true,
     },
-    companyName:{
-      type:String,
-      required:true,
-      trim:true
+    companyName: {
+      type: String,
+      required: true,
+      trim: true,
     },
 
     postedBy: {
@@ -24,10 +24,10 @@ const jobSchema = new mongoose.Schema(
       required: true,
     },
 
-    description: {
-      type: String,
-      required: true,
-    },
+   description:{
+    type:String,
+    required:true
+   },
 
     skills: [
       {
@@ -83,7 +83,7 @@ const jobSchema = new mongoose.Schema(
   { timestamps: true },
 );
 //cursor pagination
-jobSchema.index({ status: 1, createdAt: -1, _id:1 });
+jobSchema.index({ status: 1, createdAt: -1, _id: 1 });
 
 //for unique job per company
 jobSchema.index(

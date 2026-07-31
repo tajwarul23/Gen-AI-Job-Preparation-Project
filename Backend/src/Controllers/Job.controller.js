@@ -7,6 +7,7 @@
 import { CompanyModel } from "../Models/company.model.js";
 import { JobModel } from "../Models/job.model.js";
 import { userModel } from "../Models/user.model.js";
+import { generateJobDescription } from "../services/ai.service.js";
 import ApiError from "../Utils/ApiError.js";
 import ApiResponse from "../Utils/ApiResponse.js";
 import asyncHandler from "../Utils/asyncHandler.js";
@@ -18,28 +19,21 @@ import asyncHandler from "../Utils/asyncHandler.js";
  */
 
 export const createJobController = asyncHandler(async (req, res) => {
-  const dbUser = await userModel.findById(req.user.id);
-  if (!dbUser) {
-    throw new ApiError(404, "User not found");
+  const dbUser = req.user;
+  if (!req.company) {
+    throw new ApiError(404, "You must belong to a company");
   }
-  if (!dbUser.company) {
-    throw new ApiError(400, "You must belong to a company to post a job.");
-  }
-  const dbCompany = await CompanyModel.findById(dbUser.company).select(
-    "companyName",
-  );
-  if (!dbCompany) {
-    throw new ApiError(404, "Company not found.");
-  }
+  const dbCompany = req.company;
+
   const {
     title,
-    description,
     skills,
     location,
     workMode,
     employmentType,
     experienceLevel,
     salary,
+    description,
     status,
     expiresAt,
     vacancy,
@@ -47,8 +41,8 @@ export const createJobController = asyncHandler(async (req, res) => {
 
   if (
     !title?.trim() ||
-    !description?.trim() ||
     !location?.trim() ||
+    !description?.trim() ||
     !workMode?.trim() ||
     !employmentType?.trim() ||
     !experienceLevel?.trim() ||
@@ -60,18 +54,23 @@ export const createJobController = asyncHandler(async (req, res) => {
   ) {
     throw new ApiError(400, "All fields are required");
   }
+  const cleanedSkills = skills.map((skill) => skill.trim()).filter(Boolean);
+
+  if (!cleanedSkills.length) {
+    throw new ApiError(400, "At least one valid skill is required.");
+  }
   const normalizedTitle = title.trim().toLowerCase();
   const existedJob = await JobModel.findOne({
     normalizedTitle,
-    company: dbCompany,
+    company: dbCompany._id,
   });
   if (existedJob) {
     throw new ApiError(401, "This job was already created..");
   }
+
   const createdJob = await JobModel.create({
     title,
-    description,
-    skills,
+    skills: cleanedSkills,
     location,
     workMode,
     employmentType,
@@ -79,6 +78,7 @@ export const createJobController = asyncHandler(async (req, res) => {
     salary,
     status,
     expiresAt,
+    description,
     vacancy,
     normalizedTitle,
     postedBy: dbUser._id,
@@ -92,7 +92,65 @@ export const createJobController = asyncHandler(async (req, res) => {
 });
 
 /**
- * @name createJobController
+ * @name generateJobDescriptionController
+ * @description generate job description using ai
+ * @access Private [company_admin || recruiter]
+ */
+
+export const generateJobDescriptionController = asyncHandler(
+  async (req, res) => {
+    const { title, experienceLevel, workMode, employmentType, skills } =
+      req.body;
+
+    if (
+      !title?.trim() ||
+      !workMode?.trim() ||
+      !employmentType?.trim() ||
+      !experienceLevel?.trim() ||
+      !Array.isArray(skills) ||
+      skills.length === 0
+    ) {
+      throw new ApiError(400, "All fields are required");
+    }
+    if (!req.company) {
+      throw new ApiError(404, "You must belong to a company");
+    }
+    const { companyName, aboutCompany } = req.company;
+    const cleanedSkills = skills.map((skill) => skill.trim()).filter(Boolean);
+
+    if (!cleanedSkills.length) {
+      throw new ApiError(400, "At least one valid skill is required.");
+    }
+
+    const jobDescriptionByAi = await generateJobDescription(
+      title,
+      experienceLevel,
+      workMode,
+      employmentType,
+      cleanedSkills,
+      companyName,
+      aboutCompany,
+    );
+    if (!jobDescriptionByAi) {
+      throw new ApiError(
+        501,
+        "Failed to generate AI generated job description",
+      );
+    }
+    return res
+      .status(201)
+      .json(
+        new ApiResponse(
+          201,
+          jobDescriptionByAi,
+          "Job description successfully generated",
+        ),
+      );
+  },
+);
+
+/**
+ * @name getJobFeedController
  * @description Job feed for all user
  * @access Private
  */
