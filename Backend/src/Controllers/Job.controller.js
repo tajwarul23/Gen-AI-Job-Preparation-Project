@@ -32,11 +32,13 @@ export const createJobController = asyncHandler(async (req, res) => {
     workMode,
     employmentType,
     experienceLevel,
-    salary,
+    salaryMin,
+    salaryMax,
     description,
     status,
     expiresAt,
     vacancy,
+    currency,
   } = req.body;
 
   if (
@@ -47,7 +49,9 @@ export const createJobController = asyncHandler(async (req, res) => {
     !employmentType?.trim() ||
     !experienceLevel?.trim() ||
     !status?.trim() ||
-    !salary ||
+    !currency?.trim() ||
+    !salaryMin ||
+    !salaryMax ||
     !expiresAt ||
     !Array.isArray(skills) ||
     skills.length === 0
@@ -75,7 +79,12 @@ export const createJobController = asyncHandler(async (req, res) => {
     workMode,
     employmentType,
     experienceLevel,
-    salary,
+    salary: {
+      salaryMin: salaryMin,
+      salaryMax: salaryMax,
+      currency: currency,
+    },
+
     status,
     expiresAt,
     description,
@@ -231,18 +240,54 @@ export const getJobFeedController = asyncHandler(async (req, res) => {
     query.experienceLevel = experienceLevel.toUpperCase();
   }
 
-  const [jobs, totalCounts] = await Promise.all([
-    JobModel.find(query)
-      .sort({
+ 
+  const jobs = await JobModel.aggregate([
+    {
+      $match: query,
+    },
+    {
+      $sort: {
         createdAt: -1,
         _id: -1,
-      })
-      .limit(pageSize + 1)
-      .lean(),
+      },
+    },
+    {
+      $limit: pageSize + 1,
+    },
+    {
+      $lookup: {
+        from: "applications",
+        let: { jobId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$job", "$$jobId"] },
+                  { eq: ["$candidate", req.user.id] },
+                ],
+              },
+            },
+          },
+          {
+            $limit: 1,
+          },
+        ],
 
-    JobModel.countDocuments(query),
+        as: "application",
+      },
+    },
+    {
+      $addFields: {
+        isApplied: {
+          $gt: [{ $size: "$application" }, 0],
+        },
+      },
+    },
+    {
+      $project: { application: 0 },
+    },
   ]);
-
   const hasMore = jobs.length > pageSize;
 
   const results = hasMore ? jobs.slice(0, pageSize) : jobs;
@@ -261,7 +306,7 @@ export const getJobFeedController = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { total: totalCounts, jobs: results, nextCursor, hasMore },
+        { total: jobs.length, jobs, nextCursor, hasMore },
         "Fetched Job Successfully",
       ),
     );
@@ -315,8 +360,13 @@ export const updateJobController = asyncHandler(async (req, res) => {
     status,
     vacancy,
     expiresAt,
+    salaryMax,
+    salaryMin,
+    currency,
   } = req.body;
-
+ 
+  
+  
   if (title !== undefined) req.job.title = title;
   if (location !== undefined) req.job.location = location;
   if (workMode !== undefined) req.job.workMode = workMode;
@@ -325,6 +375,9 @@ export const updateJobController = asyncHandler(async (req, res) => {
   if (status !== undefined) req.job.status = status;
   if (vacancy !== undefined) req.job.vacancy = vacancy;
   if (expiresAt !== undefined) req.job.expiresAt = expiresAt;
+  if (salaryMax !== undefined) req.job.salary.salaryMax = salaryMax;
+  if (salaryMin !== undefined) req.job.salary.salaryMin = salaryMin;
+  if (currency !== undefined) req.job.salary.currency = currency;
 
   await req.job.save();
 
@@ -345,3 +398,5 @@ export const deleteJobController = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, null, "Job deleted successfully"));
 });
+
+export const analyzePrepController = asyncHandler(async (req, res) => {});

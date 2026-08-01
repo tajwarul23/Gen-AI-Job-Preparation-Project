@@ -24,10 +24,10 @@ const jobSchema = new mongoose.Schema(
       required: true,
     },
 
-   description:{
-    type:String,
-    required:true
-   },
+    description: {
+      type: String,
+      required: true,
+    },
 
     skills: [
       {
@@ -55,8 +55,8 @@ const jobSchema = new mongoose.Schema(
     },
 
     salary: {
-      min: Number,
-      max: Number,
+      salaryMin: Number,
+      salaryMax: Number,
       currency: {
         type: String,
         default: "USD",
@@ -104,5 +104,18 @@ jobSchema.index({
 
 //for filtering
 jobSchema.index({ workMode: 1, employmentType: 1, experienceLevel: 1 });
+
+jobSchema.pre("validate", function (next) {
+  if (
+    this.salary?.salaryMax !== undefined &&
+    this.salary?.salaryMax !== undefined &&
+    this.salary.salaryMax < this.salary.salaryMin
+  ) {
+    return next(
+      new Error("Minimum salary cannot be greater than maximum salary"),
+    );
+  }
+  next();
+});
 
 export const JobModel = mongoose.model("Job", jobSchema);
