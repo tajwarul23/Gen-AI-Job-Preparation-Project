@@ -2,25 +2,15 @@ import pdfParse from "pdf-parse-new";
 import { generateInterviewReport } from "../services/ai.service.js";
 import { interviewReportModel } from "../Models/interviewReport.model.js";
 import mongoose from "mongoose";
+import { resumeResolveForRequest } from "../services/resolveResume.js";
 
 /**
  * @description Controller to generate interview report base on user's selfDescription,jobDescription & resume
  */
 export const generateInterviewReportController = async (req, res) => {
   try {
-    if (!req.file) {
-      return res
-        .status(400)
-        .json({ message: "Resume file is required", success: false });
-    }
-    const resumeData = await pdfParse(req.file.buffer);
-    if (!resumeData) {
-      return res.status(400).json({
-        message: "Please re-upload the PDF file and Try again later..!",
-        success: false,
-      });
-    }
-    const resumeContent = resumeData.text;
+    const resume = await resumeResolveForRequest(req);
+    
     const { selfDescription, jobDescription } = req.body;
     if (!selfDescription || !jobDescription) {
       return res.status(400).json({
@@ -30,7 +20,7 @@ export const generateInterviewReportController = async (req, res) => {
     }
 
     const interviewReportByAi = await generateInterviewReport({
-      resume: resumeContent,
+      resume: resume.rawText,
       selfDescription: selfDescription,
       jobDescription: jobDescription,
     });
@@ -44,7 +34,7 @@ export const generateInterviewReportController = async (req, res) => {
     const interviewReport = await interviewReportModel.create({
       source:"external_job",
       user: req.user.id,
-      resume: resumeContent,
+      resume: resume.rawText,
       selfDescription,
       jobDescription,
       ...interviewReportByAi,

@@ -3,7 +3,7 @@ import { getResume } from "./getResume.js";
 import { uploadResume } from "./uploadResume.js";
 
 export const resumeResolveForRequest = async(req) =>{
-     const {resumeId} = req.body;
+     const { resumeId } = req.body || {};
 
     if(resumeId){
         return await getResume(resumeId, req.user.id)

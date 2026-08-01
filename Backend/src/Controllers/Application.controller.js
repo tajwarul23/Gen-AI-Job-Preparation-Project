@@ -4,7 +4,7 @@ import { interviewReportModel } from "../Models/interviewReport.model.js";
 import { JobModel } from "../Models/job.model.js";
 import { RecruiterReportModel } from "../Models/recruiterReport.model.js";
 import { ResumeModel } from "../Models/resume.model.js";
-import { generateRecruiterReport } from "../services/ai.service.js";
+import { generateAnalyzePrepReport, generateInterviewReport, generateRecruiterReport } from "../services/ai.service.js";
 import { resumeResolveForRequest } from "../services/resolveResume.js";
 import { uploadPDF } from "../services/uploadPDF.js";
 import ApiError from "../Utils/ApiError.js";
@@ -291,3 +291,52 @@ export const updateApplicationJobStatusController = asyncHandler(
       );
   },
 );
+
+/**
+ * @name analyzePrepController
+ * @description get interview report against a job description and a resume
+ * @access Private [candidate only]
+ */
+export const analyzePrepController = asyncHandler(async (req, res) => {
+  const { jobId } = req.params;
+
+  if (req.user.company) {
+    throw new ApiError(401, "Can't apply to a job with recruiter account");
+  }
+
+  const job = await JobModel.findById(jobId).select(
+    "_id company description skills",
+  );
+
+  if (!job) {
+    throw new ApiError(404, "No job found");
+  }
+
+  const resume = await resumeResolveForRequest(req);
+// console.log("from application controller", job.description);
+
+   const interviewReportByAi = await generateAnalyzePrepReport(resume.rawText, job.description, job.skills)
+
+      if (!interviewReportByAi) {
+          return res.status(400).json({
+            message: "Failed to generate interview report. Please try again later",
+            success: false,
+          });
+        }
+        const interviewReport = await interviewReportModel.create({
+          ...interviewReportByAi,
+          source:"application",
+          user: req.user.id,
+          resume: resume.rawText,
+          jobDescription:job.description,
+          job:job._id
+          
+        });
+    
+        return res.status(201).json({
+          message: "Interview Report Generated successfully",
+          interviewReport,
+          success: true,
+        });
+
+});

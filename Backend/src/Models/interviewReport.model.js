@@ -82,7 +82,6 @@ const interviewReportSchema = new mongoose.Schema(
     technicalQuestions: [technicalQuestionSchema],
     behavioralQuestions: [behavioralQuestionSchema],
     skillGaps: [skillGapsSchema],
-    strengths:[strengthSchema],
     preparationPlan: [preparationPlanSchema],
    
    
@@ -91,6 +90,6 @@ const interviewReportSchema = new mongoose.Schema(
 );
 
 export const interviewReportModel = mongoose.model(
-  "interviewReports",
+  "interviewReport",
   interviewReportSchema,
 );

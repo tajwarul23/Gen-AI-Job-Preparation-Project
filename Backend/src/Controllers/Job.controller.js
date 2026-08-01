@@ -399,4 +399,4 @@ export const deleteJobController = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, null, "Job deleted successfully"));
 });
 
-export const analyzePrepController = asyncHandler(async (req, res) => {});
+

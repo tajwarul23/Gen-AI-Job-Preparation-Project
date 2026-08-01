@@ -40,7 +40,8 @@ export const generateInterviewReport = async ({
   
 Resume: ${resume}
 
-Self Description: ${selfDescription}
+Self Description:
+${selfDescription}
 
 Job Description: ${jobDescription}
 
@@ -58,7 +59,7 @@ Based on the above information, generate:
         {
           role: "system",
           content:
-            "You are an interview coach. Always respond with valid JSON only. Never use markdown or code fences.",
+            "You are an interview coach. Always respond with valid JSON only. Never use markdown or code fences. if self description is given use that if not then use the resume text to get information about the self description",
         },
         {
           role: "user",
@@ -535,7 +536,10 @@ Do not add extra fields.
     throw error;
   }
 };
-
+/**
+ * @name generateJobDescription
+ * @description ai generated job description
+ */
 export const generateJobDescription = async (
   title,
   experienceLevel,
@@ -644,6 +648,138 @@ Guidelines:
       throw new Error("AI response did not match the expected schema");
     }
     console.error("Error generating interview report: ", error);
+    throw error;
+  }
+};
+
+/**
+ * @name generateAnalyzePrepReport
+ * @description generate report based on job description, skill, and resume text
+ */
+export const generateAnalyzePrepReport = async (
+  resume,
+  jobDescription,
+  skills,
+) => {
+  const formattedSkills = skills.join(", ");
+
+  const prompt = `
+You are analyzing a candidate's interview readiness for a specific job role.
+
+Candidate Resume:
+${resume}
+
+Required Skills for the Role:
+${formattedSkills}
+
+Job Description:
+${jobDescription}
+
+Analyze the candidate against the job requirements and generate an interview preparation report.
+
+Your analysis must include:
+
+1. Match Score
+- Provide a score between 0 and 100.
+- The score should represent how well the candidate's resume matches the job requirements.
+- Consider:
+  - Relevant technical skills
+  - Professional experience
+  - Projects
+  - Domain knowledge
+  - Missing required skills
+
+2. Technical Interview Questions
+- Generate at least 5 technical questions.
+- Questions should be directly related to the job description and required skills.
+- Prioritize questions that are likely to be asked for this specific role.
+- Include a mix of fundamental and advanced questions.
+
+3. Behavioral Interview Questions
+- Generate at least 3 behavioral questions.
+- Focus on teamwork, problem solving, ownership, communication, and handling challenges.
+
+4. Skill Gap Analysis
+- Identify missing or weak skills compared to the job requirements.
+- Sort skill gaps from highest priority to lowest priority.
+- Focus on skills that have the biggest impact on interview success.
+
+5. 7-Day Interview Preparation Plan
+Create a realistic day-by-day preparation roadmap.
+
+Rules for the roadmap:
+- Spend approximately 60% of the time improving identified skill gaps.
+- Spend approximately 40% of the time preparing overall interview fundamentals:
+  - Core technology concepts
+  - System design
+  - Data structures and algorithms
+  - Object-oriented programming
+  - Aptitude/problem solving
+  - Behavioral preparation
+
+Each day should contain:
+- Topics to study
+- Practical tasks or exercises
+- Expected outcome by the end of the day
+
+Only provide information that is relevant to this candidate and this job role.
+`;
+
+  try {
+    const response = await ai.chat.completions.create({
+      model: process.env.GROK_MODEL,
+      messages: [
+        {
+          role: "system",
+          content: `
+You are an expert technical interviewer and career coach.
+
+Your task is to evaluate candidates against job descriptions and create actionable interview preparation plans.
+
+Important rules:
+- Return ONLY valid JSON.
+- Do not include markdown, explanations, or code blocks.
+- Do not add fields outside the provided JSON schema.
+- Base your evaluation only on the provided resume, skills, and job description.
+- Be realistic and avoid giving inflated scores.
+- Prioritize practical interview preparation over generic advice.
+          `,
+        },
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "interview_report",
+          strict: true,
+          schema: interviewReportGroqSchema,
+        },
+      },
+      temperature: 0.5,
+      max_tokens: 3000,
+    });
+
+    let parsed;
+
+    try {
+      parsed = JSON.parse(response.choices[0].message.content);
+    } catch (error) {
+      throw new ApiError(501, "AI validation failed");
+    }
+
+    const validated = interviewReportSchema.parse(parsed);
+
+    return validated;
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error("Response validation failed:", error.errors);
+      throw new Error("AI response did not match the expected schema");
+    }
+
+    console.error("Error generating interview report:", error);
     throw error;
   }
 };
