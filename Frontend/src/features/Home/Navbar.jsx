@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../Auth/Hooks/useAuth";
 import toast from "react-hot-toast";
+import { Cpu } from "lucide-react";
 
 const navLinks = [
   { to: "/resume-builder", label: "Resume Builder" },
@@ -22,22 +23,30 @@ const Navbar = () => {
   };
 
   const linkClass = ({ isActive }) =>
-    `cursor-pointer text-lg transition-colors duration-200 ${
+    `cursor-pointer text-lg transition-colors duration-200 font-sans ${
       isActive ? "text-ink" : "text-muted hover:text-ink"
     }`;
 
   return (
-    <div className="font-mono">
+    <div className="font-sans">
       <nav className="relative z-10 flex h-16 items-center justify-between border-b border-line px-6 lg:px-8">
-        {/* ── Logo ── */}
-        <Link to="/" className="text-3xl font-bold font-mono shrink-0">
-          <span className="text-violet">⬡</span>
-          <span className="text-ink ml-4">Prep</span>
-          <span className="text-violet">Lab</span>
-        </Link>
+        
+                {/* Brand Logo */}
+        <div 
+          onClick={() => navigate("/")}
+          className="flex items-center gap-2.5 cursor-pointer group"
+        >
+          <div className="w-10 h-10 rounded-xl bg-violet/10 border border-violet-border flex items-center justify-center text-violet-text group-hover:bg-violet/20 group-hover:border-violet transition-colors">
+            <Cpu className="w-7 h-7 animate-pulse" />
+          </div>
+          <div>
+            <span className="font-display font-bold text-ink text-2xl tracking-relax">PrepLab</span>
+            
+          </div>
+        </div>
 
         {/* ── Desktop nav links — hidden on mobile/tablet ── */}
-        <div className="hidden lg:flex flex-1 justify-center gap-8">
+        <div className="hidden lg:flex flex-1 justify-center gap-8 ">
           {navLinks.map((link) => (
             <NavLink key={link.to} to={link.to} className={linkClass}>
               {link.label}
@@ -51,7 +60,7 @@ const Navbar = () => {
             loading ? (
               <div className="flex items-center justify-center gap-2">
                 <button
-                  className="rounded-xl border border-line px-4 py-2 text-lg text-muted font-mono
+                  className="rounded-xl border border-line px-4 py-2 text-lg text-muted font-sans
              cursor-pointer hover:text-ink transition-colors duration-200
              flex items-center gap-2"
                 >
@@ -62,7 +71,7 @@ const Navbar = () => {
             ) : (
               <button
                 onClick={handleLogoutClick}
-                className="rounded-xl border border-line px-4 py-2 text-lg text-muted font-mono
+                className="rounded-xl border border-line px-4 py-2 text-lg text-muted font-sans
                    cursor-pointer hover:text-ink transition-colors duration-200"
               >
                 Logout

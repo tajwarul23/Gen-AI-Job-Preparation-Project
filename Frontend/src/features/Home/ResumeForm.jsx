@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Field = ({ label }) => (
     <div className="flex items-center gap-3 bg-[#12121a] border border-[#252535] hover:border-[#3a3a55] rounded-[10px] px-4 py-[13px] transition-colors duration-200">
       <span className="w-[7px] h-[7px] rounded-full bg-violet" />
-      <span className="font-mono text-[13px] text-[#5a5a78] select-none pointer-events-none">
+      <span className="font-sans text-[13px] text-[#5a5a78] select-none pointer-events-none">
         {label}
         
       </span>

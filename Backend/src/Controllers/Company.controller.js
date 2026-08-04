@@ -1,7 +1,10 @@
 import { CompanyModel } from "../Models/company.model.js";
 import { JobModel } from "../Models/job.model.js";
 import { userModel } from "../Models/user.model.js";
-import { deleteFromCloudinary, uploadCompanyLogo } from "../services/uploadPDF.js";
+import {
+  deleteFromCloudinary,
+  uploadCompanyLogo,
+} from "../services/uploadPDF.js";
 import ApiError from "../Utils/ApiError.js";
 import ApiResponse from "../Utils/ApiResponse.js";
 import asyncHandler from "../Utils/asyncHandler.js";
@@ -39,7 +42,7 @@ export const createCompanyController = asyncHandler(async (req, res) => {
     companyName,
     aboutCompany,
     logoUrl: uploadedLogo.logoUrl,
-    logoPublicId:uploadedLogo.publicId,
+    logoPublicId: uploadedLogo.publicId,
     industry,
     country,
     createdBy: req.user.id,
@@ -71,7 +74,14 @@ export const createCompanyController = asyncHandler(async (req, res) => {
   });
   return res
     .status(201)
-    .json(new ApiResponse(201, company, "Company Created Successfully"));
+    .json(
+      new ApiResponse(
+        201,
+        company,
+        updatedUser,
+        "Company Created Successfully",
+      ),
+    );
 });
 
 /**
@@ -156,19 +166,14 @@ export const joinCompanyController = asyncHandler(async (req, res) => {
  * @access Private (company admin only)
  */
 export const updateCompanyController = asyncHandler(async (req, res) => {
-  const {
-    companyName,
-    aboutCompany,
-    country,
-    industry,
-  } = req.body;
+  const { companyName, aboutCompany, country, industry } = req.body;
 
   const company = await CompanyModel.findById(req.user.company);
 
   if (!company) {
     throw new ApiError(404, "Company not found");
   }
-  if(company.createdBy.toString() !== req.user.id.toString()){
+  if (company.createdBy.toString() !== req.user.id.toString()) {
     throw new ApiError(403, "You are not authorized to update this company");
   }
   const normalizedCompanyName = companyName?.trim();
@@ -176,12 +181,9 @@ export const updateCompanyController = asyncHandler(async (req, res) => {
     normalizedCompanyName !== undefined &&
     normalizedCompanyName !== company.companyName;
 
-
   if (normalizedCompanyName !== undefined) {
     company.companyName = normalizedCompanyName;
   }
-
-
 
   if (aboutCompany !== undefined) {
     company.aboutCompany = aboutCompany;
@@ -197,7 +199,6 @@ export const updateCompanyController = asyncHandler(async (req, res) => {
 
   await company.save();
 
-
   if (companyNameChanged) {
     await JobModel.updateMany(
       {
@@ -207,18 +208,13 @@ export const updateCompanyController = asyncHandler(async (req, res) => {
         $set: {
           companyName: company.companyName,
         },
-      }
+      },
     );
   }
 
-
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      { company },
-      "Company updated successfully"
-    )
-  );
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { company }, "Company updated successfully"));
 });
 
 /**
@@ -226,46 +222,62 @@ export const updateCompanyController = asyncHandler(async (req, res) => {
  * @description update the company logo
  * @access Private (company admin only)
  */
-export const updateCompanyLogoController = async(req, res)=>{
-
+export const updateCompanyLogoController = async (req, res) => {
   try {
     const logo = req.file;
-  if(!req.file){
-    throw new ApiError(401, "Logo file is required")
-  }
+    if (!req.file) {
+      throw new ApiError(401, "Logo file is required");
+    }
 
-  if(!req.file.mimetype.startsWith("image/")){
-    throw new ApiError(400, "Only image files are allowed")
-  }
+    if (!req.file.mimetype.startsWith("image/")) {
+      throw new ApiError(400, "Only image files are allowed");
+    }
 
-  const company = await CompanyModel.findById(req.user.company);
+    const company = await CompanyModel.findById(req.user.company);
 
-  if(!company){
-    throw new ApiError(404, "Company not found")
-  }
+    if (!company) {
+      throw new ApiError(404, "Company not found");
+    }
 
-  if(String(company.createdBy) !== String(req.user.id)){
-    throw new ApiError(403, "You are not authorized to update this company");
-  }
+    if (String(company.createdBy) !== String(req.user.id)) {
+      throw new ApiError(403, "You are not authorized to update this company");
+    }
 
-  const newLogo = await uploadCompanyLogo(logo.buffer, company.companyName);
-  const oldLogoPublicId = company.logoPublicId;
-  company.logoUrl = newLogo.logoUrl
-  company.logoPublicId = newLogo.publicId;
-  await company.save();
-  if(oldLogoPublicId){
-    deleteFromCloudinary(oldLogoPublicId).catch((err)=>{console.log("Error deleting old logo", err.message);
-    })
-  }
-  return res.status(201).json(new ApiResponse(201, "Logo updated successfully"))
+    const newLogo = await uploadCompanyLogo(logo.buffer, company.companyName);
+    const oldLogoPublicId = company.logoPublicId;
+    company.logoUrl = newLogo.logoUrl;
+    company.logoPublicId = newLogo.publicId;
+    await company.save();
+    if (oldLogoPublicId) {
+      deleteFromCloudinary(oldLogoPublicId).catch((err) => {
+        console.log("Error deleting old logo", err.message);
+      });
+    }
+    return res
+      .status(201)
+      .json(new ApiResponse(201, "Logo updated successfully"));
   } catch (error) {
     console.log("Error on updating logo", error.message);
-    throw new ApiError(501, "Error on updating logo")
+    throw new ApiError(501, "Error on updating logo");
   }
-}
+};
 
 /**
- * @name deleteCompanyController
- * @description delete the company and all job opening of it
- * @access Private (company admin only)
+ * @name getCompanyController
+ * @description get Company info
+ * @access Private (company_admin || recruiter )
  */
+
+export const getCompanyController = asyncHandler(async (req, res) => {
+  if (!req.company) {
+    return res.status(404).json({
+      message: "Company not found",
+    });
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, req.company, "Company data fetched successfully"),
+    );
+});

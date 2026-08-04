@@ -9,7 +9,7 @@ const ResumeBanner = () => {
       <div className="flex flex-col lg:flex-row gap-12 items-start">
         {/* Left */}
         <div className="flex-1">
-          <p className="text-violet uppercase font-mono tracking-wider text-sm">
+          <p className="text-violet uppercase font-sans tracking-wider text-sm">
               // Resume Builder
             </p>
           <h1 className="max-w-4xl text-4xl sm:text-5xl lg:text-7xl font-black leading-none  text-ink font-display scale-y-75  wrap-break-word">

@@ -6,8 +6,6 @@ import jwt from "jsonwebtoken";
 import { TokenBlacklistModel } from "../Models/blacklist.mode.js";
 import crypto from "crypto";
 import { date } from "zod";
-
-
 /**
  * @name registerUserController
  * @description Register a new user, expects username, email and password from req.body
@@ -15,10 +13,10 @@ import { date } from "zod";
  */
 export const registerUserController = async (req, res) => {
   res.set({
-  'Cache-Control': 'no-cache, no-store, must-revalidate',
-  'Pragma': 'no-cache',
-  'Expires': '0'
-});
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    Pragma: "no-cache",
+    Expires: "0",
+  });
   const { userName, email, password } = req.body;
 
   try {
@@ -29,14 +27,12 @@ export const registerUserController = async (req, res) => {
       });
     }
     // if(!validator.isEmail(email))
-    const isUserAlreadyExists = await userModel.findOne({ email
-    });
+    const isUserAlreadyExists = await userModel.findOne({ email });
     if (isUserAlreadyExists) {
-        return res.status(400).json({
-          message: "Account already exists with this Email",
-          success: false,
-        });
-      
+      return res.status(400).json({
+        message: "Account already exists with this Email",
+        success: false,
+      });
     }
 
     const hash = await bcrypt.hash(password, 10);
@@ -61,11 +57,11 @@ export const registerUserController = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production"?"true":"false",
+      secure: process.env.NODE_ENV === "production" ? "true" : "false",
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     });
 
-   return res.status(201).json({
+    return res.status(201).json({
       message: `Welcome to PrepLab, ${userName}! Your account has been created successfully.`,
       success: true,
       user: { id: user._id, email: user.email, userName: user.userName },
@@ -88,53 +84,65 @@ export const registerUserController = async (req, res) => {
  */
 export const loginUserController = async (req, res) => {
   res.set({
-  'Cache-Control': 'no-cache, no-store, must-revalidate',
-  'Pragma': 'no-cache',
-  'Expires': '0'
-});
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    Pragma: "no-cache",
+    Expires: "0",
+  });
   const { email, password } = req.body;
 
- try {
-   const user = await userModel.findOne({ email });
-  if (!user) {
-    return res.status(400).json({
-      message: "Invalid email or password",
-      success: false,
+  try {
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(400).json({
+        message: "Invalid email or password",
+        success: false,
+      });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(400).json({
+        message: "Invalid email or password",
+        success: false,
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+        userName: user.userName,
+        role: user.role,
+        company: user.company,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" },
+    );
+
+    // res.cookie("token", token);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // false locally
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     });
-  }
 
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-
-  if (!isPasswordValid) {
-    return res.status(400).json({
-      message: "Invalid email or password",
-      success: false,
+    return res.status(200).json({
+      message: `Welcome back, ${user.userName}!`,
+      success: true,
+      user: {
+        id: user._id,
+        email: user.email,
+        userName: user.userName,
+        role: user.role,
+        company: user.company,
+      },
     });
+  } catch (error) {
+    console.log("error in login user", error.message);
+    return res
+      .status(400)
+      .json({ message: "Error logging user", success: false });
   }
-
-  const token = jwt.sign(
-    { id: user._id, userName: user.userName, role:user.role, company:user.company },
-    process.env.JWT_SECRET,
-    { expiresIn: "1d" },
-  );
-  
-  // res.cookie("token", token);
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // false locally
-    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-  });
-
- return res.status(200).json({
-    message: `Welcome back, ${user.userName}!`,
-    success: true,
-    user: { id: user._id, email: user.email, userName: user.userName, role:user.role, company:user.company },
-  });
- } catch (error) {
-   console.log("error in login user", error.message);
-  return res.status(400).json({message:"Error logging user", success: false});
-  
- }
 };
 
 /**
@@ -144,20 +152,22 @@ export const loginUserController = async (req, res) => {
  */
 export const logoutUserController = async (req, res) => {
   res.set({
-  'Cache-Control': 'no-cache, no-store, must-revalidate',
-  'Pragma': 'no-cache',
-  'Expires': '0'
-});
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    Pragma: "no-cache",
+    Expires: "0",
+  });
   try {
     const token = req.cookies.token;
-      if(!token){
-      return res.status(400).json({ message: "No token provided", success: false });
+    if (!token) {
+      return res
+        .status(400)
+        .json({ message: "No token provided", success: false });
     }
 
     if (token) {
       await TokenBlacklistModel.create({ token });
     }
-  
+
     const userName = req.user?.userName || "User";
     // res.clearCookie("token");
     res.clearCookie("token", {
@@ -165,11 +175,15 @@ export const logoutUserController = async (req, res) => {
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     });
-    
-    return res.status(200).json({ message: `See you later, ${userName}!`, success: true });
+
+    return res
+      .status(200)
+      .json({ message: `See you later, ${userName}!`, success: true });
   } catch (error) {
     console.log("Error in logout", error.message);
-    return res.status(404).json({ message: "Error logging Out", success: false });
+    return res
+      .status(404)
+      .json({ message: "Error logging Out", success: false });
   }
 };
 /**
@@ -179,31 +193,41 @@ export const logoutUserController = async (req, res) => {
  */
 export const getMeController = async (req, res) => {
   res.set({
-  'Cache-Control': 'no-cache, no-store, must-revalidate',
-  'Pragma': 'no-cache',
-  'Expires': '0'
-});
-
-try {
-    const user = await userModel.findById(req.user.id).select("_id userName email role company");
-
-    if(!user){
-        return res.status(404).json({message:"User not found", success:false});
-    }
-  return res.status(200).json({
-    message: `Fetching details for ${user.userName}`,
-    user: {
-      id: user._id,
-      userName: user.userName,
-      email: user.email,
-      role: user.role,
-      company: user.company
-    },
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    Pragma: "no-cache",
+    Expires: "0",
   });
-} catch (error) {
-  console.log("Error in getMeController", error.message);
-  return res.status(500).json({ message: "Error Fetching user data", success: false });
-}
+
+  try {
+    const user = await userModel
+      .findById(req.user.id)
+      .select("_id userName email role company");
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "User not found", success: false });
+    }
+    let company = null;
+
+   
+
+    return res.status(200).json({
+      message: `Fetching details for ${user.userName}`,
+      user: {
+        id: user._id,
+        userName: user.userName,
+        email: user.email,
+        role: user.role,
+        company: user.company,
+      },
+    });
+  } catch (error) {
+    console.log("Error in getMeController", error.message);
+    return res
+      .status(500)
+      .json({ message: "Error Fetching user data", success: false });
+  }
 };
 
 /**
@@ -212,7 +236,6 @@ try {
  * @access public
  */
 export const verifyEmail = async (req, res) => {
-
   const { verificationToken } = req.query;
   console.log("Token received", verificationToken);
 
@@ -264,11 +287,15 @@ export const verifyEmail = async (req, res) => {
 };
 
 import admin from "../config/firebase.config.js";
+import { CompanyModel } from "../Models/company.model.js";
+import { copyFile } from "fs";
 
 export const firebaseAuthController = async (req, res) => {
   const { idToken } = req.body;
   if (!idToken)
-    return res.status(400).json({ message: "ID token required", success: false });
+    return res
+      .status(400)
+      .json({ message: "ID token required", success: false });
 
   try {
     const decoded = await admin.auth().verifyIdToken(idToken);
@@ -281,7 +308,6 @@ export const firebaseAuthController = async (req, res) => {
         userName: name || email.split("@")[0],
         email,
         firebaseUid: uid,
-        
       });
     } else if (!user.firebaseUid) {
       user.firebaseUid = uid;
@@ -289,9 +315,14 @@ export const firebaseAuthController = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, userName: user.userName, role: user.role, company:user.company },
+      {
+        id: user._id,
+        userName: user.userName,
+        role: user.role,
+        company: user.company,
+      },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "1d" },
     );
 
     res.cookie("token", token, {
@@ -303,11 +334,19 @@ export const firebaseAuthController = async (req, res) => {
     return res.status(200).json({
       message: `Welcome, ${user.userName}!`,
       success: true,
-      user: { id: user._id, email: user.email, userName: user.userName, role: user.role, company: user.company },
+      user: {
+        id: user._id,
+        email: user.email,
+        userName: user.userName,
+        role: user.role,
+        company: user.company,
+      },
     });
   } catch (error) {
     console.log("Error in firebase", error.message);
-    
+
     return res.status(401).json({ message: error.message, success: false });
   }
 };
+
+export const updateProfile = async (req, res) => {};

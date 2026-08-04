@@ -14,7 +14,7 @@ const PrevReportBanner = () => {
 
   <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
     <div>
-      <p className="text-violet uppercase font-mono tracking-wider text-sm">
+      <p className="text-violet uppercase font-sans tracking-wider text-sm">
         // Resume Library
       </p>
 
@@ -45,7 +45,7 @@ const PrevReportBanner = () => {
       <div className="border-t w-150 border-line mb-16 mx-auto" />
       <div className="flex items-baseline-last gap-7">
         <div>
-          <p className="text-violet uppercase font-mono tracking-wider text-sm">
+          <p className="text-violet uppercase font-sans tracking-wider text-sm">
             // Previous Reports
           </p>
           <h1 className="max-w-4xl mt-4 text-4xl sm:text-5xl lg:text-7xl font-black leading-none  text-ink font- scale-y-75  wrap-break-word">

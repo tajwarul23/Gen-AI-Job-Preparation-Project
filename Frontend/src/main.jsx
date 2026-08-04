@@ -5,15 +5,22 @@ import App from "./App.jsx";
 import { AuthProvider } from "./features/Auth/auth.context.jsx";
 import { InterviewProvider } from "./features/interview/interview.context.jsx";
 import { ResumeProvider } from "./features/ResumeBuilder/resume.context.jsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
+const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <AuthProvider>
-      <InterviewProvider>
-        <ResumeProvider>
-          <App />
-        </ResumeProvider>
-      </InterviewProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <InterviewProvider>
+          <ResumeProvider>
+            <App />
+          </ResumeProvider>
+        </InterviewProvider>
+      </AuthProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   </StrictMode>,
 );

@@ -24,7 +24,7 @@ const AllResumes = () => {
         <div className="border-t border-line max-w-6xl mx-auto" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-8">
-            <p className="text-violet uppercase font-mono tracking-wider text-sm">
+            <p className="text-violet uppercase font-sans tracking-wider text-sm">
               // All Resumes
             </p>
 
@@ -52,7 +52,7 @@ const AllResumes = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <p className="text-violet uppercase font-mono tracking-wider text-sm">
+          <p className="text-violet uppercase font-sans tracking-wider text-sm">
             // All Resumes
           </p>
 

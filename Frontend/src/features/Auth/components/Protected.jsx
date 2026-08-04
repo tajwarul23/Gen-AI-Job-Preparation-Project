@@ -19,3 +19,23 @@ const Protected = ({children}) => {
 }
 
 export default Protected
+
+/**
+ * <Route path="/recruiter/dashboard" element={
+  <Protected allowedRoles={["recruiter", "company_admin"]}>
+    <RecruiterDashboard />
+  </Protected>
+} />
+ * -----------------------------------------------------
+const Protected = ({ children, allowedRoles }) => {
+  const { user, isInitializing, loading } = useAuth();
+  const location = useLocation();
+
+  if (isInitializing || loading) return <SpinLoader />;
+  if (!user) return <Navigate to="/login" state={{ from: location }} replace />;
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/dashboard" replace />; // wrong persona trying to reach a role-gated route
+  }
+  return children;
+};
+ */

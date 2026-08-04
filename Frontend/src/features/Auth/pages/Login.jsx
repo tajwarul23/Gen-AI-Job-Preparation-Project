@@ -1,178 +1,123 @@
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Hooks/useAuth.js";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { loginSchema } from "../../../Schema/loginSchema.js";
-import { useEffect, useState } from "react";
-import { FaRegEyeSlash } from "react-icons/fa6";
-import { FaRegEye } from "react-icons/fa6";
-import toast from "react-hot-toast";
-
+import { useState } from "react";
 
 import { FcGoogle } from "react-icons/fc";
+import { ArrowLeft, Key, Terminal } from "lucide-react";
+
+import { routeAfterAuth } from "../../../Utils/routeAfterAuth.js";
 const Login = () => {
-  const { loading, handleLogin, error, handleGoogleLogin,googleLoading } = useAuth();
+  const [isCandidateLoading, setIsCandidateLoading] = useState(false);
+  const [isRecruiterLoading, setIsRecruiterLoading] = useState(false);
+
   const navigate = useNavigate();
-  const location = useLocation();
-  
-  const handleGoogleLoginClick = async () => {
+  const { handleGoogleLogin } = useAuth();
+  const handleContinue = async (intent) => {
+    sessionStorage.setItem("authIntent", intent);
+    if (intent === "recruiter") setIsRecruiterLoading(true);
+    else if (intent === "candidate") setIsCandidateLoading(true);
+
     try {
-    const res =  await handleGoogleLogin();
-    if (res?.success) {
-        toast.success(res.message || "Login successful!");
-        navigate(from, { replace: true });
+      const data = await handleGoogleLogin();
+      if (data?.success) {
+        routeAfterAuth(data.user, intent, navigate);
       }
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong");
-      console.log(error);
-      
+    } finally {
+      setIsCandidateLoading(false);
+      setIsRecruiterLoading(false);
     }
   };
-  const from = location.state?.from?.pathname || "/";
-  const {
-    register,
-    handleSubmit,
-    setError,
-    formState: { errors, isValid },
-  } = useForm({
-    resolver: zodResolver(loginSchema),
-    mode: "onTouched",
-  });
-  useEffect(() => {
-    if (error) toast.error(error);
-  }, [error]);
-  const [showPassword, setShowPassword] = useState(false);
-
-  const onSubmit = async (data) => {
-    try {
-      const res = await handleLogin(data);
-      if (res?.success) {
-        toast.success(res.message || "Login successful!");
-        navigate(from, { replace: true });
-      }
-    } catch (error) {
-      const message = error.response?.data?.message || "Something went wrong";
-      setError("root", { message });
-    }
-  };
-
   return (
-    <main className="min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-surface text-white rounded-2xl shadow-lg p-8">
-        <h1 className="text-2xl sm:text-3xl font-semibold text-center mb-8">
-          Login
-        </h1>
+    <div className="bg-app text-ink min-h-screen flex flex-col justify-center items-center px-4 py-12 font-sans relative overflow-hidden">
+      {/* Background radial highlight */}
+      <div className="absolute w-[600px] h-[600px] bg-violet/10 rounded-full blur-[140px] pointer-events-none" />
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {/* Email */}
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-display text-gray-300">Email</label>
+      {/* Back button */}
+      <button
+        onClick={() => navigate("/")}
+        className="absolute top-6 left-6 text-muted hover:text-ink transition-colors text-sm flex items-center gap-2 cursor-pointer font-sans"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        BACK TO MAIN
+      </button>
 
-            <input
-              type="email"
-              placeholder="Enter Email Address"
-              {...register("email")}
-              className="px-4 py-3 rounded-lg bg-overlay border border-line
-              focus:outline-none focus:ring-2 focus:ring-violet"
-            />
+      {/* Dual Login Container */}
+      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 bg-surface border border-line rounded-2xl overflow-hidden shadow-2xl relative">
+        <div className="absolute top-0 right-1/2 w-[1px] h-full bg-line hidden md:block" />
 
-            {errors.email && (
-              <p className="text-red-400 text-sm">{errors.email.message}</p>
-            )}
-          </div>
-
-          {/* Password */}
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-display text-gray-300">
-              Password
-            </label>
-
-            <div className="relative w-full">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter Password"
-                {...register("password")}
-                className="w-full px-4 py-3 pr-12 rounded-lg bg-overlay border border-line
-    focus:outline-none focus:ring-2 focus:ring-violet"
-              />
-
-              {showPassword ? (
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {" "}
-                  <FaRegEye
-                    className="absolute right-4 top-1/2 -translate-y-1/2
-    text-muted cursor-pointer"
-                  />
-                </button>
-              ) : (
-                <button>
-                  <FaRegEyeSlash
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2
-    text-muted cursor-pointer"
-                  />
-                </button>
-              )}
+        {/* Left: Candidate Login */}
+        <div className="p-8 sm:p-12 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-6 text-xl">
+              <Terminal className="w-5 h-5 text-teal" />
+              <h3 className=" font-sans text-ink tracking-wider">
+                CANDIDATE PORTAL
+              </h3>
             </div>
 
-            {errors.password && (
-              <p className="text-red-400 text-sm">{errors.password.message}</p>
-            )}
+            <p className="text-muted text-sm mb-8 leading-relaxed font-sans">
+              Build your resume, analyze it against real jobs, apply, and prep
+              with AI-generated practice questions — all tracked in one place.
+            </p>
           </div>
 
-          {errors.root && (
-            <p className="text-red-400 text-sm text-center">
-              {errors.root.message}
-            </p>
-          )}
-          <button
-            type="submit"
-            disabled={loading || !isValid}
-            className="cursor-pointer w-full py-3 rounded-lg
-  bg-violet hover:bg-violet/80 active:scale-95
-  transition font-semibold flex items-center justify-center gap-2
-  disabled:opacity-70 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Logging in...
-              </>
-            ) : (
-              "Login"
-            )}
-          </button>
+          <div className="space-y-4">
+            <button
+              onClick={() => handleContinue("candidate")}
+              className="cursor-pointer w-full flex items-center justify-center gap-3 bg-white text-gray-700 border border-gray-300 rounded-lg px-4 py-3 shadow-sm mt-5 hover:bg-gray-100 hover:shadow-md transition-all duration-200 font-medium"
+            >
+              <FcGoogle className="text-2xl" />
 
-          <h1 className="text-md">
-            Not registered yet?
-            <Link className="ml-1 font-mono text-violet" to="/register">
-              Register
-            </Link>
-          </h1>
-        </form>
-          <button
-        onClick={handleGoogleLoginClick}
-        className="cursor-pointer w-full flex items-center justify-center gap-3 bg-white text-gray-700 border border-gray-300 rounded-lg px-4 py-3 shadow-sm mt-5 hover:bg-gray-100 hover:shadow-md transition-all duration-200 font-medium"
-      >
-        <FcGoogle className="text-2xl" />
-        
-         {googleLoading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                Logging in with Google...
-              </>
-            ) : (
-              <span>Continue with Google</span>
-            )}
-      </button>
+              {isCandidateLoading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                  Logging in with Google...
+                </>
+              ) : (
+                <span>Continue with Google</span>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Right: Recruiter Login */}
+        <div className="p-8 sm:p-12 flex flex-col justify-between bg-overlay/50">
+          <div>
+            <div className="flex items-center gap-2 mb-6 text-xl text-ink">
+              <Key className="w-5 h-5 text-violet-text" />
+              <span className=" font-sans  tracking-wider">
+                RECRUITER PORTAL
+              </span>
+            </div>
+
+            <p className="text-muted text-sm mb-8 leading-relaxed font-sans">
+              Applicants show up already scored by fit — no more reading resumes
+              one by one. And when you're posting a new role, AI helps you write
+              the description and figure out what to actually screen for.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <button
+              onClick={() => handleContinue("recruiter")}
+              className="cursor-pointer w-full flex items-center justify-center gap-3 bg-white text-gray-700 border border-gray-300 rounded-lg px-4 py-3 shadow-sm mt-5 hover:bg-gray-100 hover:shadow-md transition-all duration-200 font-medium"
+            >
+              <FcGoogle className="text-2xl" />
+
+              {isRecruiterLoading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                  Logging in with Google...
+                </>
+              ) : (
+                <span>Continue with Google</span>
+              )}
+            </button>
+          </div>
+        </div>
       </div>
-    
-    </main>
+    </div>
   );
 };
 

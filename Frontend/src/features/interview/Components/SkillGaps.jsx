@@ -43,7 +43,7 @@ const SkillGaps = () => {
                 <div
                   className={`w-2.5 h-2.5 rounded-full shrink-0 ${config.dot}`}
                 />
-                <span className="text-sm text-gray-200 tracking-tight font-mono">
+                <span className="text-sm text-gray-200 tracking-tight font-sans">
                   {item.skill}
                 </span>
               </div>

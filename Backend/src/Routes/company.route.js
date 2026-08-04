@@ -1,5 +1,5 @@
 import express from "express";
-import { createCompanyController, generateInviteController, joinCompanyController, updateCompanyController, updateCompanyLogoController } from "../Controllers/Company.controller.js";
+import { createCompanyController, generateInviteController, getCompanyController, joinCompanyController, updateCompanyController, updateCompanyLogoController } from "../Controllers/Company.controller.js";
 import { authorizeRoles, verifyToken } from "../Middlewares/Auth.middleware.js";
 import upload from "../Middlewares/File.middleware.js";
 
@@ -36,5 +36,12 @@ companyRouter.patch("/update", verifyToken, authorizeRoles("company_admin"), upd
  * @access Private [only company admin]
  */
 companyRouter.patch("/updateLogo", verifyToken, authorizeRoles("company_admin"),upload.single("logo"), updateCompanyLogoController)
+
+/**
+ * @route GET /api/company/
+ * @description get company info
+ * @access Private [company_admin || recruiter]
+ */
+companyRouter.get("/", verifyToken, authorizeRoles("company_admin", "recruiter"), getCompanyController)
 
 export default companyRouter;

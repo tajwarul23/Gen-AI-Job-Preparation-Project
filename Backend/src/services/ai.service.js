@@ -471,7 +471,14 @@ Generate the report in the following format:
      - Missing
 
 8. Experience Evaluation
-   - Evaluate whether the candidate's professional experience appears sufficient for the role and explain your reasoning.
+   - Look for professional experience, internships, work history, or employment-equivalent activity (e.g. freelance work, contract roles) in the resume.
+   - If such experience IS present:
+     - Evaluate whether it appears sufficient for the role's seniority and requirements.
+     - Reference specific roles, durations, or responsibilities from the resume that inform your judgment.
+   - If NO professional experience is present in the resume (e.g. the candidate only lists projects, education, or certifications):
+     - State this explicitly: note that no professional experience was found in the resume.
+     - Do not infer or assume experience level from projects, education, or skills alone.
+     - Briefly note whether the listed projects/education could reasonably substitute for experience at an entry level, without treating them as equivalent to professional experience.
 
 
 
@@ -481,7 +488,10 @@ Important Guidelines:
 - Highlight relevant projects and experiences that demonstrate alignment with the role.
 - Do not invent or assume any projects, experience, certifications, skills, or qualifications that are not present in the provided information.
 - If there is insufficient evidence for a conclusion, explicitly state that it cannot be determined.
-- Keep the assessment objective, concise, and suitable for recruiters making hiring decisions.`;
+- Keep the assessment objective, concise, and suitable for recruiters making hiring decisions.
+- If the resume contains no professional work experience, explicitly state this in the Experience Evaluation section rather than leaving it vague or fabricating an assessment.
+- Never present projects, coursework, or certifications as if they were professional experience — evaluate them separately and label them accurately.
+`;
 
   try {
     const response = await ai.chat.completions.create({
@@ -521,6 +531,8 @@ Do not add extra fields.
     let parsed;
     try {
       parsed = JSON.parse(response.choices[0].message.content);
+      console.log("rc ==>", parsed);
+      
     } catch (error) {
       throw new ApiError(501, "AI validation failed");
     }

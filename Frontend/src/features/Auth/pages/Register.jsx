@@ -215,7 +215,7 @@ const Register = () => {
           <h1 className="text-md">
             Already Registered?
             <Link
-              className="ml-1 font-mono text-violet"
+              className="ml-1 font-sans text-violet"
               to="/login"
               state={{ from: location.state?.from }}
             >

@@ -1,3 +1,4 @@
+import { Cpu } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
@@ -12,14 +13,18 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           
           {/* Logo */}
-          <Link
-            to="/"
-            className="text-xl font-bold font-mono shrink-0"
-          >
-            <span className="text-violet">⬡</span>
-            <span className="text-ink ml-2">Prep</span>
-            <span className="text-violet">Lab</span>
-          </Link>
+           <div 
+          // onClick={() => navigate("landing")}
+          className="flex items-center gap-2.5 cursor-pointer group"
+        >
+          <div className="w-10 h-10 rounded-xl bg-violet/10 border border-violet-border flex items-center justify-center text-violet-text group-hover:bg-violet/20 group-hover:border-violet transition-colors">
+            <Cpu className="w-7 h-7 animate-pulse" />
+          </div>
+          <div>
+            <span className="font-display font-bold text-ink text-2xl tracking-relax">PrepLab</span>
+            
+          </div>
+        </div>
 
           {/* Copyright */}
           <p className="text-muted text-xs text-center">

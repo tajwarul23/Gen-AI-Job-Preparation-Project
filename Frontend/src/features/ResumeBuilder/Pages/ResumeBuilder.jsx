@@ -24,7 +24,7 @@ const Field = ({ error, children }) => (
       {children}
     </div>
     {error && (
-      <span className="font-mono text-[11px] text-[#f7a090] pl-1 flex items-center gap-1">
+      <span className="font-sans text-[11px] text-[#f7a090] pl-1 flex items-center gap-1">
         <span>✗</span> {error}
       </span>
     )}
@@ -32,10 +32,10 @@ const Field = ({ error, children }) => (
 );
 
 const inputClass =
-  "w-full bg-transparent font-mono text-[13px] text-[#c8c8e0] placeholder:text-[#5a5a78] outline-none ";
+  "w-full bg-transparent font-sans text-[13px] text-[#c8c8e0] placeholder:text-[#5a5a78] outline-none ";
 
 const textareaClass =
-  "w-full bg-transparent font-mono text-[13px] text-[#c8c8e0] placeholder:text-[#5a5a78] outline-none resize-none leading-relaxed";
+  "w-full bg-transparent font-sans text-[13px] text-[#c8c8e0] placeholder:text-[#5a5a78] outline-none resize-none leading-relaxed";
 
 const Section = ({ title, children }) => (
   <div className="mb-7">
@@ -51,7 +51,7 @@ const Section = ({ title, children }) => (
 
 const CharCount = ({ current, max }) => (
   <span
-    className={`font-mono text-[10px] ml-auto flex-shrink-0 ${
+    className={`font-sans text-[10px] ml-auto flex-shrink-0 ${
       current > max ? "text-[#f7a090]" : "text-[#3a3a55]"
     }`}
   >
@@ -156,7 +156,7 @@ const ResumeBuilder = () => {
   return (
     <div className="max-w-7xl mx-auto">
       <div className="mt-10">
-        <p className="text-violet uppercase font-mono tracking-wider text-sm">
+        <p className="text-violet uppercase font-sans tracking-wider text-sm">
           // Resume Builder
         </p>
         <h1 className=" text-4xl sm:text-5xl lg:text-7xl font-black leading-none  text-ink font-display scale-y-75  wrap-break-word">
@@ -268,7 +268,7 @@ const ResumeBuilder = () => {
             {/* Skills */}
             <Section title="Skills">
               {skillFields.length === 0 && (
-                <p className="font-mono text-[12px] text-[#5a5a78] text-center py-2">
+                <p className="font-sans text-[12px] text-[#5a5a78] text-center py-2">
                   No Skills added — click below to add one
                 </p>
               )}
@@ -283,7 +283,7 @@ const ResumeBuilder = () => {
                   >
                     {/* header */}
                     <div className="flex items-center justify-between mb-1">
-                      <span className="font-mono text-[11px] text-[#3a3a55] uppercase tracking-widest">
+                      <span className="font-sans text-[11px] text-[#3a3a55] uppercase tracking-widest">
                         Skill #{index + 1}
                       </span>
 
@@ -291,7 +291,7 @@ const ResumeBuilder = () => {
                         <button
                           type="button"
                           onClick={() => removeSkill(index)}
-                          className="font-mono text-[11px] text-[#5a5a78] hover:text-[#f7a090] transition-colors duration-150 cursor-pointer"
+                          className="font-sans text-[11px] text-[#5a5a78] hover:text-[#f7a090] transition-colors duration-150 cursor-pointer"
                         >
                           Remove
                         </button>
@@ -335,7 +335,7 @@ const ResumeBuilder = () => {
                     description: "",
                   })
                 }
-                className="w-full border border-dashed border-[#2a2a38] hover:border-[rgba(124,106,247,0.4)] text-[#5a5a78] hover:text-[#a99af7] font-mono text-[12px] rounded-[10px] py-3 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
+                className="w-full border border-dashed border-[#2a2a38] hover:border-[rgba(124,106,247,0.4)] text-[#5a5a78] hover:text-[#a99af7] font-sans text-[12px] rounded-[10px] py-3 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
               >
                 <span className="text-[16px] leading-none">+</span>
                 Add another Skill
@@ -345,7 +345,7 @@ const ResumeBuilder = () => {
             {/* ── Work Experience ── */}
             <Section title="Work Experience (Optional)">
               {fields.length === 0 && (
-                <p className="font-mono text-[12px] text-[#5a5a78] text-center py-2">
+                <p className="font-sans text-[12px] text-[#5a5a78] text-center py-2">
                   No experience added — click below to add a position
                 </p>
               )}
@@ -356,14 +356,14 @@ const ResumeBuilder = () => {
                 >
                   {/* block header */}
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-mono text-[11px] text-[#3a3a55] uppercase tracking-widest">
+                    <span className="font-sans text-[11px] text-[#3a3a55] uppercase tracking-widest">
                       Position #{index + 1}
                     </span>
                     {fields.length > 0 && (
                       <button
                         type="button"
                         onClick={() => remove(index)}
-                        className="font-mono text-[11px] text-[#5a5a78] hover:text-[#f7a090] transition-colors duration-150 cursor-pointer"
+                        className="font-sans text-[11px] text-[#5a5a78] hover:text-[#f7a090] transition-colors duration-150 cursor-pointer"
                       >
                         Remove
                       </button>
@@ -445,7 +445,7 @@ const ResumeBuilder = () => {
                     achievements: "",
                   })
                 }
-                className="w-full border border-dashed border-[#2a2a38] hover:border-[rgba(124,106,247,0.4)] text-[#5a5a78] hover:text-[#a99af7] font-mono text-[12px] rounded-[10px] py-3 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
+                className="w-full border border-dashed border-[#2a2a38] hover:border-[rgba(124,106,247,0.4)] text-[#5a5a78] hover:text-[#a99af7] font-sans text-[12px] rounded-[10px] py-3 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
               >
                 <span className="text-[16px] leading-none">+</span> Add another
                 position
@@ -455,7 +455,7 @@ const ResumeBuilder = () => {
             {/* ── Education ── */}
             <Section title="Education">
               {educationFields.length === 0 && (
-                <p className="font-mono text-[12px] text-[#5a5a78] text-center py-2">
+                <p className="font-sans text-[12px] text-[#5a5a78] text-center py-2">
                   No Education added — click below to add one
                 </p>
               )}
@@ -466,7 +466,7 @@ const ResumeBuilder = () => {
                 >
                   {/* Header */}
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-mono text-[11px] text-[#3a3a55] uppercase tracking-widest">
+                    <span className="font-sans text-[11px] text-[#3a3a55] uppercase tracking-widest">
                       Education #{index + 1}
                     </span>
 
@@ -474,7 +474,7 @@ const ResumeBuilder = () => {
                       <button
                         type="button"
                         onClick={() => removeEducation(index)}
-                        className="font-mono text-[11px] text-[#5a5a78] hover:text-[#f7a090] cursor-pointer"
+                        className="font-sans text-[11px] text-[#5a5a78] hover:text-[#f7a090] cursor-pointer"
                       >
                         Remove
                       </button>
@@ -532,7 +532,7 @@ const ResumeBuilder = () => {
                     result: "",
                   })
                 }
-                className="cursor-pointer w-full border border-dashed border-[#2a2a38] hover:border-[rgba(124,106,247,0.4)] text-[#5a5a78] hover:text-[#a99af7] font-mono text-[12px] rounded-[10px] py-3 transition-all duration-200"
+                className="cursor-pointer w-full border border-dashed border-[#2a2a38] hover:border-[rgba(124,106,247,0.4)] text-[#5a5a78] hover:text-[#a99af7] font-sans text-[12px] rounded-[10px] py-3 transition-all duration-200"
               >
                 + Add Education
               </button>
@@ -542,7 +542,7 @@ const ResumeBuilder = () => {
 
             <Section title="Certificates (optional)">
               {certificationFields.length === 0 && (
-                <p className="font-mono text-[12px] text-[#5a5a78] text-center py-2">
+                <p className="font-sans text-[12px] text-[#5a5a78] text-center py-2">
                   No Certifications added — click below to add one
                 </p>
               )}
@@ -559,14 +559,14 @@ const ResumeBuilder = () => {
                   >
                     {/* header */}
                     <div className="flex items-center justify-between mb-1">
-                      <span className="font-mono text-[11px] text-[#3a3a55] uppercase tracking-widest">
+                      <span className="font-sans text-[11px] text-[#3a3a55] uppercase tracking-widest">
                         Certification #{index + 1}
                       </span>
 
                       <button
                         type="button"
                         onClick={() => removeCertification(index)}
-                        className="font-mono text-[11px] text-[#5a5a78] hover:text-[#f7a090] transition-colors duration-150 cursor-pointer"
+                        className="font-sans text-[11px] text-[#5a5a78] hover:text-[#f7a090] transition-colors duration-150 cursor-pointer"
                       >
                         Remove
                       </button>
@@ -638,7 +638,7 @@ const ResumeBuilder = () => {
                     credentialUrl: "",
                   })
                 }
-                className="w-full border border-dashed border-[#2a2a38] hover:border-[rgba(124,106,247,0.4)] text-[#5a5a78] hover:text-[#a99af7] font-mono text-[12px] rounded-[10px] py-3 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
+                className="w-full border border-dashed border-[#2a2a38] hover:border-[rgba(124,106,247,0.4)] text-[#5a5a78] hover:text-[#a99af7] font-sans text-[12px] rounded-[10px] py-3 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
               >
                 <span className="text-[16px] leading-none">+</span>
                 Add another Certificate
@@ -647,7 +647,7 @@ const ResumeBuilder = () => {
             {/* ── Projects ── */}
             <Section title="Projects">
               {projectFields.length === 0 && (
-                <p className="font-mono text-[12px] text-[#5a5a78] text-center py-2">
+                <p className="font-sans text-[12px] text-[#5a5a78] text-center py-2">
                   No projects added — click below to add one
                 </p>
               )}
@@ -662,14 +662,14 @@ const ResumeBuilder = () => {
                   >
                     {/* header */}
                     <div className="flex items-center justify-between mb-1">
-                      <span className="font-mono text-[11px] text-[#3a3a55] uppercase tracking-widest">
+                      <span className="font-sans text-[11px] text-[#3a3a55] uppercase tracking-widest">
                         Project #{index + 1}
                       </span>
 
                       <button
                         type="button"
                         onClick={() => removeProject(index)}
-                        className="font-mono text-[11px] text-[#5a5a78] hover:text-[#f7a090] transition-colors duration-150 cursor-pointer"
+                        className="font-sans text-[11px] text-[#5a5a78] hover:text-[#f7a090] transition-colors duration-150 cursor-pointer"
                       >
                         Remove
                       </button>
@@ -737,7 +737,7 @@ const ResumeBuilder = () => {
                     description: "",
                   })
                 }
-                className="w-full border border-dashed border-[#2a2a38] hover:border-[rgba(124,106,247,0.4)] text-[#5a5a78] hover:text-[#a99af7] font-mono text-[12px] rounded-[10px] py-3 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
+                className="w-full border border-dashed border-[#2a2a38] hover:border-[rgba(124,106,247,0.4)] text-[#5a5a78] hover:text-[#a99af7] font-sans text-[12px] rounded-[10px] py-3 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
               >
                 <span className="text-[16px] leading-none">+</span>
                 Add another project
@@ -755,7 +755,7 @@ const ResumeBuilder = () => {
 
             {/* Global form error summary (only on submit) */}
             {Object.keys(errors).length > 0 && (
-              <p className="mt-3 text-center font-mono text-[12px] text-[#f7a090]">
+              <p className="mt-3 text-center font-sans text-[12px] text-[#f7a090]">
                 ✗ Fix the errors above before generating your resume
                 {errors.name}
               </p>

@@ -26,7 +26,7 @@ const AllReports = () => {
       <div className="my-15 text-white font-display">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-8">
-            <p className="text-violet uppercase font-mono tracking-wider text-sm">
+            <p className="text-violet uppercase font-sans tracking-wider text-sm">
               // Interview Reports
             </p>
 
@@ -56,7 +56,7 @@ const AllReports = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <p className="text-violet uppercase font-mono tracking-wider text-sm">
+          <p className="text-violet uppercase font-sans tracking-wider text-sm">
             // Interview Reports
           </p>
 

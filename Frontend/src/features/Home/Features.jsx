@@ -9,7 +9,7 @@ const Features = () => {
         {/* Description */}
         <div className="flex flex-wrap sm:flex-nowrap items-baseline-last gap-6">
           <div>
-            <p className="text-violet uppercase font-mono tracking-wider text-sm mb-4">
+            <p className="text-violet uppercase font-sans tracking-wider text-sm mb-4">
               // What you get
             </p>
 
