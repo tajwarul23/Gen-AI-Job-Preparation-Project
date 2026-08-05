@@ -1,16 +1,25 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { createCompanySchema } from "../../../Schema/createCompanySchema";
 import { motion } from "motion/react";
-import { Building2Icon, Link2, UploadCloud, X } from "lucide-react";
+import { Building2Icon, UploadCloud, X } from "lucide-react";
+import Select from "react-select";
+import countryList from "react-select-country-list";
+import { useCreateCompany } from "../Hooks/useCompany";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const CreateCompanyForm = () => {
+
+  const {mutate:createCompany, isPending, isError, error} = useCreateCompany();
+
   const {
     register,
     handleSubmit,
     setValue,
     watch,
+    control,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(createCompanySchema),
@@ -27,10 +36,12 @@ const CreateCompanyForm = () => {
   const fileInputRef = useRef(null);
   const logo = watch("logo");
 
+ const countries = useMemo(() => countryList().getData(), []);
+
   const applyLogoFile = useCallback(
     (file) => {
       if (!file) return;
-      // Optional: guard against non-images / oversized files before setting.
+      
       if (!file.type.startsWith("image/")) return;
       setValue("logo", file, { shouldValidate: true, shouldDirty: true });
     },
@@ -71,7 +82,7 @@ const CreateCompanyForm = () => {
     setValue("logo", null, { shouldValidate: true, shouldDirty: true });
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
-
+  const navigate = useNavigate();
   const onSubmit = (data) => {
     const formData = new FormData();
     formData.append("companyName", data.companyName);
@@ -85,8 +96,16 @@ const CreateCompanyForm = () => {
 
     console.log([...formData.entries()]);
     console.log(data.logo);
+    createCompany(formData, {
+      onSuccess: ()=> navigate("/recruiter/dashboard")
+    })
   };
 
+  useEffect(()=>{
+    if(isError){
+      toast.error(error?.response?.data?.message || "Failed to Initialize Company")
+    }
+  },[error])
   return (
     /** Create Company */
     <motion.div
@@ -96,6 +115,7 @@ const CreateCompanyForm = () => {
       className="bg-surface border border-line rounded-2xl p-6 sm:p-8 flex flex-col justify-between"
     >
       <form
+      
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col justify-between h-full space-y-6"
       >
@@ -137,13 +157,11 @@ const CreateCompanyForm = () => {
                 About Company
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-3 text-muted text-sm">
-                  <Link2 className="w-4 h-4" />
-                </span>
+                
                 <textarea
                   placeholder=""
                   {...register("aboutCompany")}
-                  className="w-full bg-overlay text-ink text-sm border border-line rounded-xl pl-9 pr-3 p-3 focus:outline-none focus:border-teal placeholder:text-muted font-sans"
+                  className="w-full bg-overlay text-ink text-sm border border-line rounded-xl  pr-3 p-3 focus:outline-none focus:border-teal placeholder:text-muted font-sans"
                 ></textarea>
               </div>
               {errors.aboutCompany && (
@@ -186,36 +204,35 @@ const CreateCompanyForm = () => {
             </div>
 
             {/* Country */}
-            <div>
-              <label className="block text-xs font-mono text-muted uppercase mb-1.5 font-bold">
-                Country
-              </label>
-              <select
-                {...register("country")}
-                className="w-full bg-overlay text-ink text-sm border border-line rounded-xl p-3 focus:outline-none focus:border-teal cursor-pointer font-sans"
-              >
-                <option value="TECHNOLOGY">TECHNOLOGY</option>
-                <option value="FINANCE">FINANCE</option>
-                <option value="HEALTHCARE">HEALTHCARE</option>
-                <option value="EDUCATION">EDUCATION</option>
-                <option value="E_COMMERCE">E-COMMERCE</option>
-                <option value="MARKETING">MARKETING</option>
-                <option value="CONSULTING">CONSULTING</option>
-                <option value="REAL_ESTATE">REAL ESTATE</option>
-                <option value="MANUFACTURING">MANUFACTURING</option>
-                <option value="LOGISTICS">LOGISTICS</option>
-                <option value="TELECOMMUNICATION">TELECOMMUNICATION</option>
-                <option value="MEDIA">MEDIA</option>
-                <option value="GOVERNMENT">GOVERNMENT</option>
-                <option value="NON_PROFIT">NON_PROFIT</option>
-                <option value="OTHER">OTHER</option>
-              </select>
-              {errors.country && (
-                <p className="text-red-400 text-[11px] mt-1 font-mono">
-                  {errors.country.message}
-                </p>
-              )}
-            </div>
+       <div>
+  <label className="block text-xs font-mono text-muted uppercase mb-1.5 font-bold">
+    Country
+  </label>
+
+  <Controller
+  
+    name="country"
+    control={control}
+    rules={{ required: "Country is required" }}
+    render={({ field }) => (
+      <Select
+      
+        options={countries}
+        placeholder="Select a country"
+        value={countries.find(
+          (country) => country.value === field.value
+        )}
+        onChange={(option) => field.onChange(option.value)}
+      />
+    )}
+  />
+
+  {errors.country && (
+    <p className="text-red-400 text-[11px] mt-1 font-mono">
+      {errors.country.message}
+    </p>
+  )}
+</div>
 
             {/* Upload logo drag-and-drop */}
             <div>
@@ -284,10 +301,11 @@ const CreateCompanyForm = () => {
 
         <div className="pt-4">
           <button
+          disabled={isPending}
             type="submit"
             className="w-full py-3 bg-teal hover:bg-teal/90 text-app font-semibold text-xs rounded-xl transition-all cursor-pointer disabled:opacity-50 shadow-md shadow-teal/10 font-sans"
           >
-            Initialize Organization
+            {isPending? "Initializing":"Initialize Company"}
           </button>
         </div>
       </form>

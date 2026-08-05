@@ -78,8 +78,8 @@ export const createCompanyController = asyncHandler(async (req, res) => {
       new ApiResponse(
         201,
         company,
-        updatedUser,
         "Company Created Successfully",
+        { updatedUser },
       ),
     );
 });

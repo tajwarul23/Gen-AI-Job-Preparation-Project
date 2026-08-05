@@ -36,35 +36,45 @@ const App = () => {
         }}
       />
       <Router>
-        <Routes>
-          {/* Public Auth Routes */}
-          <Route path="/login" element={<Suspense fallback={<SpinLoader/>}><Login /></Suspense>} />
-          <Route path="/register" element={<Suspense fallback={<SpinLoader/>}><Register /></Suspense>} />
-          
+  <Routes>
+    {/* Public Auth Routes */}
+    <Route path="/login" element={<Suspense fallback={<SpinLoader/>}><Login /></Suspense>} />
+    <Route path="/register" element={<Suspense fallback={<SpinLoader/>}><Register /></Suspense>} />
 
-          <Route path="*" element={<NotFound />} />
-          {/* Layout with Navbar  */}
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<HomePage />} />
-            {/* Protected Routes */}
-            <Route element={<ProtectedLayout />}>
-            <Route path="/onboarding/company" element={<Suspense fallback={<SpinLoader/>}><OnBoardCompany/></Suspense>} />
-              <Route path="/candidate/dashboard" element={<Suspense fallback={<SpinLoader/>}><CandidateDashBoard/></Suspense>}/>
-              <Route path="/recruiter/dashboard" element={<Suspense fallback={<SpinLoader/>}><RecruiterDashBoard/></Suspense>}/>
-              <Route path="/resume-builder" element={<Suspense fallback={<SpinLoader/>}><ResumeBuilder /></Suspense>} />
-              <Route path="/resume/:resumeId" element={<Suspense fallback={<SpinLoader/>}><ResumeViewer /></Suspense>} />
-              <Route path="/resume/allResume" element={<Suspense fallback={<SpinLoader/>}><AllResumes /></Suspense>} />
+    {/* Layout with Navbar */}
+    <Route element={<MainLayout />}>
+      <Route path="/" element={<HomePage />} />
 
-              <Route path="/resume-analyzer" element={<Suspense fallback={<SpinLoader/>}><ResumeAnalyzer></ResumeAnalyzer></Suspense>} />
-              <Route path="/interview/allReports" element={<Suspense fallback={<SpinLoader/>}><AllReports /></Suspense>} />
-              <Route
-                path="/interview/:interviewId"
-                element={<Suspense fallback={<SpinLoader/>}><InterviewReport /></Suspense>}
-              />
-            </Route>
-          </Route>
-        </Routes>
-      </Router>
+      {/* Protected — any authenticated user, no role restriction */}
+      <Route element={<ProtectedLayout />}>
+        <Route path="/onboarding/company" element={<Suspense fallback={<SpinLoader/>}><OnBoardCompany/></Suspense>} />
+      </Route>
+
+      {/* Protected — candidate only */}
+      <Route element={<ProtectedLayout allowedRoles={["candidate"]} />}>
+        <Route path="/candidate/dashboard" element={<Suspense fallback={<SpinLoader/>}><CandidateDashBoard/></Suspense>} />
+        <Route path="/resume-builder" element={<Suspense fallback={<SpinLoader/>}><ResumeBuilder /></Suspense>} />
+        <Route path="/resume/:resumeId" element={<Suspense fallback={<SpinLoader/>}><ResumeViewer /></Suspense>} />
+        <Route path="/resume/allResume" element={<Suspense fallback={<SpinLoader/>}><AllResumes /></Suspense>} />
+        <Route path="/resume-analyzer" element={<Suspense fallback={<SpinLoader/>}><ResumeAnalyzer /></Suspense>} />
+      </Route>
+
+      {/* Protected — recruiter only */}
+      <Route element={<ProtectedLayout allowedRoles={["recruiter", "company_admin"]} />}>
+        <Route path="/recruiter/dashboard" element={<Suspense fallback={<SpinLoader/>}><RecruiterDashBoard/></Suspense>} />
+      </Route>
+
+      {/* Protected — candidate or recruiter */}
+      <Route element={<ProtectedLayout allowedRoles={["candidate", "recruiter", "company_admin"]} />}>
+        <Route path="/interview/allReports" element={<Suspense fallback={<SpinLoader/>}><AllReports /></Suspense>} />
+        <Route path="/interview/:interviewId" element={<Suspense fallback={<SpinLoader/>}><InterviewReport /></Suspense>} />
+      </Route>
+
+      {/* 404 inside the layout so Navbar still shows */}
+      <Route path="*" element={<NotFound />} />
+    </Route>
+  </Routes>
+</Router>
     </div>
   );
 };

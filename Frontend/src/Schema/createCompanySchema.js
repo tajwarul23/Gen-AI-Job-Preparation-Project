@@ -5,23 +5,7 @@ export const createCompanySchema = z.object({
 
   aboutCompany: z.string().min(1, "About company is required"),
 
-  industry: z.enum([
-    "TECHNOLOGY",
-    "FINANCE",
-    "HEALTHCARE",
-    "EDUCATION",
-    "E_COMMERCE",
-    "MARKETING",
-    "CONSULTING",
-    "REAL_ESTATE",
-    "MANUFACTURING",
-    "LOGISTICS",
-    "TELECOMMUNICATION",
-    "MEDIA",
-    "GOVERNMENT",
-    "NON_PROFIT",
-    "OTHER",
-  ]),
+  industry: z.string().min(1, "Choose one industry"),
 
   country: z.string().min(1, "Country is required"),
 
@@ -38,8 +22,8 @@ logo: z.preprocess(
       .refine((file) => file.type.startsWith("image/"), {
         message: "Only image files are allowed",
       })
-      .refine((file) => file.size <= 3 * 1024 * 1024, {
-        message: "File size must be under 100MB",
+      .refine((file) => file.size <= 2 * 1024 * 1024, {
+        message: "File size must be under 2MB",
       })
   ),
 

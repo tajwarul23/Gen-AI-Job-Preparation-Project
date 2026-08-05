@@ -2,9 +2,9 @@
 import Protected from '../Auth/components/Protected'
 import { Outlet } from 'react-router-dom'
 
-const ProtectedLayout = () => {
+const ProtectedLayout = ({allowedRoles}) => {
   return (
-    <Protected>
+    <Protected allowedRoles={allowedRoles}>
         <Outlet/>
     </Protected>
   )

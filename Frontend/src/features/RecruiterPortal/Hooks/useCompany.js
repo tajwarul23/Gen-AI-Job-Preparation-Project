@@ -26,7 +26,17 @@ export const useCreateCompany = () => {
     mutationFn: createCompanyApi,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["company"] });
-      setUser(data.updatedUser);
+
+      const updatedUser =
+        data?.updatedUser ??
+        data?.data?.updatedUser ??
+        data?.user ??
+        null;
+
+      if (updatedUser) {
+        setUser(updatedUser);
+      }
+
       console.log("Company Created", data);
     },
     onError: (error) => {
