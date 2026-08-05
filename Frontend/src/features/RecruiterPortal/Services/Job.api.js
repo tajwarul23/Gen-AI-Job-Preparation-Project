@@ -15,13 +15,14 @@ export const getCompanyJobFeedApi = async()=>{
     return response.data;
 }
 
+// move this to candidate portal
 export const getCandidateJobFeedApi = async()=>{
     const response = await api.get("/");
     return response.data;
 }
 
-export const updateJobApi = async(jobId)=>{
-    const response = await api.patch(`/${jobId}`);
+export const updateJobApi = async(jobId, formData)=>{
+    const response = await api.patch(`/${jobId}`, formData);
     return response.data;
 }
 
@@ -31,6 +32,6 @@ export const deleteJobApi = async(jobId)=>{
 }
 
 export const generateJobDescriptionApi = async(formData)=>{
-    const response = await api.post(formData);
+    const response = await api.post("/generate-description", formData);
     return response.data;
 }

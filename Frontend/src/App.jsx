@@ -13,6 +13,10 @@ import CandidateDashBoard from "./features/Candidate/CandidateDashBoard.jsx";
 import RecruiterDashBoard from "./features/RecruiterPortal/Pages/RecruiterDashBoard.jsx";
 
 import OnBoardCompany from "./features/RecruiterPortal/Pages/OnBoardCompany.jsx";
+import JobFeed from "./features/RecruiterPortal/Pages/JobFeed.jsx";
+import JobStudio from "./features/RecruiterPortal/Pages/JobStudio.jsx";
+import CompanyProfile from "./features/RecruiterPortal/Pages/CompanyProfile.jsx";
+import RecruitPipeline from "./features/RecruiterPortal/Pages/RecruitPipeline.jsx";
 
 const Login = lazy(()=>import("./features/Auth/pages/Login.jsx"))
 const Register = lazy(()=>import("./features/Auth/pages/Register.jsx"))
@@ -62,6 +66,10 @@ const App = () => {
       {/* Protected — recruiter only */}
       <Route element={<ProtectedLayout allowedRoles={["recruiter", "company_admin"]} />}>
         <Route path="/recruiter/dashboard" element={<Suspense fallback={<SpinLoader/>}><RecruiterDashBoard/></Suspense>} />
+        <Route path="/recruiter/jobFeed" element={<Suspense fallback={<SpinLoader/>}><JobFeed/></Suspense>} />
+        <Route path="/recruiter/jobStudio" element={<Suspense fallback={<SpinLoader/>}><JobStudio/></Suspense>} />
+        <Route path="/recruiter/companyProfile" element={<Suspense fallback={<SpinLoader/>}><CompanyProfile/></Suspense>} />
+        <Route path="/recruiter/pipeline" element={<Suspense fallback={<SpinLoader/>}><RecruitPipeline/></Suspense>} />
       </Route>
 
       {/* Protected — candidate or recruiter */}

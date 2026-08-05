@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../Auth/Hooks/useAuth";
 import toast from "react-hot-toast";
-import { Cpu } from "lucide-react";
+import { Briefcase, Building2, Cpu, Rss, Users } from "lucide-react";
 
 
 const candidateNavLinks = [
@@ -13,8 +13,10 @@ const candidateNavLinks = [
 ];
 
 const recruiterNavLinks = [
-  { to: "/recruiter/dashboard", label: "Dashboard" },
-  { to: "/interview/allReports", label: "Reports" },
+  { to: "/recruiter/pipeline", label: "Recruit Pipeline", icon:Users },
+  { to: "/recruiter/jobFeed", label: "Job Feed", icon:Rss },
+  { to: "/recruiter/jobStudio", label: "Job Studio", icon:Briefcase },
+  { to: "/recruiter/companyProfile", label: "Company Profile", icon:Building2 },
 ];
 
 const Navbar = () => {
@@ -37,8 +39,8 @@ const Navbar = () => {
   };
 
   const linkClass = ({ isActive }) =>
-    `cursor-pointer text-lg transition-colors duration-200 font-sans ${
-      isActive ? "text-ink" : "text-muted hover:text-ink"
+    `cursor-pointer text-sm transition-colors duration-200 font-sans flex items-center justify-center gap-2 pb-1 ${
+      isActive ? "text-violet border-b-2 border-violet" : "text-muted hover:text-ink"
     }`;
 
   return (
@@ -61,11 +63,15 @@ const Navbar = () => {
 
         {/* ── Desktop nav links — hidden on mobile/tablet ── */}
         <div className="hidden lg:flex flex-1 justify-center gap-8 ">
-          {navLinks.map((link) => (
+          {navLinks.map((link) => {
+            const Icon = link.icon;
+            return(
             <NavLink key={link.to} to={link.to} className={linkClass}>
-              {link.label}
+              <Icon size={18}/>
+              <span>{link.label}</span>
             </NavLink>
-          ))}
+          )
+          })}
         </div>
 
         {/* ── Desktop right buttons — hidden on mobile/tablet ── */}

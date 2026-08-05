@@ -97,7 +97,7 @@ const CreateCompanyForm = () => {
     console.log([...formData.entries()]);
     console.log(data.logo);
     createCompany(formData, {
-      onSuccess: ()=> navigate("/recruiter/dashboard")
+      onSuccess: ()=> navigate("/recruiter/pipeline")
     })
   };
 

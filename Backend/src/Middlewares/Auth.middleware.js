@@ -23,7 +23,7 @@ export const verifyToken = async(req, res, next) => {
     }
     req.user = user;
     if(user.company){
-      const company = await CompanyModel.findById(req.user.company).select("_id companyName aboutCompany");
+      const company = await CompanyModel.findById(req.user.company).select();
       if(!company){
           return res.status(404).json({
         message: "Company not found",

@@ -75,12 +75,9 @@ export const createCompanyController = asyncHandler(async (req, res) => {
   return res
     .status(201)
     .json(
-      new ApiResponse(
-        201,
-        company,
-        "Company Created Successfully",
-        { updatedUser },
-      ),
+      new ApiResponse(201, company, "Company Created Successfully", {
+        updatedUser,
+      }),
     );
 });
 
@@ -255,7 +252,7 @@ export const updateCompanyLogoController = async (req, res) => {
     }
     return res
       .status(201)
-      .json(new ApiResponse(201, "Logo updated successfully"));
+      .json(new ApiResponse(201, company, "Logo updated successfully"));
   } catch (error) {
     console.log("Error on updating logo", error.message);
     throw new ApiError(501, "Error on updating logo");
