@@ -4,17 +4,31 @@ import { useAuth } from "../Auth/Hooks/useAuth";
 import toast from "react-hot-toast";
 import { Cpu } from "lucide-react";
 
-const navLinks = [
+
+const candidateNavLinks = [
   { to: "/resume-builder", label: "Resume Builder" },
   { to: "/resume-analyzer", label: "Resume Analyzer" },
   { to: "/interview/allReports", label: "Reports" },
   { to: "/resume/allResume", label: "Resumes" },
 ];
 
+const recruiterNavLinks = [
+  { to: "/recruiter/dashboard", label: "Dashboard" },
+  { to: "/interview/allReports", label: "Reports" },
+];
+
 const Navbar = () => {
   const { user, handleLogout, loading } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const authIntent = sessionStorage.getItem("authIntent");
+
+  let navLinks;
+  if (!user) navLinks = [];
+  else if (user?.role === "candidate" && authIntent === "recruiter") navLinks = [];
+  else if (user?.role === "company_admin" || user.role === "recruiter")
+    navLinks = recruiterNavLinks;
+  else if (user?.role === "candidate") navLinks = candidateNavLinks;
 
   const handleLogoutClick = async () => {
     navigate("/");
@@ -30,9 +44,8 @@ const Navbar = () => {
   return (
     <div className="font-sans">
       <nav className="relative z-10 flex h-16 items-center justify-between border-b border-line px-6 lg:px-8">
-        
-                {/* Brand Logo */}
-        <div 
+        {/* Brand Logo */}
+        <div
           onClick={() => navigate("/")}
           className="flex items-center gap-2.5 cursor-pointer group"
         >
@@ -40,8 +53,9 @@ const Navbar = () => {
             <Cpu className="w-7 h-7 animate-pulse" />
           </div>
           <div>
-            <span className="font-display font-bold text-ink text-2xl tracking-relax">PrepLab</span>
-            
+            <span className="font-display font-bold text-ink text-2xl tracking-relax">
+              PrepLab
+            </span>
           </div>
         </div>
 
@@ -135,7 +149,7 @@ const Navbar = () => {
             loading ? (
               <div className="flex items-center gap-2">
                 <button className="text-left text-lg flex items-center gap-2  text-muted hover:text-ink transition-colors duration-200 cursor-pointer">
-                <div className="w-4 h-4 border-2 border-muted border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-muted border-t-transparent rounded-full animate-spin" />
                   Logging out
                 </button>
               </div>
