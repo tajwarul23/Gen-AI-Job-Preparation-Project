@@ -64,10 +64,10 @@ const Navbar = () => {
         {/* ── Desktop nav links — hidden on mobile/tablet ── */}
         <div className="hidden lg:flex flex-1 justify-center gap-8 ">
           {navLinks.map((link) => {
-            const Icon = link.icon;
+            const Icon = link?.icon;
             return(
             <NavLink key={link.to} to={link.to} className={linkClass}>
-              <Icon size={18}/>
+              {Icon && <Icon size={18}/>}
               <span>{link.label}</span>
             </NavLink>
           )

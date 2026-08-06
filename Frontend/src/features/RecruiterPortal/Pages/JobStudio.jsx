@@ -36,7 +36,7 @@ const JobStudio = () => {
       deadline: "",
     },
   });
-
+  const [hasGenerated, setHasGenerated] = useState(false);
   const skills = watch("skills");
   const data = watch();
   const description = watch("description");
@@ -114,7 +114,7 @@ const JobStudio = () => {
     isPending: isGenerating,
     error: aiError,
   } = useGenerateJobDescription();
-  let buttonCount = 0;
+
   const handleGenerateJobDescription = () => {
     const { title, experienceLevel, workMode, employmentType, skills } = data;
 
@@ -141,7 +141,7 @@ const JobStudio = () => {
       },
       {
         onSuccess: (result) => {
-          buttonCount++;
+          setHasGenerated(true);
           setValue("description", result.data.jobDescription, {
             shouldValidate: true,
             shouldDirty: true,
@@ -490,13 +490,14 @@ const JobStudio = () => {
               <button
                 type="button"
                 onClick={handleGenerateJobDescription}
-                disabled={isGenerating || buttonCount > 0}
-                className="uppercase w-full sm:w-auto px-8 py-4 bg-teal/10 hover:bg-overlay border border-line hover:border-linehov text-ink font-semibold rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+                disabled={isGenerating || hasGenerated}
+                className="uppercase w-full sm:w-auto px-8 py-4 bg-teal/10 hover:bg-overlay border border-line hover:border-linehov text-ink font-semibold rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-teal/10"
               >
                 {isGenerating
                   ? "Generating..."
-                  : "Generate Job Description with AI"}
-
+                  : hasGenerated
+                    ? "Description Generated"
+                    : "Generate Job Description with AI"}
                 <Sparkles className="w-4 h-4 text-purple" />
               </button>
               <ReviewJobPost data={data} />

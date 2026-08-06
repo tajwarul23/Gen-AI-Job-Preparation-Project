@@ -1,15 +1,16 @@
-import { Briefcase, Building2, CheckCircle2, Plus, Rss } from 'lucide-react'
+import { Briefcase, Building2, CheckCircle2, Plus } from 'lucide-react'
 
 import { useGetCompany } from '../Hooks/useCompany'
 import { useNavigate } from 'react-router-dom';
 
-const EmptyPipeline = () => {
+const EmptyPipeline = ({from}) => {
     const {data} = useGetCompany();
     const navigate = useNavigate();
   return (
-   <div className="bg-surface border border-line rounded-2xl p-6 sm:p-10 space-y-8">
+   <div className="bg-surface border border-line rounded-2xl p-6 sm:p-10 space-y-8 mb-10">
             {/* Header Banner */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-gradient-to-r from-violet/10 via-surface to-teal/10 border border-line rounded-xl">
+            {
+              from === "jobFeed" ? <></>: (<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-gradient-to-r from-violet/10 via-surface to-teal/10 border border-line rounded-xl">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-violet/20 border border-violet/30 flex items-center justify-center text-violet-text shrink-0">
                   <Building2 className="w-5 h-5" />
@@ -25,7 +26,8 @@ const EmptyPipeline = () => {
                 </div>
               </div>
              
-            </div>
+            </div>)
+            }
 
             {/* Main Empty Hero Box */}
             <div className="text-center max-w-2xl mx-auto py-6 space-y-4">
@@ -49,13 +51,7 @@ const EmptyPipeline = () => {
                   <Plus className="w-4 h-4" />
                   Create First Job Opening
                 </button>
-                <button
-                  onClick={() => navigate("/recruiter/jobFeed")}
-                  className="px-5 py-2.5 bg-overlay hover:bg-surface border border-line text-ink text-xs font-semibold rounded-xl transition-all cursor-pointer flex items-center gap-2 font-sans"
-                >
-                  <Rss className="w-4 h-4 text-violet" />
-                  Open Company Job Feed
-                </button>
+                
               </div>
             </div>
 

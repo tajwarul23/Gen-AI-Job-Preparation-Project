@@ -306,7 +306,7 @@ export const getJobFeedController = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { total: jobs.length, jobs, nextCursor, hasMore },
+        { count: jobs.length, jobs, nextCursor, hasMore },
         "Fetched Job Successfully",
       ),
     );

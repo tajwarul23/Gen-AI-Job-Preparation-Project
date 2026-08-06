@@ -16,6 +16,7 @@ export const useGetCompanyJobFeed = () => {
   return useQuery({
     queryFn: getCompanyJobFeedApi,
     queryKey: ["companyJobFeed"],
+    staleTime: 5 * 60 * 1000,
   });
 };
 
@@ -23,6 +24,7 @@ export const useGetCandidateJobFeed = () => {
   return useQuery({
     queryFn: getCandidateJobFeedApi,
     queryKey: ["candidateJobFeed"],
+    staleTime: 5 * 60 * 1000,
   });
 };
 

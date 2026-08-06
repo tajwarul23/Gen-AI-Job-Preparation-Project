@@ -14,6 +14,7 @@ export const useGetCompany = () => {
   return useQuery({
     queryKey: ["company"],
     queryFn: getCompanyApi,
+    staleTime: 5 * 60 * 1000,
   });
 };
 

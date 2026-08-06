@@ -7,18 +7,20 @@ import PipelineHeader from "../Components/PipelineHeader";
 import EmptyPipeline from "../Components/EmptyPipeline";
 import JobPipeline from "../Components/JobPipeline";
 import PipelineSidebar from "../Components/PipelineSidebar";
+import { useGetCompanyJobFeed } from "../Hooks/useJob";
 
 const RecruitPipeline = () => {
   const navigate = useNavigate();
   const {data, isLoading, isError, error} = useGetCompany()
-  const hasJobs = 0;
+  const {data:jobs} = useGetCompanyJobFeed();
+  const hasJobs = jobs.data.count;
   useEffect(()=>{
     if(isError){
       toast.error(error?.response?.data?.message || "Failed to fetch Company Information")
     }
   },[error])
 return (
-  <div className="max-w-7xl mx-auto">
+  <div className="max-w-7xl mx-auto min-h-screen">
     <PipelineHeader/>
     {hasJobs ? (
       <div className="grid grid-cols-12 gap-8">
