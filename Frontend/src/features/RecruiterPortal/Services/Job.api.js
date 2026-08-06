@@ -5,8 +5,8 @@ const api = axios.create({
     withCredentials:true
 });
 
-export const createJobApi = async(formData)=>{
-    const response = await api.post("/create", formData);
+export const createJobApi = async(data)=>{
+    const response = await api.post("/create", data);
     return response.data;
 }
 
@@ -21,8 +21,8 @@ export const getCandidateJobFeedApi = async()=>{
     return response.data;
 }
 
-export const updateJobApi = async(jobId, formData)=>{
-    const response = await api.patch(`/${jobId}`, formData);
+export const updateJobApi = async(jobId, data)=>{
+    const response = await api.patch(`/${jobId}`, data);
     return response.data;
 }
 
@@ -31,7 +31,7 @@ export const deleteJobApi = async(jobId)=>{
     return response.data;
 }
 
-export const generateJobDescriptionApi = async(formData)=>{
-    const response = await api.post("/generate-description", formData);
+export const generateJobDescriptionApi = async(data)=>{
+    const response = await api.post("/generate-description", data);
     return response.data;
 }

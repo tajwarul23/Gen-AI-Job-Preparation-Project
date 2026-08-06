@@ -20,8 +20,8 @@ export const joinCompanyApi = async(token)=>{
     return response.data;
 }
 
-export const updateCompanyInfoApi = async (formData)=>{
-    const response = await api.patch("/update", formData);
+export const updateCompanyInfoApi = async (data)=>{
+    const response = await api.patch("/update", data);
     return response.data;
 }
 

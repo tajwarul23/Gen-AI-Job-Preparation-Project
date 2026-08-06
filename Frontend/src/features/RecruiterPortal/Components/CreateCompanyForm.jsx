@@ -123,13 +123,13 @@ const CreateCompanyForm = () => {
           <div className="flex items-center gap-2 mb-6">
             <Building2Icon className="w-5 h-5 text-teal" />
             <h3 className="text-sm font-mono text-muted tracking-wider uppercase font-bold">
-              PATH ALPHA // INITIALIZE COMPANY
+              INITIALIZE ORGANIZATION
             </h3>
           </div>
 
           <p className="text-muted text-sm mb-6 font-sans">
             Establish a new, isolated candidate processing workspace for your
-            team. You'll become the primary node administrator.
+            team. You'll become the primary Organization Administrator.
           </p>
 
           <div className="space-y-4">
@@ -305,7 +305,7 @@ const CreateCompanyForm = () => {
             type="submit"
             className="w-full py-3 bg-teal hover:bg-teal/90 text-app font-semibold text-xs rounded-xl transition-all cursor-pointer disabled:opacity-50 shadow-md shadow-teal/10 font-sans"
           >
-            {isPending? "Initializing":"Initialize Company"}
+            {isPending? "Initializing":"Initialize Organization"}
           </button>
         </div>
       </form>

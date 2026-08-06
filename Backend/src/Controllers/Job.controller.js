@@ -32,15 +32,14 @@ export const createJobController = asyncHandler(async (req, res) => {
     workMode,
     employmentType,
     experienceLevel,
-    salaryMin,
-    salaryMax,
+
     description,
     status,
-    expiresAt,
+    deadline,
     vacancy,
-    currency,
+    salary,
   } = req.body;
-
+  const { salaryMin, salaryMax, currency } = salary;
   if (
     !title?.trim() ||
     !location?.trim() ||
@@ -52,10 +51,12 @@ export const createJobController = asyncHandler(async (req, res) => {
     !currency?.trim() ||
     !salaryMin ||
     !salaryMax ||
-    !expiresAt ||
+    !deadline ||
     !Array.isArray(skills) ||
     skills.length === 0
   ) {
+    console.log(req.body);
+    
     throw new ApiError(400, "All fields are required");
   }
   const cleanedSkills = skills.map((skill) => skill.trim()).filter(Boolean);
@@ -86,7 +87,7 @@ export const createJobController = asyncHandler(async (req, res) => {
     },
 
     status,
-    expiresAt,
+    deadline,
     description,
     vacancy,
     normalizedTitle,
@@ -240,7 +241,6 @@ export const getJobFeedController = asyncHandler(async (req, res) => {
     query.experienceLevel = experienceLevel.toUpperCase();
   }
 
- 
   const jobs = await JobModel.aggregate([
     {
       $match: query,
@@ -359,14 +359,12 @@ export const updateJobController = asyncHandler(async (req, res) => {
     experienceLevel,
     status,
     vacancy,
-    expiresAt,
+    deadline,
     salaryMax,
     salaryMin,
     currency,
   } = req.body;
- 
-  
-  
+
   if (title !== undefined) req.job.title = title;
   if (location !== undefined) req.job.location = location;
   if (workMode !== undefined) req.job.workMode = workMode;
@@ -374,7 +372,7 @@ export const updateJobController = asyncHandler(async (req, res) => {
   if (experienceLevel !== undefined) req.job.experienceLevel = experienceLevel;
   if (status !== undefined) req.job.status = status;
   if (vacancy !== undefined) req.job.vacancy = vacancy;
-  if (expiresAt !== undefined) req.job.expiresAt = expiresAt;
+  if (deadline !== undefined) req.job.deadline = deadline;
   if (salaryMax !== undefined) req.job.salary.salaryMax = salaryMax;
   if (salaryMin !== undefined) req.job.salary.salaryMin = salaryMin;
   if (currency !== undefined) req.job.salary.currency = currency;
@@ -398,5 +396,3 @@ export const deleteJobController = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, null, "Job deleted successfully"));
 });
-
-

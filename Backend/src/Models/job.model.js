@@ -78,7 +78,7 @@ const jobSchema = new mongoose.Schema(
       required: true,
     },
 
-    expiresAt: Date,
+    deadline: Date,
   },
   { timestamps: true },
 );

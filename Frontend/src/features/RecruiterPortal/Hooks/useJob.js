@@ -7,7 +7,10 @@ import {
   getCompanyJobFeedApi,
   updateJobApi,
 } from "../Services/Job.api";
-
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
+// const navigate = useNavigate();
 //-----------------QUERIES------------------------------
 export const useGetCompanyJobFeed = () => {
   return useQuery({
@@ -25,18 +28,27 @@ export const useGetCandidateJobFeed = () => {
 
 //-----------------MUTATIONS------------------------------
 export const useCreateJob = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createJobApi,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      toast.success("Job Posted Successfully")
+      console.log(data);
+      
       queryClient.invalidateQueries({
         queryKey: ["companyJobFeed"],
+        
+        
       });
       queryClient.invalidateQueries({
         queryKey: ["candidateJobFeed"],
       });
+      
+      navigate("/recruiter/jobFeed");
     },
     onError: (error) => {
+      toast.error(error?.response?.data?.message || "Failed to create job")
       console.error(error?.response?.data?.message || "Failed to create job");
     },
   });
@@ -46,7 +58,7 @@ export const useUpdateJob = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ jobId, formData }) => updateJobApi(jobId, formData),
+    mutationFn: ({ jobId, data }) => updateJobApi(jobId, data),
 
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -77,9 +89,11 @@ export const useDeleteJob = () => {
       queryClient.invalidateQueries({
         queryKey: ["candidateJobFeed"],
       });
+      toast.success("Job Deleted Successfully")
     },
     onError: (error) => {
       console.error(error?.response?.data?.message || "Failed to delete job");
+      toast.error("Job Deletion Failed. Please Try later")
     },
   });
 };
@@ -87,8 +101,16 @@ export const useDeleteJob = () => {
 export const useGenerateJobDescription = () => {
   return useMutation({
     mutationFn: generateJobDescriptionApi,
+
     onError: (error) => {
-      console.error(error?.response?.data?.message || "Failed to create job");
+      console.error(
+        error?.response?.data?.message || "Failed to generate job description"
+      );
+
+      toast.error(
+        error?.response?.data?.message ||
+        "Failed to generate job description. Please try again."
+      );
     },
   });
 };
