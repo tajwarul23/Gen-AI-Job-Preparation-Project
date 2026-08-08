@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+
 import {
   createCompanyApi,
   generateInvitationLinkApi,
@@ -7,51 +12,85 @@ import {
   updateCompanyInfoApi,
   updateCompanyLogoApi,
 } from "../Services/company.api";
+
 import { useContext } from "react";
 import { AuthContext } from "../../Auth/auth.context";
 
+
+/* 
+   GET COMPANY
+ */
+
 export const useGetCompany = () => {
+  const { user } = useContext(AuthContext);
+
   return useQuery({
-    queryKey: ["company"],
+    queryKey: ["company", user?.id],
     queryFn: getCompanyApi,
     staleTime: 5 * 60 * 1000,
+    enabled: !!user?.id,
   });
 };
 
-const updateCompanyCache = (queryClient, company) => {
-  // Instant UI update
-  queryClient.setQueryData(["company"], company);
 
-  // Background refetch
+/* 
+   CACHE HELPER
+ */
+
+const updateCompanyCache = (
+  queryClient,
+  userId,
+  company
+) => {
+  queryClient.setQueryData(
+    ["company", userId],
+    company
+  );
+
   queryClient.invalidateQueries({
-    queryKey: ["company"],
+    queryKey: ["company", userId],
   });
 };
+
+
+/* 
+   CREATE COMPANY
+ */
 
 export const useCreateCompany = () => {
   const queryClient = useQueryClient();
-  const { setUser } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
 
   return useMutation({
     mutationFn: createCompanyApi,
 
     onSuccess: (data) => {
-      updateCompanyCache(queryClient, data.data);
+      const updatedUser = data.updatedUser || user;
 
       if (data.updatedUser) {
         setUser(data.updatedUser);
       }
 
-      console.log("Company Created", data);
+      updateCompanyCache(
+        queryClient,
+        updatedUser?.id,
+        data.data
+      );
     },
 
     onError: (error) => {
       console.error(
-        error?.response?.data?.message || "Failed to Create Company"
+        error?.response?.data?.message ||
+          "Failed to Create Company"
       );
     },
   });
 };
+
+
+/* 
+   GENERATE INVITE LINK
+ */
 
 export const useGenerateInviteLink = () => {
   return useMutation({
@@ -70,32 +109,55 @@ export const useGenerateInviteLink = () => {
   });
 };
 
+
+/* 
+   JOIN COMPANY
+ */
+
 export const useJoinCompany = () => {
+  const queryClient = useQueryClient();
   const { setUser } = useContext(AuthContext);
 
   return useMutation({
     mutationFn: joinCompanyApi,
 
     onSuccess: (data) => {
-      setUser(data.updatedUser);
+      const updatedUser = data.updatedUser;
+
+      setUser(updatedUser);
+
+      queryClient.invalidateQueries({
+        queryKey: ["company", updatedUser?.id],
+      });
     },
 
     onError: (error) => {
       console.error(
-        error?.response?.data?.message || "Failed to join company"
+        error?.response?.data?.message ||
+          "Failed to join company"
       );
     },
   });
 };
 
+
+/* 
+   UPDATE COMPANY INFO
+ */
+
 export const useUpdateCompanyInfo = () => {
   const queryClient = useQueryClient();
+  const { user } = useContext(AuthContext);
 
   return useMutation({
     mutationFn: updateCompanyInfoApi,
 
     onSuccess: (data) => {
-      updateCompanyCache(queryClient, data.data);
+      updateCompanyCache(
+        queryClient,
+        user?.id,
+        data.data
+      );
     },
 
     onError: (error) => {
@@ -107,14 +169,24 @@ export const useUpdateCompanyInfo = () => {
   });
 };
 
+
+/* 
+   UPDATE COMPANY LOGO
+ */
+
 export const useUpdateCompanyLogo = () => {
   const queryClient = useQueryClient();
+  const { user } = useContext(AuthContext);
 
   return useMutation({
     mutationFn: updateCompanyLogoApi,
 
     onSuccess: (data) => {
-      updateCompanyCache(queryClient, data.data);
+      updateCompanyCache(
+        queryClient,
+        user?.id,
+        data.data
+      );
     },
 
     onError: (error) => {

@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+import dotenv, { parse } from "dotenv";
 dotenv.config();
 import Groq from "groq-sdk";
 import { z } from "zod";
@@ -619,13 +619,27 @@ Guidelines:
 - Use only the technologies, skills, and requirements provided by the user.
 - Do not add technical skills, certifications, responsibilities, salary, benefits, or years of experience that were not provided.
 - Incorporate the provided experience level naturally throughout the description by setting appropriate expectations for the role.
-- Structure the description with clearly labeled sections:
-  - About the Company
-  - About the Role
-  - Key Responsibilities
-  - Preferred Qualifications (only when appropriate)
-  - Experience Level
-  - Application Closing Statement
+- Structure the description using clearly labeled sections.
+- Every section heading MUST end with a colon (:).
+- Each section heading MUST appear on its own line.
+- Use these exact section headings when applicable:
+  - About the Company:
+  - About the Role:
+  - Key Responsibilities:
+  - Preferred Qualifications:
+  - Experience Level:
+  - Application Closing Statement:
+- Every section heading must end with a colon (:).
+- Use the exact section heading format:
+  "About the Company:"
+  "About the Role:"
+  "Key Responsibilities:"
+  "Preferred Qualifications:"
+  "Experience Level:"
+  "Application Closing Statement:"
+- Do not add a colon to normal paragraph sentences unless grammatically necessary.
+- Keep each section heading on its own line.
+- Do not use markdown formatting such as #, **, -, or bullet symbols for section headings.
         `,
         },
         {
@@ -649,10 +663,14 @@ Guidelines:
     let parsed;
     try {
       parsed = JSON.parse(response.choices[0].message.content);
+      
+      
     } catch (error) {
       throw new ApiError(501, "AI validation failed");
     }
     const validated = jobDescriptionSchema.parse(parsed);
+    
+    
     return validated;
   } catch (error) {
     if (error instanceof z.ZodError) {

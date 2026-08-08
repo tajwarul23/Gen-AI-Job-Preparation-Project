@@ -218,6 +218,7 @@ const CreateCompanyForm = () => {
       <Select
       
         options={countries}
+        className="text-black"
         placeholder="Select a country"
         value={countries.find(
           (country) => country.value === field.value

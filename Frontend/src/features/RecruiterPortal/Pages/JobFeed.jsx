@@ -2,17 +2,23 @@ import { Plus, Building2, Globe } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetCompany } from "../Hooks/useCompany";
-import { useGetCompanyJobFeed, useGetCandidateJobFeed } from "../Hooks/useJob";
+import { useGetCompanyJobFeed } from "../Hooks/useJob";
 import JobCard from "../Components/JobCard";
 import EmptyPipeline from "../Components/EmptyPipeline";
+import AllJobFeed from "../../../Shared/AllJobFeed";
 
 const JobFeed = () => {
   const [viewMode, setViewMode] = useState("company");
   const navigate = useNavigate();
 
-  const { data: company } = useGetCompany();
+  const { data } = useGetCompany();
+
+  const company = data?.data?.company;
+  const applicationLength = data?.data?.applicationLength;
+  // console.log(company, applicationLength);
+
   const { data: companyJobs } = useGetCompanyJobFeed();
-  const { data: platformJobs } = useGetCandidateJobFeed();
+  const { data: platformJobs } = useGetCompanyJobFeed();
 
   const activeData = viewMode === "company" ? companyJobs : platformJobs;
   const hasJobs = activeData?.data?.count;
@@ -50,12 +56,13 @@ const JobFeed = () => {
         </div>
 
         {/* Header */}
-        <div className="bg-surface border border-line rounded-2xl p-6 shadow-sm mb-10">
+       {
+        viewMode === "company" && ( <div className="bg-surface border border-line rounded-2xl p-6 shadow-sm mb-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-line pb-6">
             <div className="flex items-center gap-4">
               <img
                 src={
-                  company?.data?.logoUrl ||
+                  company?.logoUrl ||
                   "https://lh3.googleusercontent.com/d/1zC9f8t_G0wzX7b5Y9iU_pZ9y-T3D2oOa=w100-h100-cc"
                 }
                 alt={company?.data?.companyName}
@@ -65,7 +72,7 @@ const JobFeed = () => {
                 <div className="flex items-center gap-2">
                   <h1 className="text-xl font-bold font-display text-ink">
                     {viewMode === "company"
-                      ? `${company?.data?.companyName} Job Feed`
+                      ? `${company?.companyName} Job Feed`
                       : "Platform Job Feed"}
                   </h1>
                   <span className="text-[10px] font-mono uppercase bg-violet/10 text-violet-text border border-violet-border px-2 py-0.5 rounded-full font-bold">
@@ -74,7 +81,7 @@ const JobFeed = () => {
                 </div>
                 <p className="text-xs text-muted font-sans mt-0.5">
                   {viewMode === "company"
-                    ? `Manage active postings, update job parameters, and track applicant pipelines for ${company?.data?.companyName}`
+                    ? `Manage active postings, update job parameters, and track applicant pipelines for ${company?.companyName}`
                     : "Browse every open role currently live across the platform"}
                 </p>
               </div>
@@ -92,12 +99,12 @@ const JobFeed = () => {
           </div>
 
           {/* Quick Metrics */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 text-xs font-mono">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4  font-mono">
             <div className="bg-overlay border border-line rounded-xl p-3">
-              <span className="text-muted block text-[10px] uppercase">
+              <span className="text-muted block text-lg uppercase">
                 Active Openings
               </span>
-              <span className="text-lg font-bold text-teal font-display">
+              <span className="text-2xl font-bold text-teal font-display">
                 {hasJobs || 0}
               </span>
             </div>
@@ -105,37 +112,41 @@ const JobFeed = () => {
             {viewMode === "company" && (
               <>
                 <div className="bg-overlay border border-line rounded-xl p-3">
-                  <span className="text-muted block text-[10px] uppercase">
+                  <span className="text-muted block text-lg uppercase">
                     Company Roles
                   </span>
-                  <span className="text-lg font-bold text-ink font-display">
+                  <span className="text-2xl font-bold text-ink font-display">
                     {hasJobs || 0}
                   </span>
                 </div>
 
                 <div className="bg-overlay border border-line rounded-xl p-3">
-                  <span className="text-muted block text-[10px] uppercase">
-                    Industry
+                  <span className="text-muted block text-lg uppercase">
+                    Total Applicants
                   </span>
-                  <span className="text-xs font-bold text-ink truncate block mt-1">
-                    {company?.data?.industry || "Technology"}
+                  <span className="text-2xl font-bold text-ink truncate block mt-1">
+                    {applicationLength}
                   </span>
                 </div>
               </>
             )}
           </div>
-        </div>
+        </div>)
+       }
 
         {/* Job Feed */}
-        {jobList.length > 0 ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-            {jobList.map((job) => (
-              <JobCard key={job._id || job.id} job={job} />
-            ))}
-          </div>
-        ) : (
-          <EmptyPipeline from="jobFeed" />
-        )}
+        {viewMode === "company" &&
+          (jobList.length > 0 ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+              {jobList.map((job) => (
+                <JobCard key={job._id || job.id} job={job} />
+              ))}
+            </div>
+          ) : (
+            <EmptyPipeline from="jobFeed" />
+          ))}
+
+        {viewMode === "platform" && <AllJobFeed />}
       </div>
     </div>
   );

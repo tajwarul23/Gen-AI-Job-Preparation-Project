@@ -1,37 +1,43 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createJobApi,
   deleteJobApi,
   generateJobDescriptionApi,
-  getCandidateJobFeedApi,
+  getJobFeedApi,
   getCompanyJobFeedApi,
   updateJobApi,
 } from "../Services/Job.api";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../../Auth/auth.context";
 // import { useNavigate } from "react-router-dom";
 // const navigate = useNavigate();
 //-----------------QUERIES------------------------------
 export const useGetCompanyJobFeed = () => {
+  const {user} = useContext(AuthContext);
   return useQuery({
     queryFn: getCompanyJobFeedApi,
-    queryKey: ["companyJobFeed"],
+    queryKey: ["companyJobFeed", user?.company],
     staleTime: 5 * 60 * 1000,
+    enabled: !!user?.company
   });
 };
 
-export const useGetCandidateJobFeed = () => {
-  return useQuery({
-    queryFn: getCandidateJobFeedApi,
-    queryKey: ["candidateJobFeed"],
-    staleTime: 5 * 60 * 1000,
-  });
-};
+export const useGetJobFeed = (filters = {}) =>{
+  return useInfiniteQuery({
+    queryKey:["jobFeed", filters],
+    queryFn: ({pageParam}) => getJobFeedApi({pageParam, filters}),
+    initialPageParam: null,
+    getNextPageParam: (lastPage) => lastPage?.data?.hasMore ? lastPage.data.nextCursor : undefined
+  })
+}
 
 //-----------------MUTATIONS------------------------------
 export const useCreateJob = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const {user} = useContext(AuthContext);
   return useMutation({
     mutationFn: createJobApi,
     onSuccess: (data) => {
@@ -39,7 +45,7 @@ export const useCreateJob = () => {
       console.log(data);
       
       queryClient.invalidateQueries({
-        queryKey: ["companyJobFeed"],
+        queryKey: ["companyJobFeed", user?.company],
         
         
       });
@@ -58,14 +64,16 @@ export const useCreateJob = () => {
 
 export const useUpdateJob = () => {
   const queryClient = useQueryClient();
-
+  const {user} = useContext(AuthContext);
   return useMutation({
     mutationFn: ({ jobId, data }) => updateJobApi(jobId, data),
 
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["companyJobFeed"],
+        queryKey: ["companyJobFeed", user?.company],
       });
+
+      toast.success("Job Updated Successfully")
 
       queryClient.invalidateQueries({
         queryKey: ["candidateJobFeed"],
@@ -73,19 +81,20 @@ export const useUpdateJob = () => {
     },
     onError: (error) => {
       console.error(error?.response?.data?.message || "Failed to Update job");
+      toast.error(error?.response?.data?.message || "Failed to update job")
     },
   });
 };
 
 export const useDeleteJob = () => {
   const queryClient = useQueryClient();
-
+  const {user} = useContext(AuthContext);
   return useMutation({
     mutationFn: deleteJobApi,
 
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["companyJobFeed"],
+        queryKey: ["companyJobFeed", user?.company],
       });
 
       queryClient.invalidateQueries({

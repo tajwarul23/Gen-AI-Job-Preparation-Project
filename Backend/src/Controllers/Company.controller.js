@@ -1,3 +1,4 @@
+import { applicationModel } from "../Models/application.model.js";
 import { CompanyModel } from "../Models/company.model.js";
 import { JobModel } from "../Models/job.model.js";
 import { userModel } from "../Models/user.model.js";
@@ -271,10 +272,12 @@ export const getCompanyController = asyncHandler(async (req, res) => {
       message: "Company not found",
     });
   }
-
+const allApplications = await applicationModel.find({company: req.company._id});
+const company = req.company;
+const applicationLength = allApplications.length
   return res
     .status(200)
     .json(
-      new ApiResponse(200, req.company, "Company data fetched successfully"),
+      new ApiResponse(200, {company, applicationLength},  "Company data fetched successfully"),
     );
 });

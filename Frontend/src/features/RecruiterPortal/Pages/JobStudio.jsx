@@ -159,7 +159,7 @@ const JobStudio = () => {
       top: 0,
       behavior: "smooth",
     });
-    console.log(data);
+    // console.log(data);
     createJob(data);
   };
 
@@ -243,7 +243,7 @@ const JobStudio = () => {
 
                 <input
                   {...register("location")}
-                  placeholder="New York"
+                  placeholder="Sylhet"
                   className="w-full bg-overlay border border-line rounded-xl p-3"
                 />
                 <p className="text-red-400 text-xs mt-1">

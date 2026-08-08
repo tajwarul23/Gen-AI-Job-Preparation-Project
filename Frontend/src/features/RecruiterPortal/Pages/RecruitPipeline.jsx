@@ -13,7 +13,7 @@ const RecruitPipeline = () => {
   const navigate = useNavigate();
   const {data, isLoading, isError, error} = useGetCompany()
   const {data:jobs} = useGetCompanyJobFeed();
-  const hasJobs = jobs.data.count;
+  const hasJobs = jobs?.data?.count;
   useEffect(()=>{
     if(isError){
       toast.error(error?.response?.data?.message || "Failed to fetch Company Information")

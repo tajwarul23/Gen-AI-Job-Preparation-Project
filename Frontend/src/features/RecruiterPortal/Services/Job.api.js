@@ -16,8 +16,10 @@ export const getCompanyJobFeedApi = async()=>{
 }
 
 // move this to candidate portal
-export const getCandidateJobFeedApi = async()=>{
-    const response = await api.get("/");
+export const getJobFeedApi = async({pageParam, filters = {}})=>{
+    const params = {...filters};
+    if(pageParam)params.cursor = pageParam;
+    const response = await api.get("/", {params});
     return response.data;
 }
 

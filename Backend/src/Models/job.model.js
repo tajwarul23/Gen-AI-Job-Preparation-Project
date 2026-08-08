@@ -15,7 +15,7 @@ const jobSchema = new mongoose.Schema(
 
     postedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "users",
       required: true,
     },
 
@@ -83,7 +83,7 @@ const jobSchema = new mongoose.Schema(
   { timestamps: true },
 );
 //cursor pagination
-jobSchema.index({ status: 1, createdAt: -1, _id: 1 });
+jobSchema.index({ status: 1, createdAt: -1, _id: -1 });
 
 //for unique job per company
 jobSchema.index(
@@ -96,8 +96,8 @@ jobSchema.index(
 //for text search
 jobSchema.index({
   title: "text",
-  description: "text",
   skills: "text",
+  description:"text",
   companyName: "text",
   location: "text",
 });
@@ -108,7 +108,7 @@ jobSchema.index({ workMode: 1, employmentType: 1, experienceLevel: 1 });
 jobSchema.pre("validate", function (next) {
   if (
     this.salary?.salaryMax !== undefined &&
-    this.salary?.salaryMax !== undefined &&
+    this.salary?.salaryMin !== undefined &&
     this.salary.salaryMax < this.salary.salaryMin
   ) {
     return next(

@@ -56,7 +56,7 @@ export const createJobController = asyncHandler(async (req, res) => {
     skills.length === 0
   ) {
     console.log(req.body);
-    
+
     throw new ApiError(400, "All fields are required");
   }
   const cleanedSkills = skills.map((skill) => skill.trim()).filter(Boolean);
@@ -264,7 +264,7 @@ export const getJobFeedController = asyncHandler(async (req, res) => {
               $expr: {
                 $and: [
                   { $eq: ["$job", "$$jobId"] },
-                  { eq: ["$candidate", req.user.id] },
+                  { $eq: ["$candidate", req.user.id] },
                 ],
               },
             },
@@ -306,7 +306,7 @@ export const getJobFeedController = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { count: jobs.length, jobs, nextCursor, hasMore },
+        { count: results.length, jobs: results, nextCursor, hasMore },
         "Fetched Job Successfully",
       ),
     );
@@ -330,9 +330,12 @@ export const getCompanyJobFeedController = asyncHandler(async (req, res) => {
   const jobs = await JobModel.find({
     company: dbUser.company,
   })
+    .populate({
+      path: "postedBy",
+      select: "userName _id company",
+    })
     .sort({ createdAt: -1 })
     .lean();
-
   return res
     .status(200)
     .json(
@@ -360,9 +363,7 @@ export const updateJobController = asyncHandler(async (req, res) => {
     status,
     vacancy,
     deadline,
-    salaryMax,
-    salaryMin,
-    currency,
+    salary,
   } = req.body;
 
   if (title !== undefined) req.job.title = title;
@@ -373,10 +374,28 @@ export const updateJobController = asyncHandler(async (req, res) => {
   if (status !== undefined) req.job.status = status;
   if (vacancy !== undefined) req.job.vacancy = vacancy;
   if (deadline !== undefined) req.job.deadline = deadline;
-  if (salaryMax !== undefined) req.job.salary.salaryMax = salaryMax;
-  if (salaryMin !== undefined) req.job.salary.salaryMin = salaryMin;
-  if (currency !== undefined) req.job.salary.currency = currency;
 
+  if (salary !== undefined) {
+    const { salaryMin, salaryMax, currency } = salary;
+
+    if (salaryMin !== undefined) {
+      req.job.salary.salaryMin = salaryMin;
+    }
+
+    if (salaryMax !== undefined) {
+      req.job.salary.salaryMax = salaryMax;
+    }
+
+    if (currency !== undefined) {
+      req.job.salary.currency = currency;
+    }
+  }
+  if(!req.job.isModified()){
+    
+  return res
+    .status(200)
+    .json(new ApiResponse(200, req.job, "No Changes to update"));
+  }
   await req.job.save();
 
   return res

@@ -17,6 +17,7 @@ import JobFeed from "./features/RecruiterPortal/Pages/JobFeed.jsx";
 import JobStudio from "./features/RecruiterPortal/Pages/JobStudio.jsx";
 import CompanyProfile from "./features/RecruiterPortal/Pages/CompanyProfile.jsx";
 import RecruitPipeline from "./features/RecruiterPortal/Pages/RecruitPipeline.jsx";
+import AllJobFeed from "./Shared/AllJobFeed.jsx";
 
 const Login = lazy(()=>import("./features/Auth/pages/Login.jsx"))
 const Register = lazy(()=>import("./features/Auth/pages/Register.jsx"))
@@ -75,6 +76,7 @@ const App = () => {
       {/* Protected — candidate or recruiter */}
       <Route element={<ProtectedLayout allowedRoles={["candidate", "recruiter", "company_admin"]} />}>
         <Route path="/interview/allReports" element={<Suspense fallback={<SpinLoader/>}><AllReports /></Suspense>} />
+        <Route path="/all/job" element={<Suspense fallback={<SpinLoader/>}><AllJobFeed /></Suspense>} />
         <Route path="/interview/:interviewId" element={<Suspense fallback={<SpinLoader/>}><InterviewReport /></Suspense>} />
       </Route>
 
