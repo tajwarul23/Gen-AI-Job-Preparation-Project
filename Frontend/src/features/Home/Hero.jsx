@@ -6,6 +6,7 @@ import CandidateSuite from "./CandidateSuite";
 import RecruiterSuite from "./RecruiterSuite";
 import { useAuth } from "../Auth/Hooks/useAuth";
 import { routeAfterAuth } from "../../Utils/routeAfterAuth";
+import SpinLoader from "../../Shared/SpinLoader";
 const Hero = () => {
   const navigate = useNavigate();
 const { loading, handleLogin, error, handleGoogleLogin,googleLoading } = useAuth();
@@ -15,6 +16,9 @@ const { loading, handleLogin, error, handleGoogleLogin,googleLoading } = useAuth
     if(data?.success){
       routeAfterAuth(data.user, intent, navigate);
     }
+  }
+  if(googleLoading){
+    return <SpinLoader/>
   }
   return (
     // ← overflow-hidden here stops glows from causing horizontal scroll

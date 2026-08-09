@@ -5,11 +5,14 @@ import {
   CalendarClock,
   Briefcase,
   Map,
+  SquarePen,
+  Trash2,
 } from "lucide-react";
 import { useRef } from "react";
 import { useAuth } from "../../Auth/Hooks/useAuth";
 import DescriptionModalBody from "./DescriptionModalBody";
 import UpdateModalBody from "./UpdateModalBody";
+import DeleteModalBody from "./DeleteModalBody";
 
 const formatSalary = (min, max, currency) => {
   const fmt = new Intl.NumberFormat("en-US", {
@@ -63,6 +66,7 @@ const JobCard = ({ job }) => {
   } = job;
   const dialogRef = useRef(null);
   const updateDialogRef = useRef(null);
+  const deleteDialogRef = useRef(null);
   const deadlineInfo = formatDeadline(deadline);
   const isClosingSoon =
     deadlineInfo?.daysLeft !== undefined &&
@@ -70,67 +74,98 @@ const JobCard = ({ job }) => {
     deadlineInfo.daysLeft >= 0;
 
   const { user } = useAuth();
-  const showUpdateButton = user?.company === company;
+  
+  const isMyCompany = user?.company === company;
+  const isCandidate = user?.role === "candidate" ;
 
   return (
     <div
       className="
       group flex h-full flex-col rounded-2xl
       border border-line bg-surface
-      p-5
+      p-4 sm:p-5
       transition-all duration-200
       hover:-translate-y-0.5
       hover:border-teal/40
       hover:shadow-lg hover:shadow-black/5
     "
     >
-      {/* - HEADER - */}
+      {/* - ROW 1: title/status/myCompany (left) — update/delete (right) - */}
       <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h2
-            className="
-      line-clamp-2 text-base font-bold leading-6
-      text-ink transition-colors
-      group-hover:text-teal
-    "
-          >
-            {title}
-          </h2>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2
+              className="
+              line-clamp-2 text-base font-bold leading-6
+              text-ink transition-colors
+              group-hover:text-teal
+            "
+            >
+              {title}
+            </h2>
 
-          <div className="flex items-center gap-2">
-            <Map />
-            <p className="mt-1 text-lg font-sans text-ink">{companyName}</p>
+            <span
+              className={`
+              shrink-0 rounded-full border px-2.5 py-1
+              text-[10px] font-mono font-bold uppercase tracking-wide
+              ${statusStyles[status]}
+            `}
+            >
+              {status.toLowerCase()}
+            </span>
+
+            {isMyCompany && (
+              <span
+                className="
+                shrink-0 rounded-full border border-teal/40 bg-teal/10
+                px-2.5 py-1 text-[10px] font-mono font-bold
+                uppercase tracking-wide text-teal
+              "
+              >
+                My Company
+              </span>
+            )}
           </div>
-
-          <p className="mt-1 text-[10px] font-mono uppercase tracking-wide text-muted">
-            {experienceLevel?.toLowerCase()} level
-          </p>
         </div>
 
-        <div className="flex  gap-5">
-          <span
-            className={`
-          rounded-full border px-2.5 py-1
-          text-[10px] font-mono font-bold uppercase tracking-wide
-          ${statusStyles[status]}
-        `}
-          >
-            {status.toLowerCase()}
-          </span>
-          <span
-            className={`
-          shrink-0 rounded-full border px-2.5 py-1
-          text-[10px] font-mono font-bold uppercase tracking-wide
-          ${workModeStyles[workMode]}
-        `}
-          >
-            {workMode?.toLowerCase()}
-          </span>
-        </div>
+        {isMyCompany && (
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => updateDialogRef.current?.showModal()}
+              className="
+              rounded-lg border-2 border-violet px-3 py-1.5
+              text-xs font-semibold text-muted
+              transition-colors hover:bg-overlay hover:text-ink
+              cursor-pointer
+            "
+            >
+              <SquarePen className="w-4 h-4 text-violet" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => deleteDialogRef.current?.showModal()}
+              className="
+              rounded-lg border-2 border-red-400/60 px-3 py-1.5
+              text-xs font-semibold text-red-400
+              transition-colors hover:bg-red-400/10
+              cursor-pointer
+            "
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* - META - */}
-      <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2">
+      {/* - ROW 2: companyName, location, workMode, salary, employmentType, experienceLevel, vacancy - */}
+      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+        <span className="flex items-center gap-1.5 text-sm font-medium text-ink">
+          <Map className="h-3.5 w-3.5 shrink-0 text-teal" />
+          {companyName}
+        </span>
+
         <span className="flex items-center gap-1.5 text-xs text-muted">
           <MapPin className="h-3.5 w-3.5 shrink-0" />
           <span className="truncate">
@@ -138,72 +173,63 @@ const JobCard = ({ job }) => {
           </span>
         </span>
 
+        <span
+          className={`
+          shrink-0 rounded-full border px-2.5 py-1
+          text-[10px] font-mono font-bold uppercase tracking-wide
+          ${workModeStyles[workMode]}
+        `}
+        >
+          {workMode?.toLowerCase()}
+        </span>
+
+        <span className="flex items-center gap-1.5 text-xs text-muted">
+          <Wallet className="h-3.5 w-3.5 shrink-0 text-teal" />
+          {formatSalary(salary?.salaryMin, salary?.salaryMax, salary?.currency)}
+        </span>
+
         <span className="flex items-center gap-1.5 text-xs text-muted">
           <Briefcase className="h-3.5 w-3.5 shrink-0" />
           {employmentType?.replace("_", " ").toLowerCase()}
+        </span>
+
+        <span className="text-[10px] font-mono uppercase tracking-wide text-muted">
+          {experienceLevel?.toLowerCase()} level
         </span>
 
         <span className="flex items-center gap-1.5 text-xs text-muted">
           <Users className="h-3.5 w-3.5 shrink-0" />
           {vacancy} {vacancy === 1 ? "opening" : "openings"}
         </span>
+
+        {deadlineInfo && (
+          <span
+            className={`
+            flex items-center gap-1.5 text-[11px] font-mono
+            ${isClosingSoon ? "text-red-400" : "text-muted"}
+          `}
+          >
+            <CalendarClock className="h-3.5 w-3.5" />
+            {isClosingSoon
+              ? `${deadlineInfo.daysLeft}d left`
+              : `Closes ${deadlineInfo.label}`}
+          </span>
+        )}
       </div>
 
-      {/* - DIVIDER - */}
-      <div className="my-4 h-px bg-line" />
-
-      {/* - SKILLS - */}
-      {skills?.length > 0 && (
-        <div>
-          <p className="mb-2 text-[10px] font-mono uppercase tracking-wider text-muted">
-            Skills
-          </p>
-
-          <div className="flex flex-wrap gap-1.5">
-            {skills.slice(0, 5).map((skill, i) => (
-              <span
-                key={i}
-                className="
-                rounded-md border border-line
-                bg-overlay px-2 py-1
-                text-[11px] font-mono text-ink
-                transition-colors
-                group-hover:border-teal/20
-              "
-              >
-                {skill}
-              </span>
-            ))}
-
-            {skills.length > 5 && (
-              <span
-                className="
-                rounded-md px-2 py-1
-                text-[11px] font-mono
-                text-muted
-              "
-              >
-                +{skills.length - 5} more
-              </span>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* - DESCRIPTION - */}
-      <div className="mt-5">
+      {/* - ROW 3: description (dark bg) + read more - */}
+      <div className="mt-4 rounded-xl bg-ink/5 dark:bg-black/30 p-3.5">
         <p className="mb-2 text-[10px] font-mono uppercase tracking-wider text-muted">
-          Job Description:
+          Job Description
         </p>
 
-        <div className="line-clamp-8 min-h-29 text-sm leading-6 text-ink/80">
+        <div className="line-clamp-4 text-sm leading-6 text-ink/80">
           {description
             ?.slice(0, 300)
             .split("\n")
             .filter(Boolean)
             .map((line, index) => {
               const isHeading = line.trim().includes(":");
-
               return (
                 <p
                   key={index}
@@ -215,79 +241,93 @@ const JobCard = ({ job }) => {
             })}
         </div>
 
-        <div className="flex items-center justify-between">
-          <button
-            type="button"
-            onClick={() => dialogRef.current?.showModal()}
-            className="group inline-flex items-center gap-1.5 text-xs font-semibold text-teal
-               hover:text-teal/80 transition-colors cursor-pointer"
-          >
-            View job description
-            <span className="transition-transform group-hover/link:translate-x-0.5">
-              →
-            </span>
-          </button>
-
-          {showUpdateButton && (
-            <button
-              type="button"
-              onClick={() => updateDialogRef.current?.showModal()}
-              className="px-3 py-1.5 mt-3 text-xs font-semibold rounded-lg
-               border-2 border-teal text-muted
-               hover:text-ink hover:bg-overlay
-               transition-colors cursor-pointer"
-            >
-              Update
-            </button>
-          )}
-        </div>
+        <button
+          type="button"
+          onClick={() => dialogRef.current?.showModal()}
+          className="
+          group/link mt-2 inline-flex items-center gap-1.5
+          text-xs font-semibold text-teal
+          transition-colors hover:text-teal/80
+          cursor-pointer
+        "
+        >
+          Read more
+          <span className="transition-transform group-hover/link:translate-x-0.5">
+            →
+          </span>
+        </button>
       </div>
 
       {/* - SPACER - */}
       <div className="flex-1" />
 
-      {/* - FOOTER - */}
-      <div className="mt-5 border-t border-line pt-4">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          {/* Salary */}
-          <div>
-            <p className="mb-1 text-[10px] font-mono uppercase tracking-wider text-muted">
-              Salary
-            </p>
-
-            <div className="flex items-center gap-1.5 text-sm font-semibold text-ink">
-              <Wallet className="h-3.5 w-3.5 text-teal" />
-              {formatSalary(
-                salary?.salaryMin,
-                salary?.salaryMax,
-                salary?.currency,
-              )}
-            </div>
-          </div>
-
-          {/* Deadline */}
-          {deadlineInfo && (
-            <div className="text-right">
-              <div
-                className={`
-                flex items-center justify-end gap-1.5
-                text-[11px] font-mono
-                ${isClosingSoon ? "text-red-400" : "text-muted"}
-              `}
-              >
-                <CalendarClock className="h-3.5 w-3.5" />
-
-                {isClosingSoon
-                  ? `${deadlineInfo.daysLeft}d left`
-                  : `Closes ${deadlineInfo.label}`}
+      {/* - ROW 4: skills (left) — apply (right) - */}
+      <div className="mt-4 flex flex-col gap-3 border-t border-line pt-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0 flex-1">
+          {skills?.length > 0 && (
+            <>
+              <p className="mb-2 text-[10px] font-mono uppercase tracking-wider text-muted">
+                Skills
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {skills.slice(0, 5).map((skill, i) => (
+                  <span
+                    key={i}
+                    className="
+                    rounded-md border border-line
+                    bg-overlay px-2 py-1
+                    text-[11px] font-mono text-ink
+                    transition-colors
+                    group-hover:border-teal/20
+                  "
+                  >
+                    {skill}
+                  </span>
+                ))}
+                {skills.length > 5 && (
+                  <span className="rounded-md px-2 py-1 text-[11px] font-mono text-muted">
+                    +{skills.length - 5} more
+                  </span>
+                )}
               </div>
-            </div>
+            </>
           )}
         </div>
+
+        {isCandidate && (
+          <button
+            type="button"
+            // onClick={onApply}
+            className="
+          shrink-0 rounded-lg bg-teal px-4 py-2
+          text-xs font-semibold text-white
+          transition-colors hover:bg-teal/90
+          cursor-pointer
+        "
+          >
+            Apply Now
+          </button>
+        )}
+        {
+          isMyCompany && (
+            <button
+            type="button"
+            // onClick={onApply}
+            className=" flex items-center justify-center
+          shrink-0 rounded-lg bg-violet px-4 py-2
+          text-xs font-semibold text-black font-sans
+          transition-colors hover:bg-teal/90
+          cursor-pointer 
+        "
+          >
+            See Application Details
+            
+          </button>
+          )
+        }
       </div>
 
       {/* - DESCRIPTION MODAL - */}
-
       <DescriptionModalBody
         dialogRef={dialogRef}
         title={title}
@@ -295,7 +335,10 @@ const JobCard = ({ job }) => {
         employmentType={employmentType}
         description={description}
       />
+      {/* UPDATE MODAL */}
       <UpdateModalBody updateDialogRef={updateDialogRef} job={job} />
+      {/* DELETE MODAL */}
+      <DeleteModalBody deleteDialogRef={deleteDialogRef} jobId={job._id} />
     </div>
   );
 };

@@ -137,7 +137,7 @@ const JobFeed = () => {
         {/* Job Feed */}
         {viewMode === "company" &&
           (jobList.length > 0 ? (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+            <div className="grid  gap-4 mt-6">
               {jobList.map((job) => (
                 <JobCard key={job._id || job.id} job={job} />
               ))}

@@ -90,7 +90,7 @@ export const useDeleteJob = () => {
   const queryClient = useQueryClient();
   const {user} = useContext(AuthContext);
   return useMutation({
-    mutationFn: deleteJobApi,
+    mutationFn : deleteJobApi,
 
     onSuccess: () => {
       queryClient.invalidateQueries({
