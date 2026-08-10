@@ -4,7 +4,11 @@ import { interviewReportModel } from "../Models/interviewReport.model.js";
 import { JobModel } from "../Models/job.model.js";
 import { RecruiterReportModel } from "../Models/recruiterReport.model.js";
 import { ResumeModel } from "../Models/resume.model.js";
-import { generateAnalyzePrepReport, generateInterviewReport, generateRecruiterReport } from "../services/ai.service.js";
+import {
+  generateAnalyzePrepReport,
+  generateInterviewReport,
+  generateRecruiterReport,
+} from "../services/ai.service.js";
 import { resumeResolveForRequest } from "../services/resolveResume.js";
 import { uploadPDF } from "../services/uploadPDF.js";
 import ApiError from "../Utils/ApiError.js";
@@ -165,9 +169,11 @@ export const getCandidateApplicationsController = async (req, res) => {
 
 export const getCompanyApplicationsController = async (req, res) => {
   try {
-    const { page = 1, limit = 10, status, job, sort = "newest" } = req.query;
+    const { status, job, sort = "newest" } = req.query;
 
-    const filter = { company: req.user.company };
+    const filter = {
+      company: req.user.company,
+    };
 
     if (status !== undefined) {
       filter.status = status;
@@ -179,59 +185,51 @@ export const getCompanyApplicationsController = async (req, res) => {
 
     const sortOption = sort === "oldest" ? { createdAt: 1 } : { createdAt: -1 };
 
-    const skip = Number(page - 1) * Number(limit);
+    const applications = await applicationModel
+      .find(filter)
+      .populate({
+        path: "candidate",
+        select: "userName email",
+      })
+      .populate({
+        path: "job",
+        select: "title description employmentType workMode",
+      })
+      .populate({
+        path: "resume",
+        select: "title resumeUrl thumbnailUrl",
+      })
+      .populate({
+        path: "recruiterReport",
+        select:
+          "skillGaps weaknesses strengths executiveSummary hiringRecommendation matchScore",
+      })
+      .sort(sortOption);
 
-    const [applications, totalApplications] = await Promise.all([
-      applicationModel
-        .find(filter)
-        .populate({
-          path: "candidate",
-          select: "userName email",
-        })
-        .populate({
-          path: "job",
-          select: "title description employmentType workMode",
-        })
-        .populate({
-          path: "resume",
-          select: "title resumeUrl thumbnailUrl",
-        })
-        .populate({
-          path: "recruiterReport",
-          select:
-            "skillGaps weaknesses strengths executiveSummary hiringRecommendation matchScore",
-        })
-        .sort(sortOption)
-        .skip(skip)
-        .limit(Number(limit)),
-
-      applicationModel.countDocuments(filter),
-    ]);
-
-    return res.status(200).json(
-      new ApiResponse(
-        200,
-        {
-          applications,
-          pagination: {
-            totalApplications,
-            currentPage: Number(page),
-            totalPage: Math.ceil(totalApplications / Number(limit)),
-            limit: Number(limit),
-            hasNextPage:
-              Number(page) < Math.ceil(totalApplications / Number(limit)),
-            hasPreviousPage: Number(page) > 1,
-          },
-        },
-        "Applications Fetched successfully",
-      ),
-    );
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { applications },
+          "Applications fetched successfully",
+        ),
+      );
   } catch (error) {
     console.log("error in getCompanyApplicationController", error.message);
+
     throw new ApiError(501, "Error getting company applications");
   }
 };
 
+/**
+ * @name getCompanyApplicantListByJobIdController
+ * @description recruiter will get all the applicant details by specific job id
+ * @access Private [company_admin || recruiter]
+ */
+export const getCompanyApplicantListByJobIdController = asyncHandler(
+  async (req, res) => {},
+);
 /**
  * @name updateApplicationJobStatusController
  * @description recruiter will update  the application details
@@ -248,12 +246,18 @@ export const updateApplicationJobStatusController = asyncHandler(
 
     const allowedStatus = [
       "applied",
-      "reviewing",
+      "interview",
       "shortlisted",
       "rejected",
       "hired",
     ];
-
+    const allowedTransitions = {
+      applied: ["interview", "shortlisted", "rejected"],
+      interview: ["shortlisted", "rejected", "hired"],
+      shortlisted: ["interview", "hired", "rejected"],
+      rejected: [],
+      hired: [],
+    };
     if (!allowedStatus.includes(status)) {
       throw new ApiError(401, "Invalid status input");
     }
@@ -274,14 +278,20 @@ export const updateApplicationJobStatusController = asyncHandler(
       throw new ApiError(401, "Unauthorized access to the resource");
     }
 
-    const prevIndex = allowedStatus.indexOf(application.status);
-    const newIndex = allowedStatus.indexOf(status);
+    const currentStatus = application.status;
 
-    if (newIndex <= prevIndex) {
-      throw new ApiError(403, "Invalid status transition");
+    const allowedNextStatuses = allowedTransitions[currentStatus] || [];
+
+    if (!allowedNextStatuses.includes(status)) {
+      throw new ApiError(
+        403,
+        `Cannot move application from ${currentStatus} to ${status}`,
+      );
     }
+
     application.status = status;
     application.statusUpdatedAt = new Date();
+
     await application.save();
 
     return res
@@ -313,30 +323,32 @@ export const analyzePrepController = asyncHandler(async (req, res) => {
   }
 
   const resume = await resumeResolveForRequest(req);
-// console.log("from application controller", job.description);
+  // console.log("from application controller", job.description);
 
-   const interviewReportByAi = await generateAnalyzePrepReport(resume.rawText, job.description, job.skills)
+  const interviewReportByAi = await generateAnalyzePrepReport(
+    resume.rawText,
+    job.description,
+    job.skills,
+  );
 
-      if (!interviewReportByAi) {
-          return res.status(400).json({
-            message: "Failed to generate interview report. Please try again later",
-            success: false,
-          });
-        }
-        const interviewReport = await interviewReportModel.create({
-          ...interviewReportByAi,
-          source:"application",
-          user: req.user.id,
-          resume: resume.rawText,
-          jobDescription:job.description,
-          job:job._id
-          
-        });
-    
-        return res.status(201).json({
-          message: "Interview Report Generated successfully",
-          interviewReport,
-          success: true,
-        });
+  if (!interviewReportByAi) {
+    return res.status(400).json({
+      message: "Failed to generate interview report. Please try again later",
+      success: false,
+    });
+  }
+  const interviewReport = await interviewReportModel.create({
+    ...interviewReportByAi,
+    source: "application",
+    user: req.user.id,
+    resume: resume.rawText,
+    jobDescription: job.description,
+    job: job._id,
+  });
 
+  return res.status(201).json({
+    message: "Interview Report Generated successfully",
+    interviewReport,
+    success: true,
+  });
 });

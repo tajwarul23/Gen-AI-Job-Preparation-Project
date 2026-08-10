@@ -13,6 +13,7 @@ import { useAuth } from "../../Auth/Hooks/useAuth";
 import DescriptionModalBody from "./DescriptionModalBody";
 import UpdateModalBody from "./UpdateModalBody";
 import DeleteModalBody from "./DeleteModalBody";
+import { useNavigate } from "react-router-dom";
 
 const formatSalary = (min, max, currency) => {
   const fmt = new Intl.NumberFormat("en-US", {
@@ -37,6 +38,8 @@ const formatDeadline = (deadline) => {
   return { label, daysLeft };
 };
 
+
+
 const workModeStyles = {
   REMOTE: "bg-blue-500/10 text-blue-400 border-blue-500/30",
   HYBRID: "bg-violet/10 text-violet-text border-violet-border",
@@ -48,7 +51,7 @@ const statusStyles = {
   CLOSED: "bg-red-500/10 text-red-400 border-red-500/30",
 };
 
-const JobCard = ({ job }) => {
+const JobCard = ({ job, view }) => {
   const {
     title,
     skills = [],
@@ -74,6 +77,7 @@ const JobCard = ({ job }) => {
     deadlineInfo.daysLeft >= 0;
 
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   const isMyCompany = user?.company === company;
   const isCandidate = user?.role === "candidate" ;
@@ -292,6 +296,11 @@ const JobCard = ({ job }) => {
               </div>
             </>
           )}
+          {
+            (isMyCompany && view === "company") && (<p className="mt-2 text-xs font-mono uppercase text-muted">
+              Posted By: {job?.postedBy?.userName}
+            </p>)
+          }
         </div>
 
         {isCandidate && (
@@ -312,7 +321,7 @@ const JobCard = ({ job }) => {
           isMyCompany && (
             <button
             type="button"
-            // onClick={onApply}
+            onClick={()=>{navigate(`/recruiter/pipeline?job=${job._id}`)}}
             className=" flex items-center justify-center
           shrink-0 rounded-lg bg-violet px-4 py-2
           text-xs font-semibold text-black font-sans

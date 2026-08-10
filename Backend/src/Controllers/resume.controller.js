@@ -142,7 +142,6 @@ export const getResumeById = async (req, res) => {
   try {
     const resumeById = await ResumeModel.findOne({
       _id: resumeId,
-      user: req.user.id,
     });
     if (!resumeById) {
       return res.status(404).json({

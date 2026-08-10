@@ -70,9 +70,9 @@ useEffect(() => {
     <div className="min-h-screen bg-app flex flex-col items-center py-8 px-4">
       {/* toolbar */}
       <div className="w-full max-w-4xl flex items-center justify-between mb-4">
-        <h1 className="text-xl font-semibold text-ink">
+        {/* <h1 className="text-xl font-semibold text-ink">
           {resume.fullName}'s Resume
-        </h1>
+        </h1> */}
 
         {/* Download button — three states: saving, failed, ready */}
         {resume.saveFailed ? (

@@ -139,7 +139,7 @@ const JobFeed = () => {
           (jobList.length > 0 ? (
             <div className="grid  gap-4 mt-6">
               {jobList.map((job) => (
-                <JobCard key={job._id || job.id} job={job} />
+                <JobCard key={job._id || job.id} job={job} view={"company"} />
               ))}
             </div>
           ) : (

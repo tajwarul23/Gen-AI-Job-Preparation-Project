@@ -137,7 +137,7 @@ const JobFeed = () => {
               <input
                 value={filters.location}
                 onChange={(e) => updateFilter("location", e.target.value)}
-                placeholder="e.g. New York"
+                placeholder="e.g. Sylhet"
                 className="w-full bg-overlay border border-line rounded-lg p-2 text-sm text-ink"
               />
             </div>
@@ -215,7 +215,7 @@ const JobFeed = () => {
           <>
             <div className="grid  gap-4">
               {jobList.map((job) => (
-                <JobCard key={job._id || job.id} job={job} />
+                <JobCard key={job._id || job.id} job={job} view = {"platform"}/>
               ))}
             </div>
 

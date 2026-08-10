@@ -5,6 +5,8 @@ import { useUpdateJob } from "../Hooks/useJob";
 import toast from "react-hot-toast";
 
 const UpdateModalBody = ({ updateDialogRef, job }) => {
+  // console.log(job?.postedBy?.userName);
+  
 
     const convertDate = (date) =>{
         if(!date)return "";
@@ -67,9 +69,7 @@ const UpdateModalBody = ({ updateDialogRef, job }) => {
           <div>
             <h3 className="text-xl font-bold">Update Job</h3>
 
-            <p className="mt-1 text-xs font-mono uppercase text-muted">
-              Posted By: {job?.postedBy?.userName}
-            </p>
+            
           </div>
 
           <button

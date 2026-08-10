@@ -53,13 +53,14 @@ const App = () => {
       {/* Protected — any authenticated user, no role restriction */}
       <Route element={<ProtectedLayout />}>
         <Route path="/onboarding/company" element={<Suspense fallback={<SpinLoader/>}><OnBoardCompany/></Suspense>} />
+        <Route path="/resume/:resumeId" element={<Suspense fallback={<SpinLoader/>}><ResumeViewer /></Suspense>} />
       </Route>
 
       {/* Protected — candidate only */}
       <Route element={<ProtectedLayout allowedRoles={["candidate"]} />}>
         <Route path="/candidate/dashboard" element={<Suspense fallback={<SpinLoader/>}><CandidateDashBoard/></Suspense>} />
         <Route path="/resume-builder" element={<Suspense fallback={<SpinLoader/>}><ResumeBuilder /></Suspense>} />
-        <Route path="/resume/:resumeId" element={<Suspense fallback={<SpinLoader/>}><ResumeViewer /></Suspense>} />
+        
         <Route path="/resume/allResume" element={<Suspense fallback={<SpinLoader/>}><AllResumes /></Suspense>} />
         <Route path="/resume-analyzer" element={<Suspense fallback={<SpinLoader/>}><ResumeAnalyzer /></Suspense>} />
       </Route>
@@ -70,6 +71,7 @@ const App = () => {
         <Route path="/recruiter/jobFeed" element={<Suspense fallback={<SpinLoader/>}><JobFeed/></Suspense>} />
         <Route path="/recruiter/jobStudio" element={<Suspense fallback={<SpinLoader/>}><JobStudio/></Suspense>} />
         <Route path="/recruiter/companyProfile" element={<Suspense fallback={<SpinLoader/>}><CompanyProfile/></Suspense>} />
+        
         <Route path="/recruiter/pipeline" element={<Suspense fallback={<SpinLoader/>}><RecruitPipeline/></Suspense>} />
       </Route>
 
