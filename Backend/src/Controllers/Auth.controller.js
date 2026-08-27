@@ -4,8 +4,7 @@ import bcrypt from "bcryptjs";
 import { userModel } from "../Models/user.model.js";
 import jwt from "jsonwebtoken";
 import { TokenBlacklistModel } from "../Models/blacklist.mode.js";
-import crypto from "crypto";
-import { date } from "zod";
+
 /**
  * @name registerUserController
  * @description Register a new user, expects username, email and password from req.body
@@ -38,15 +37,12 @@ export const registerUserController = async (req, res) => {
     const hash = await bcrypt.hash(password, 10);
 
     //generate verification token
-    const verificationToken = crypto.randomBytes(32).toString("hex");
-    const verificationTokenExpiry = new Date(Date.now() + 2 * 60 * 60 * 1000);
+  
     const user = await userModel.create({
       userName,
       email,
       password: hash,
-      verificationToken,
-      verificationTokenExpiry,
-      isVerified: true,
+      
     });
 
     const token = jwt.sign(
@@ -230,65 +226,11 @@ export const getMeController = async (req, res) => {
   }
 };
 
-/**
- * @name verifyEmail
- * @description verify the user inputted email
- * @access public
- */
-export const verifyEmail = async (req, res) => {
-  const { verificationToken } = req.query;
-  console.log("Token received", verificationToken);
 
-  try {
-    const user = await userModel.findOne({
-      verificationToken: verificationToken,
-      verificationTokenExpiry: { $gt: new Date() },
-    });
 
-    if (!user) {
-      return res.status(400).json({
-        message: "Invalid or expired verification token",
-        success: false,
-      });
-    }
-
-    // Mark user as verified and clear the token
-    user.isVerified = true;
-    user.verificationToken = undefined;
-    user.verificationTokenExpiry = undefined;
-    const token = jwt.sign(
-      { id: user._id, userName: user.userName },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" },
-    );
-
-    // res.cookie("token", token);
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // false locally
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-    });
-
-    await user.save();
-    res.status(200).json({
-      message: `Email verified successfully! You can now log in, ${user.userName}.`,
-      success: true,
-      user: { _id: user._id, userName: user.userName, email: user.email },
-    });
-  } catch (error) {
-    console.log("Error in verifying email", error.message);
-
-    res.status(500).json({
-      message: "Error verifying email",
-      success: false,
-      err: error.message,
-    });
-  }
-};
 
 import admin from "../config/firebase.config.js";
-import { CompanyModel } from "../Models/company.model.js";
-import { copyFile } from "fs";
+
 
 export const firebaseAuthController = async (req, res) => {
   const { idToken } = req.body;

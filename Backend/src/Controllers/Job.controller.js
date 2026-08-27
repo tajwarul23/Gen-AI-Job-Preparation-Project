@@ -4,6 +4,7 @@
  * @access Private
  */
 
+import mongoose from "mongoose";
 import { CompanyModel } from "../Models/company.model.js";
 import { JobModel } from "../Models/job.model.js";
 import { userModel } from "../Models/user.model.js";
@@ -241,6 +242,8 @@ export const getJobFeedController = asyncHandler(async (req, res) => {
     query.experienceLevel = experienceLevel.toUpperCase();
   }
 
+  const candidateId = new mongoose.Types.ObjectId(req.user.id);
+
   const jobs = await JobModel.aggregate([
     {
       $match: query,
@@ -264,7 +267,7 @@ export const getJobFeedController = asyncHandler(async (req, res) => {
               $expr: {
                 $and: [
                   { $eq: ["$job", "$$jobId"] },
-                  { $eq: ["$candidate", req.user.id] },
+                  { $eq: ["$candidate", candidateId] },
                 ],
               },
             },
@@ -335,7 +338,7 @@ export const getCompanyJobFeedController = asyncHandler(async (req, res) => {
       select: "userName _id company",
     })
     .sort({ createdAt: -1 })
-    .lean();
+    
   return res
     .status(200)
     .json(

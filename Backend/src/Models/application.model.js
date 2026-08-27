@@ -42,6 +42,11 @@ const applicationSchema = new mongoose.Schema(
     },
     recruiterMessage: { type: String },
     statusUpdatedAt: { type: Date },
+
+    matchScore:{
+      type:Number,
+      default:0
+    }
   },
   { timestamps: true },
 );

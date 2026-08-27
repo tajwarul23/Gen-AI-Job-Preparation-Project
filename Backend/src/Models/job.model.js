@@ -78,6 +78,11 @@ const jobSchema = new mongoose.Schema(
       required: true,
     },
 
+    applicantsCount:{
+      type:Number,
+      default:0
+    },
+
     deadline: Date,
   },
   { timestamps: true },

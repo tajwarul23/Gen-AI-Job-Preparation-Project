@@ -49,6 +49,7 @@ export const applyToJobController = asyncHandler(async (req, res) => {
       status: "applied",
       recruiterReportStatus: "generating",
     });
+    await JobModel.findByIdAndUpdate(job._id, { $inc: { applicantsCount: 1 } });
   } catch (error) {
     if (error.code === 11000) {
       throw new ApiError(409, "You have already applied for this job");
@@ -77,6 +78,7 @@ export const applyToJobController = asyncHandler(async (req, res) => {
       await applicationModel.findByIdAndUpdate(application._id, {
         recruiterReport: report._id,
         recruiterReportStatus: "generated",
+        matchScore: report.matchScore
       });
 
       // console.log("Generated recruiter report", report);
@@ -183,7 +185,7 @@ export const getCompanyApplicationsController = async (req, res) => {
       filter.job = job;
     }
 
-    const sortOption = sort === "oldest" ? { createdAt: 1 } : { createdAt: -1 };
+    const sortOption = {matchScore:-1};
 
     const applications = await applicationModel
       .find(filter)
