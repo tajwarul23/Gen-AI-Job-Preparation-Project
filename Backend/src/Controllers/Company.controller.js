@@ -10,6 +10,25 @@ import ApiError from "../Utils/ApiError.js";
 import ApiResponse from "../Utils/ApiResponse.js";
 import asyncHandler from "../Utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
+import { sendCompanyInviteEmail } from "../services/email.service.js";
+
+const buildInviteLink = (companyId) => {
+  const inviteToken = jwt.sign(
+    {
+      companyId,
+      type: "company_invite",
+    },
+    process.env.INVITATION_TOKEN_SECRET,
+    { expiresIn: "1d" },
+  );
+
+  const clientUrl =
+    process.env.NODE_ENV === "production"
+      ? "https://preplab-ai.vercel.app"
+      : "http://localhost:5173";
+
+  return `${clientUrl}/onboarding/company?token=${inviteToken}`;
+};
 /**
  * @name createCompanyController
  * @description RECRUITER only, creator become company_admin
@@ -73,13 +92,11 @@ export const createCompanyController = asyncHandler(async (req, res) => {
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
   });
-  return res
-    .status(201)
-    .json(
-      new ApiResponse(201, company, "Company Created Successfully", {
-        updatedUser,
-      }),
-    );
+  return res.status(201).json(
+    new ApiResponse(201, company, "Company Created Successfully", {
+      updatedUser,
+    }),
+  );
 });
 
 /**
@@ -88,25 +105,36 @@ export const createCompanyController = asyncHandler(async (req, res) => {
  * @access Private (company_admin)
  */
 export const generateInviteController = asyncHandler(async (req, res) => {
-  let inviteLink;
-  const inviteToken = jwt.sign(
-    {
-      companyId: req.user.company,
-      type: "company_invite",
-    },
-    process.env.INVITATION_TOKEN_SECRET,
-    { expiresIn: "1d" },
-  );
-
-  inviteLink = `http://localhost:3000/api/company/join?token=${inviteToken}`;
-  //but later we have to send the frontend link frontend/join?token=abc123
-  if (inviteLink === "") {
-    throw new ApiError(500, "failed to generate invite link");
-  }
+  const inviteLink = buildInviteLink(req.user.company);
 
   return res
     .status(200)
     .json(new ApiResponse(200, inviteLink, "Your invite link"));
+});
+
+/**
+ * @name inviteByEmailController
+ * @description company_admin sends a shareable invite link directly to a recruiter's email
+ * @access Private (company_admin)
+ */
+export const inviteByEmailController = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  if (!email?.trim()) {
+    throw new ApiError(400, "Email is required");
+  }
+
+  const inviteLink = buildInviteLink(req.user.company);
+
+  await sendCompanyInviteEmail({
+    to: email.trim(),
+    companyName: req.company.companyName,
+    inviterName: req.user.userName,
+    inviteLink,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, `Invite sent to ${email.trim()}`));
 });
 
 /**
@@ -272,12 +300,48 @@ export const getCompanyController = asyncHandler(async (req, res) => {
       message: "Company not found",
     });
   }
-const allApplications = await applicationModel.find({company: req.company._id});
-const company = req.company;
-const applicationLength = allApplications.length
+const applicationLength = await applicationModel.countDocuments({
+  company: req.company._id,
+});
+  const company = req.company;
+  
+  const employeeDetails = await CompanyModel.aggregate([
+    {
+      $match:{
+        _id: req.company._id
+      }
+    },
+  {
+    $lookup: {
+      from: "users",
+      localField: "_id",
+      foreignField: "company",
+      as: "employees",
+      pipeline: [
+        {
+          $project: {
+            userName: 1,
+            email: 1,
+            role: 1,
+            createdAt: 1,
+          },
+        },
+      ],
+    }
+  },
+  {
+    $addFields: {
+      employeeCount: { $size: "$employees" }
+    }
+  }
+])
   return res
     .status(200)
     .json(
-      new ApiResponse(200, {company, applicationLength},  "Company data fetched successfully"),
+      new ApiResponse(
+        200,
+        { company, applicationLength, employeeDetails },
+        "Company data fetched successfully",
+      ),
     );
 });

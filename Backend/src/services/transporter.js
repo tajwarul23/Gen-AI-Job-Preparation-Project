@@ -1,5 +1,8 @@
-// import { Resend } from "resend";
+import emailjs from "@emailjs/nodejs";
 
-// const resend = new Resend(process.env.RESEND_API_KEY);
+emailjs.init({
+  publicKey: process.env.EMAILJS_PUBLIC_KEY,
+  privateKey: process.env.EMAILJS_PRIVATE_KEY,
+});
 
-// export default resend;
+export default emailjs;

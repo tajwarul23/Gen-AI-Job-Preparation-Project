@@ -1,5 +1,5 @@
 import express from "express";
-import { createCompanyController, generateInviteController, getCompanyController, joinCompanyController, updateCompanyController, updateCompanyLogoController } from "../Controllers/Company.controller.js";
+import { createCompanyController, generateInviteController, getCompanyController, inviteByEmailController, joinCompanyController, updateCompanyController, updateCompanyLogoController } from "../Controllers/Company.controller.js";
 import { authorizeRoles, verifyToken } from "../Middlewares/Auth.middleware.js";
 import upload from "../Middlewares/File.middleware.js";
 
@@ -23,6 +23,13 @@ companyRouter.post("/join", verifyToken,  joinCompanyController )
  * @access Private [only company admin]
  */
 companyRouter.post("/invite", verifyToken, authorizeRoles("company_admin"), generateInviteController)
+
+/**
+ * @route POST /api/company/invite-email
+ * @description generate an invite link and email it directly to a recruiter
+ * @access Private [only company admin]
+ */
+companyRouter.post("/invite-email", verifyToken, authorizeRoles("company_admin"), inviteByEmailController)
 
 /**
  * @route POST /api/company/update

@@ -14,6 +14,8 @@ import { uploadPDF } from "../services/uploadPDF.js";
 import ApiError from "../Utils/ApiError.js";
 import ApiResponse from "../Utils/ApiResponse.js";
 import asyncHandler from "../Utils/asyncHandler.js";
+import { sendApplicationStatusEmail } from "../services/email.service.js";
+import { application } from "express";
 
 /**
  * @name applyToJobController
@@ -78,7 +80,7 @@ export const applyToJobController = asyncHandler(async (req, res) => {
       await applicationModel.findByIdAndUpdate(application._id, {
         recruiterReport: report._id,
         recruiterReportStatus: "generated",
-        matchScore: report.matchScore
+        matchScore: report.matchScore,
       });
 
       // console.log("Generated recruiter report", report);
@@ -125,7 +127,7 @@ export const getCandidateApplicationsController = async (req, res) => {
         })
         .populate({
           path: "job",
-          select: "title description employmentType workMode",
+          select: "title description employmentType workMode companyName",
         })
         .populate({
           path: "resume",
@@ -185,7 +187,7 @@ export const getCompanyApplicationsController = async (req, res) => {
       filter.job = job;
     }
 
-    const sortOption = {matchScore:-1};
+    
 
     const applications = await applicationModel
       .find(filter)
@@ -206,7 +208,7 @@ export const getCompanyApplicationsController = async (req, res) => {
         select:
           "skillGaps weaknesses strengths executiveSummary hiringRecommendation matchScore",
       })
-      .sort(sortOption);
+      .sort({matchScore:-1});
 
     return res
       .status(200)
@@ -271,12 +273,24 @@ export const updateApplicationJobStatusController = asyncHandler(
         _id: applicationId,
         company: req.user.company,
       })
-      .select("company status statusUpdatedAt");
+      .select("company status statusUpdatedAt candidate job")
+      .populate({
+        path: "candidate",
+        select: "userName email",
+      })
+      .populate({
+        path: "job",
+        select: "title",
+      })
+      .populate({
+        path: "company",
+        select: "companyName",
+      });
 
     if (!application) {
       throw new ApiError(404, "No application found");
     }
-    if (String(application.company) !== String(req.user.company)) {
+    if (String(application.company._id) !== String(req.user.company)) {
       throw new ApiError(401, "Unauthorized access to the resource");
     }
 
@@ -296,11 +310,22 @@ export const updateApplicationJobStatusController = asyncHandler(
 
     await application.save();
 
-    return res
+   
+
+     res
       .status(200)
       .json(
         new ApiResponse(200, application, "Job status updated successfully"),
       );
+
+
+       await sendApplicationStatusEmail({
+      to: application.candidate.email,
+      candidateName: application.candidate.userName,
+      jobTitle: application.job.title,
+      companyName: application.company.companyName,
+      status,
+    });
   },
 );
 
