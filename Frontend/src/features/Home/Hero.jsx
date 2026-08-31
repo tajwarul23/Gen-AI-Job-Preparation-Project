@@ -9,7 +9,7 @@ import { routeAfterAuth } from "../../Utils/routeAfterAuth";
 import SpinLoader from "../../Shared/SpinLoader";
 const Hero = () => {
   const navigate = useNavigate();
-const { loading, handleLogin, error, handleGoogleLogin,googleLoading } = useAuth();
+const {  handleGoogleLogin,googleLoading } = useAuth();
   const handleContinue = async(intent) =>{
     sessionStorage.setItem("authIntent", intent);
     const data = await handleGoogleLogin();

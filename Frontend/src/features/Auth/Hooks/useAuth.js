@@ -33,6 +33,8 @@ export const useAuth = () => {
       return data;
     } catch (error) {
       setError(error?.response?.data?.message || "Something Went Wrong..!");
+      console.log(error);
+      
     } finally {
       setLoading(false);
     }
@@ -48,6 +50,7 @@ export const useAuth = () => {
       return data;
     } catch (error) {
       setError(error?.response?.data?.message || "Something Went Wrong..!");
+      console.log(error);
     } finally {
       setGoogleLoading(false);
     }
@@ -64,6 +67,7 @@ export const useAuth = () => {
       }
     } catch (error) {
       setError(error?.response?.data?.message || "Something Went Wrong..!");
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -79,6 +83,7 @@ export const useAuth = () => {
     
     } catch (error) {
       setError(error?.response?.data?.message || "Something Went Wrong..!");
+      console.log(error);
     } finally {
       setUser(null);
       setLoading(false);

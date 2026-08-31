@@ -83,7 +83,7 @@ const JobFeed = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-xl font-bold font-display text-ink">
+            <h1 className="text-xl lg:text-2xl font-bold font-display text-ink">
               Job Feed
             </h1>
             <p className="text-xs text-muted font-sans mt-0.5">
@@ -131,7 +131,7 @@ const JobFeed = () => {
         {showFilters && (
           <div className="bg-surface border border-line rounded-2xl p-4 mb-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div>
-              <label className="block text-ink text-[10px] font-mono uppercase  mb-1.5">
+              <label className="block text-ink text-sm font-mono uppercase  mb-1.5">
                 Location
               </label>
               <input
@@ -143,7 +143,7 @@ const JobFeed = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-mono uppercase text-ink mb-1.5">
+              <label className="block text-sm font-mono uppercase text-ink mb-1.5">
                 Work Mode
               </label>
               <select
@@ -159,7 +159,7 @@ const JobFeed = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-mono uppercase text-muted mb-1.5">
+              <label className="block text-sm font-mono uppercase text-muted mb-1.5">
                 Employment Type
               </label>
               <select
@@ -176,7 +176,7 @@ const JobFeed = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-mono uppercase text-muted mb-1.5">
+              <label className="block text-sm font-mono uppercase text-muted mb-1.5">
                 Experience
               </label>
               <select

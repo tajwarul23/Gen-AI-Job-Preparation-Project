@@ -28,6 +28,8 @@ export const AuthProvider = ({ children }) => {
 
       if (error?.response?.status !== 401) {
         setError(error?.response?.data?.message || "Something Went Wrong..!");
+        console.log("Error in fetchCurrentUser",error?.response?.data?.message );
+        
       }
     } finally {
       setIsInitializing(false);

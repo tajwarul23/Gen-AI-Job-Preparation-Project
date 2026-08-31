@@ -8,13 +8,19 @@ const JoinCompany = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const token = searchParams.get("token");
-  const { mutate, isPending, isSuccess, isError, error, data } = useJoinCompany();
+  const { mutate, isPending, isSuccess, isError, error } = useJoinCompany();
 
   useEffect(() => {
     if (token) {
       mutate(token);
     }
   }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!isSuccess) return;
+    const timer = setTimeout(() => navigate("/recruiter/pipeline"), 1500);
+    return () => clearTimeout(timer);
+  }, [isSuccess, navigate]);
 
   return (
     <motion.div
@@ -49,7 +55,7 @@ const JoinCompany = () => {
           <p className="text-sm text-ink font-sans">
             Joined successfully. Redirecting to your dashboard...
           </p>
-          {setTimeout(() => navigate("/dashboard"), 1500) && null}
+          {setTimeout(() => navigate("/recruiter/pipeline"), 1500) && null}
         </div>
       )}
 

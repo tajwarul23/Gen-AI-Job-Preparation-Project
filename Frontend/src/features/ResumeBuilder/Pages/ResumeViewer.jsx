@@ -61,6 +61,7 @@ useEffect(() => {
       setTimeout(() => window.URL.revokeObjectURL(url), 100);
     } catch (error) {
       toast.error(error?.message || "Something went wrong");
+      console.log(error);
     } finally {
       setDownloading(false);
     }

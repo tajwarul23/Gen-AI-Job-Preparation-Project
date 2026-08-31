@@ -23,3 +23,35 @@ export const updateApplicationStatusApi = async (applicationId, status) => {
   const response = await api.patch(`/${applicationId}`, { status });
   return response.data;
 };
+
+// /api/application/:jobId
+
+export const applyToJobApi = async ({ jobId, resumeId, file }) => {
+  let body;
+  let config = {};
+  if (file) {
+    body = new FormData();
+    body.append("resume", file);
+    config = { headers: { "Content-Type": "multipart/form-data" } };
+  } else {
+    body = { resumeId };
+  }
+  const response = await api.post(`/${jobId}`, body, config);
+  return response.data;
+};
+
+// /api/application/analyze/:jobId
+
+export const analyzePrepApi = async ({ jobId, resumeId, file }) => {
+  let body;
+  let config = {};
+  if (file) {
+    body = new FormData();
+    body.append("resume", file);
+    config = { headers: { "Content-Type": "multipart/form-data" } };
+  } else {
+    body = { resumeId };
+  }
+  const response = await api.post(`/analyze/${jobId}`, body, config);
+  return response.data;
+};

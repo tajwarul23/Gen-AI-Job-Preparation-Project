@@ -7,6 +7,8 @@ import {
   Map,
   SquarePen,
   Trash2,
+  Send,
+  Sparkles,
 } from "lucide-react";
 import { useRef } from "react";
 import { useAuth } from "../../Auth/Hooks/useAuth";
@@ -14,6 +16,8 @@ import DescriptionModalBody from "./DescriptionModalBody";
 import UpdateModalBody from "./UpdateModalBody";
 import DeleteModalBody from "./DeleteModalBody";
 import { useNavigate } from "react-router-dom";
+import ApplyModalBody from "./ApplyModalBody";
+import AnalyzePrepModalBody from "./AnalyzePrepModalBody";
 
 const formatSalary = (min, max, currency) => {
   const fmt = new Intl.NumberFormat("en-US", {
@@ -37,7 +41,6 @@ const formatDeadline = (deadline) => {
   });
   return { label, daysLeft };
 };
-
 
 
 const workModeStyles = {
@@ -68,6 +71,8 @@ const JobCard = ({ job, view }) => {
     company,
   } = job;
   const dialogRef = useRef(null);
+  const applyDialogRef = useRef(null);
+  const analyzeDialogRef = useRef(null);
   const updateDialogRef = useRef(null);
   const deleteDialogRef = useRef(null);
   const deadlineInfo = formatDeadline(deadline);
@@ -78,9 +83,9 @@ const JobCard = ({ job, view }) => {
 
   const { user } = useAuth();
   const navigate = useNavigate();
-  
+
   const isMyCompany = user?.company === company;
-  const isCandidate = user?.role === "candidate" ;
+  const isCandidate = user?.role === "candidate";
 
   return (
     <div
@@ -111,7 +116,7 @@ const JobCard = ({ job, view }) => {
             <span
               className={`
               shrink-0 rounded-full border px-2.5 py-1
-              text-[10px] font-mono font-bold uppercase tracking-wide
+              text-sm font-mono font-bold uppercase tracking-wide
               ${statusStyles[status]}
             `}
             >
@@ -122,7 +127,7 @@ const JobCard = ({ job, view }) => {
               <span
                 className="
                 shrink-0 rounded-full border border-teal/40 bg-teal/10
-                px-2.5 py-1 text-[10px] font-mono font-bold
+                px-2.5 py-1 text-sm font-mono font-bold
                 uppercase tracking-wide text-teal
               "
               >
@@ -180,7 +185,7 @@ const JobCard = ({ job, view }) => {
         <span
           className={`
           shrink-0 rounded-full border px-2.5 py-1
-          text-[10px] font-mono font-bold uppercase tracking-wide
+          text-sm font-mono font-bold uppercase tracking-wide
           ${workModeStyles[workMode]}
         `}
         >
@@ -197,7 +202,7 @@ const JobCard = ({ job, view }) => {
           {employmentType?.replace("_", " ").toLowerCase()}
         </span>
 
-        <span className="text-[10px] font-mono uppercase tracking-wide text-muted">
+        <span className="text-sm font-mono uppercase tracking-wide text-muted">
           {experienceLevel?.toLowerCase()} level
         </span>
 
@@ -223,7 +228,7 @@ const JobCard = ({ job, view }) => {
 
       {/* - ROW 3: description (dark bg) + read more - */}
       <div className="mt-4 rounded-xl bg-ink/5 dark:bg-black/30 p-3.5">
-        <p className="mb-2 text-[10px] font-mono uppercase tracking-wider text-muted">
+        <p className="mb-2 text-sm font-mono uppercase tracking-wider text-muted">
           Job Description
         </p>
 
@@ -270,7 +275,7 @@ const JobCard = ({ job, view }) => {
         <div className="min-w-0 flex-1">
           {skills?.length > 0 && (
             <>
-              <p className="mb-2 text-[10px] font-mono uppercase tracking-wider text-muted">
+              <p className="mb-2 text-sm font-mono uppercase tracking-wider text-muted">
                 Skills
               </p>
               <div className="flex flex-wrap gap-1.5">
@@ -296,44 +301,63 @@ const JobCard = ({ job, view }) => {
               </div>
             </>
           )}
-          {
-            (isMyCompany && view === "company") && (<p className="mt-2 text-xs font-mono uppercase text-muted">
+          {isMyCompany && view === "company" && (
+            <p className="mt-2 text-xs font-mono uppercase text-muted">
               Posted By: {job?.postedBy?.userName}
-            </p>)
-          }
+            </p>
+          )}
         </div>
 
         {isCandidate && (
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              disabled={job?.isApplied}
+              onClick={()=>{applyDialogRef?.current?.showModal()}}
+              className={`flex items-center justify-center gap-1.5
+        shrink-0 rounded-lg px-4 py-2
+        text-xs font-semibold text-white
+        transition-colors ${job?.isApplied ? "bg-violet/40 cursor-not-allowed opacity-60" : "bg-violet hover:bg-violet-dim cursor-pointer"}`}
+            >
+              <Send className="h-3.5 w-3.5" />
+              {
+                job?.isApplied? ("Applied") : ("Apply Now")
+              }
+            </button>
+
+            <button
+              type="button"
+              onClick={() => analyzeDialogRef.current?.showModal()}
+              className="
+        flex items-center justify-center gap-1.5
+        shrink-0 rounded-lg border-2 border-violet px-4 py-2
+        text-xs font-semibold text-violet
+        transition-colors hover:bg-violet/10
+        cursor-pointer
+      "
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              Analyze & Prep
+            </button>
+          </div>
+        ) }
+      
+        {isMyCompany && (
           <button
             type="button"
-            // onClick={onApply}
-            className="
-          shrink-0 rounded-lg bg-teal px-4 py-2
-          text-xs font-semibold text-white
-          transition-colors hover:bg-teal/90
-          cursor-pointer
-        "
-          >
-            Apply Now
-          </button>
-        )}
-        {
-          isMyCompany && (
-            <button
-            type="button"
-            onClick={()=>{navigate(`/recruiter/pipeline?job=${job._id}`)}}
+            onClick={() => {
+              navigate(`/recruiter/pipeline?job=${job._id}`);
+            }}
             className=" flex items-center justify-center
           shrink-0 rounded-lg bg-violet px-4 py-2
           text-xs font-semibold text-black font-sans
-          transition-colors hover:bg-teal/90
+          transition-colors hover:bg-violet-dim
           cursor-pointer 
         "
           >
             See Application Details
-            
           </button>
-          )
-        }
+        )}
       </div>
 
       {/* - DESCRIPTION MODAL - */}
@@ -348,6 +372,10 @@ const JobCard = ({ job, view }) => {
       <UpdateModalBody updateDialogRef={updateDialogRef} job={job} />
       {/* DELETE MODAL */}
       <DeleteModalBody deleteDialogRef={deleteDialogRef} jobId={job._id} />
+      {/* APPLY MODAL */}
+      <ApplyModalBody applyDialogRef={applyDialogRef} jobId= {job._id}/>
+      {/* ANALYZE & PREP MODAL */}
+      <AnalyzePrepModalBody analyzeDialogRef={analyzeDialogRef} jobId={job._id} />
     </div>
   );
 };

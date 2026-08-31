@@ -14,7 +14,7 @@ const ReportList = ({
   return (
     <div>
       {/* Section Header */}
-      <p className="mb-3 flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider text-muted">
+      <p className="mb-3 flex items-center gap-2 text-sm font-mono uppercase tracking-wider text-muted">
         <Icon className={`h-3.5 w-3.5 ${color}`} />
         {title}
       </p>

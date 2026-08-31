@@ -71,7 +71,7 @@ const RecruitPipeline = () => {
           <div className="lg:col-span-4">
             <div className="mb-3">
               <div className="mb-2 flex items-center justify-between">
-                <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted">
+                <p className="text-sm font-mono font-semibold uppercase tracking-wider text-muted">
                   Sort Applicants by Application Status
                 </p>
               </div>
@@ -82,7 +82,7 @@ const RecruitPipeline = () => {
                   onClick={() => setStatusFilter("")}
                   className={`
         rounded-lg border px-2.5 py-1.5
-        text-[10px] font-semibold transition-colors
+        text-sm font-semibold transition-colors
         cursor-pointer
         ${
           statusFilter === ""
@@ -98,7 +98,7 @@ const RecruitPipeline = () => {
                   onClick={() => setStatusFilter("applied")}
                   className={`
         rounded-lg border px-2.5 py-1.5
-        text-[10px] font-semibold transition-colors
+        text-sm font-semibold transition-colors
         cursor-pointer
         ${
           statusFilter === "applied"
@@ -115,7 +115,7 @@ const RecruitPipeline = () => {
                   onClick={() => setStatusFilter("interview")}
                   className={`
         rounded-lg border px-2.5 py-1.5
-        text-[10px] font-semibold transition-colors
+        text-sm font-semibold transition-colors
         cursor-pointer
         ${
           statusFilter === "interview"
@@ -132,7 +132,7 @@ const RecruitPipeline = () => {
                   onClick={() => setStatusFilter("shortlisted")}
                   className={`
         rounded-lg border px-2.5 py-1.5
-        text-[10px] font-semibold transition-colors
+        text-sm font-semibold transition-colors
         cursor-pointer
         ${
           statusFilter === "shortlisted"
@@ -149,7 +149,7 @@ const RecruitPipeline = () => {
                   onClick={() => setStatusFilter("hired")}
                   className={`
         rounded-lg border px-2.5 py-1.5
-        text-[10px] font-semibold transition-colors
+        text-sm font-semibold transition-colors
         cursor-pointer
         ${
           statusFilter === "hired"
@@ -166,7 +166,7 @@ const RecruitPipeline = () => {
                   onClick={() => setStatusFilter("rejected")}
                   className={`
         rounded-lg border px-2.5 py-1.5
-        text-[10px] font-semibold transition-colors
+        text-sm font-semibold transition-colors
         cursor-pointer
         ${
           statusFilter === "rejected"

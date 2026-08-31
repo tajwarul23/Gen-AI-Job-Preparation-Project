@@ -286,7 +286,7 @@ const CreateCompanyForm = () => {
                   </p>
                 )}
 
-                <p className="text-[10px] text-muted mt-1 font-mono">
+                <p className="text-sm text-muted mt-1 font-mono">
                   PNG, JPG up to 2MB
                 </p>
               </div>

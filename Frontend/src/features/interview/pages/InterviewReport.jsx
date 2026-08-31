@@ -8,6 +8,19 @@ import MatchScore from "../Components/MatchScore";
 import SkillGaps from "../Components/SkillGaps";
 import InterviewReportSkeleton from "./InterviewReportSkeleton";
 import toast from "react-hot-toast";
+import { NotebookPen } from "lucide-react";
+
+const TABS = [
+  { key: "technical", label: "Technical Question", accent: "teal" },
+  { key: "behavioral", label: "Behavioral Question", accent: "violet" },
+  { key: "roadmap", label: "Roadmap", accent: "purple" },
+];
+
+const tabActiveClass = {
+  teal: "border-teal/30 bg-teal/10 text-teal-text",
+  violet: "border-violet-border bg-violet/10 text-violet-text",
+  purple: "border-purple-border bg-purple/10 text-purple-text",
+};
 
 const InterviewReport = () => {
   const [activeTab, setActiveTab] = useState("technical");
@@ -30,50 +43,42 @@ const InterviewReport = () => {
     );
   }
    if(error){
-     return(<div className="text-red-400 text-4xl text-center">{error}</div>)
+     return(
+       <div className="min-h-screen bg-app flex items-center justify-center p-8">
+         <div className="rounded-2xl border border-red-400/20 bg-red-400/5 p-6 text-center max-w-md">
+           <p className="text-sm text-red-400">{error}</p>
+         </div>
+       </div>
+     )
   }
   if(!report){
-    return(<div className="text-ink text-4xl text-center">No report found..!</div>)
+    return(
+      <div className="min-h-screen bg-app flex items-center justify-center p-8">
+        <p className="text-sm text-muted">No report found..!</p>
+      </div>
+    )
   }
  
 
   return (
-    <div className="min-h-screen  text-white font-display">
+    <div className="min-h-screen bg-app text-ink">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1  lg:grid-cols-[200px_1fr_290px] gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr_290px] gap-6">
           {/* Left Sidebar */}
-          <aside className="hidden min-h-screen  lg:flex flex-col  justify-start gap-20  bg-surface rounded-xl p-4 border border-line font-display">
-            <button
-              onClick={() => setActiveTab("technical")}
-              className={`cursor-pointer w-full mt-2 font-semibold text-sm py-3.5 rounded-xl transition active:scale-95 ${
-                activeTab === "technical"
-                  ? "bg-violet text-ink shadow-[0_0_24px_rgba(124,58,237,0.5)]"
-                  : " bg-violet/40 text-ink "
-              }`}
-            >
-              Technical Question{" "}
-            </button>
-            <button
-              onClick={() => setActiveTab("behavioral")}
-              className={`cursor-pointer w-full mt-2 font-semibold text-sm py-3.5 rounded-xl transition active:scale-95 ${
-                activeTab === "behavioral"
-                  ? "bg-violet text-ink shadow-[0_0_24px_rgba(124,58,237,0.5)]"
-                  : " bg-violet/40 text-ink "
-              }`}
-            >
-              Behavioral Question{" "}
-            </button>
-            <button
-              onClick={() => setActiveTab("roadmap")}
-              className={`cursor-pointer w-full mt-2 font-semibold text-sm py-3.5 rounded-xl transition active:scale-95 ${
-                activeTab === "roadmap"
-                  ? "bg-violet text-ink shadow-[0_0_24px_rgba(124,58,237,0.5)]"
-                  : " bg-violet/40 text-ink "
-              }`}
-            >
-              Roadmap{" "}
-            </button>
-            
+          <aside className="hidden min-h-screen lg:flex flex-col justify-start gap-3 bg-surface rounded-xl p-4 border border-line">
+            {TABS.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`cursor-pointer w-full font-semibold text-sm py-3 rounded-xl border transition ${
+                  activeTab === tab.key
+                    ? tabActiveClass[tab.accent]
+                    : "border-line bg-overlay text-muted hover:text-ink hover:border-linehov"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </aside>
 
           {/* Main Content */}
@@ -82,15 +87,15 @@ const InterviewReport = () => {
             <div className="flex flex-col items-start justify-between gap-4 flex-wrap mb-5">
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-violet animate-bounce" />
-                  <span className="text-[11px] font-medium text-gray-500 uppercase tracking-widest">
+                  <NotebookPen className="w-4 h-4 text-teal" />
+                  <span className="text-[11px] font-mono font-medium text-muted uppercase tracking-widest">
                     Interview Report
                   </span>
                 </div>
-                <h1 className="text-xl font-semibold text-gray-50 leading-snug mb-1.5">
+                <h1 className="text-xl lg:text-2xl font-bold font-display text-ink leading-snug mb-1.5">
                   {report?.title}
                 </h1>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted font-sans">
                   {report?.createdAt?new Date(report?.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
@@ -99,46 +104,40 @@ const InterviewReport = () => {
                 </p>
               </div>
               <div className="flex gap-2 flex-wrap items-center">
-                <span
-                  onClick={() => setActiveTab("technical")}
-                  className=" cursor-pointer text-xs font-medium bg-blue-950 text-blue-300 px-3 py-1 rounded-full border border-blue-800/40"
-                >
-                  Technical
-                </span>
-                <span
-                  onClick={() => setActiveTab("behavioral")}
-                  className=" cursor-pointer text-xs font-medium bg-green-950 text-green-300 px-3 py-1 rounded-full border border-green-800/40"
-                >
-                  Behavioral
-                </span>
-                <span
-                  onClick={() => setActiveTab("roadmap")}
-                  className="cursor-pointer text-xs font-medium bg-purple-950 text-purple-300 px-3 py-1 rounded-full border border-purple-800/40"
-                >
-                  Roadmap
-                </span>
-                
+                {TABS.map((tab) => (
+                  <span
+                    key={tab.key}
+                    onClick={() => setActiveTab(tab.key)}
+                    className={`cursor-pointer text-xs font-semibold px-3 py-1 rounded-full border transition ${
+                      activeTab === tab.key
+                        ? tabActiveClass[tab.accent]
+                        : "border-line bg-overlay text-muted hover:text-ink"
+                    }`}
+                  >
+                    {tab.label.replace(" Question", "")}
+                  </span>
+                ))}
               </div>
             </div>
-            <div className="border-t border-gray-800 mb-5" />
+            <div className="border-t border-line mb-5" />
 
             {activeTab === "technical" && <TechnicalQuestion />}
             {activeTab === "behavioral" && <BehavioralQuestion />}
             {activeTab === "roadmap" && <Roadmap />}
-            
+
           </main>
 
           {/* Right Sidebar */}
-          <aside className="hidden lg:flex flex-col gap-10  bg-surface rounded-xl p-4 border border-line ">
+          <aside className="hidden lg:flex flex-col gap-10 bg-surface rounded-xl p-4 border border-line">
             <MatchScore />
             <SkillGaps />
           </aside>
           {/* Right side bar on small screen */}
           <div>
-            <div className=" lg:hidden bg-surface rounded-xl p-4 border border-line">
+            <div className="lg:hidden bg-surface rounded-xl p-4 border border-line">
               <MatchScore />
             </div>
-            <div className=" lg:hidden bg-surface rounded-xl p-4 border border-line mt-5">
+            <div className="lg:hidden bg-surface rounded-xl p-4 border border-line mt-5">
               <SkillGaps />
             </div>
           </div>

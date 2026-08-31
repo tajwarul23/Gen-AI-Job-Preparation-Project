@@ -1,6 +1,31 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+/* Scale root font-size up on larger screens so rem-based Tailwind text
+   utilities grow proportionally across the whole app, not just the
+   marketing homepage. */
+html {
+  font-size: 16px;
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 17px;
+  }
+}
+
+@media (min-width: 1280px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 1536px) {
+  html {
+    font-size: 19px;
+  }
+}
+
 @theme {
   /* =========================================================
      BACKGROUNDS

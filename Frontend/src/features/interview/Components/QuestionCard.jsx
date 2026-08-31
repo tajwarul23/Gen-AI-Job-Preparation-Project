@@ -5,23 +5,23 @@ const QuestionCard = ({ index, question, intention, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className={`border rounded-xl overflow-hidden transition-colors ${
+    <div className={`w-full border rounded-xl overflow-hidden transition-colors ${
       isOpen ? "border-linehov" : "border-line"
-    } bg-surface font-display`}>
+    } bg-surface`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between gap-3 px-5 py-4 text-left cursor-pointer"
       >
         <div className="flex items-start gap-3 flex-1">
-          <span className="min-w-6 h-6 bg-gray-800 border border-gray-700 rounded-md flex items-center justify-center text-xs font-medium text-gray-400 mt-0.5">
+          <span className="min-w-6 h-6 bg-overlay border border-line rounded-md flex items-center justify-center text-xs font-mono font-medium text-muted mt-0.5">
             {index}
           </span>
-          <span className="text-[15px] font-medium text-white leading-relaxed">
+          <span className="text-[15px] font-medium text-ink leading-relaxed font-sans">
             {question}
           </span>
         </div>
         <svg
-          className={`w-4 h-4 text-gray-400 shrink-0 transition-transform duration-300 ${
+          className={`w-4 h-4 text-muted shrink-0 transition-transform duration-300 ${
             isOpen ? "rotate-180" : ""
           }`}
           fill="none" viewBox="0 0 16 16"
@@ -32,13 +32,13 @@ const QuestionCard = ({ index, question, intention, answer }) => {
 
       {isOpen && (
         <div className="px-5 pb-5 pl-[calc(1.25rem+24px+12px)] flex flex-col gap-2.5">
-          <div className="bg-gray-800 rounded-lg p-4">
-            <p className="text-[11px] font-medium text-gray-400 uppercase tracking-widest mb-1">Intention</p>
-            <p className="text-sm text-gray-200 leading-relaxed">{intention}</p>
+          <div className="bg-overlay rounded-lg p-4">
+            <p className="text-[11px] font-mono font-medium text-muted uppercase tracking-widest mb-1">Intention</p>
+            <p className="text-sm text-ink leading-relaxed font-sans">{intention}</p>
           </div>
-          <div className="border-2 border-green-900 rounded-lg p-4">
-            <p className="text-[11px] font-medium text-gray-400 uppercase tracking-widest mb-1">Answer</p>
-            <p className="text-sm text-gray-200 leading-relaxed">{answer}</p>
+          <div className="border border-teal/30 bg-teal/5 rounded-lg p-4">
+            <p className="text-[11px] font-mono font-medium text-muted uppercase tracking-widest mb-1">Answer</p>
+            <p className="text-sm text-ink leading-relaxed font-sans">{answer}</p>
           </div>
         </div>
       )}

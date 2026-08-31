@@ -70,12 +70,12 @@ const JobFeed = () => {
               />
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-bold font-display text-ink">
+                  <h1 className="text-xl lg:text-2xl font-bold font-display text-ink">
                     {viewMode === "company"
                       ? `${company?.companyName} Job Feed`
                       : "Platform Job Feed"}
                   </h1>
-                  <span className="text-[10px] font-mono uppercase bg-violet/10 text-violet-text border border-violet-border px-2 py-0.5 rounded-full font-bold">
+                  <span className="text-sm font-mono uppercase bg-violet/10 text-violet-text border border-violet-border px-2 py-0.5 rounded-full font-bold">
                     {viewMode === "company" ? "Official Feed" : "All Companies"}
                   </span>
                 </div>

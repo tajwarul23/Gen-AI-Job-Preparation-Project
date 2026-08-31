@@ -21,6 +21,7 @@ import AllJobFeed from "./Shared/AllJobFeed.jsx";
 
 const Login = lazy(()=>import("./features/Auth/pages/Login.jsx"))
 const Register = lazy(()=>import("./features/Auth/pages/Register.jsx"))
+const Profile = lazy(()=>import("./features/Auth/pages/Profile.jsx"))
 const ResumeAnalyzer = lazy(()=>import("./features/interview/pages/ResumeAnalyzer.jsx"))
 const InterviewReport = lazy(()=>import("./features/interview/pages/InterviewReport.jsx"))
 const AllReports = lazy(()=>import("./features/interview/pages/AllReports.jsx"))
@@ -54,6 +55,7 @@ const App = () => {
       <Route element={<ProtectedLayout />}>
         <Route path="/onboarding/company" element={<Suspense fallback={<SpinLoader/>}><OnBoardCompany/></Suspense>} />
         <Route path="/resume/:resumeId" element={<Suspense fallback={<SpinLoader/>}><ResumeViewer /></Suspense>} />
+        <Route path="/profile" element={<Suspense fallback={<SpinLoader/>}><Profile/></Suspense>} />
       </Route>
 
       {/* Protected — candidate only */}

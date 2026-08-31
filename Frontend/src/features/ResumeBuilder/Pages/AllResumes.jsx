@@ -4,6 +4,7 @@ import ResumeCard from "./ResumeCard";
 import toast from "react-hot-toast";
 import AllReportSkeleton from "../../interview/pages/AllReportSkeleton";
 import { Link } from "react-router-dom";
+import { FileUser } from "lucide-react";
 
 const AllResumes = () => {
   const { getAllResume, resumes, loading, error } = useResume();
@@ -24,15 +25,14 @@ const AllResumes = () => {
         <div className="border-t border-line max-w-6xl mx-auto" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-8">
-            <p className="text-violet uppercase font-sans tracking-wider text-sm">
-              // All Resumes
-            </p>
+            <div className="flex items-center gap-2 mb-1 min-w-0">
+              <FileUser className="w-5 h-5 text-teal shrink-0" />
+              <h1 className="text-xl lg:text-2xl font-bold font-display text-ink min-w-0">
+                Your Resume History
+              </h1>
+            </div>
 
-            <h1 className="text-4xl sm:text-5xl font-black text-ink font-display mt-3">
-              Your Resume History
-            </h1>
-
-            <p className="text-muted mt-3">
+            <p className="text-xs sm:text-sm text-muted font-sans mb-6">
               Total Resumes: {resumes?.length || 0}
             </p>
           </div>
@@ -52,15 +52,14 @@ const AllResumes = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <p className="text-violet uppercase font-sans tracking-wider text-sm">
-            // All Resumes
-          </p>
+          <div className="flex items-center gap-2 mb-1 min-w-0">
+            <FileUser className="w-5 h-5 text-teal shrink-0" />
+            <h1 className="text-xl lg:text-2xl font-bold font-display text-ink min-w-0">
+              Your Resumes History
+            </h1>
+          </div>
 
-          <h1 className="text-4xl sm:text-5xl font-black text-ink font-display mt-3">
-            Your Resumes History
-          </h1>
-
-          <p className="text-muted mt-3">
+          <p className="text-xs sm:text-sm text-muted font-sans mb-6">
             Total Resumes: {resumes?.length || 0}
           </p>
         </div>

@@ -8,5 +8,5 @@ export const routeAfterAuth = (user, intent, navigate) =>{
         navigate("/recruiter/pipeline");
         return;
     }
-    navigate("/candidate/dashboard");
+    navigate("/all/job");
 }

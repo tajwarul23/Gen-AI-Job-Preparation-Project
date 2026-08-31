@@ -65,7 +65,7 @@ const EmptyPipeline = ({ from }) => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="p-4 bg-overlay border border-line rounded-xl space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono text-teal font-bold uppercase">
+              <span className="text-sm font-mono text-teal font-bold uppercase">
                 STEP 1
               </span>
               <CheckCircle2 className="w-4 h-4 text-teal" />
@@ -78,10 +78,10 @@ const EmptyPipeline = ({ from }) => {
 
           <div className="p-4 bg-overlay border border-line rounded-xl space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono text-violet-text font-bold uppercase">
+              <span className="text-sm font-mono text-violet-text font-bold uppercase">
                 STEP 2
               </span>
-              <span className="text-[10px] font-mono text-muted">PENDING</span>
+              <span className="text-sm font-mono text-muted">PENDING</span>
             </div>
             <h5 className="text-xs font-bold text-ink">Post Your First Job</h5>
             <p className="text-[11px] text-muted leading-normal font-sans">
@@ -92,10 +92,10 @@ const EmptyPipeline = ({ from }) => {
 
           <div className="p-4 bg-overlay border border-line rounded-xl space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono text-muted font-bold uppercase">
+              <span className="text-sm font-mono text-muted font-bold uppercase">
                 STEP 3
               </span>
-              <span className="text-[10px] font-mono text-muted">READY</span>
+              <span className="text-sm font-mono text-muted">READY</span>
             </div>
             <h5 className="text-xs font-bold text-ink">Recruit & Screen</h5>
             <p className="text-[11px] text-muted leading-normal font-sans">

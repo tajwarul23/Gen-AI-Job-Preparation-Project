@@ -8,6 +8,7 @@ import {
   createCompanyApi,
   generateInvitationLinkApi,
   getCompanyApi,
+  inviteByEmailApi,
   joinCompanyApi,
   updateCompanyInfoApi,
   updateCompanyLogoApi,
@@ -110,7 +111,25 @@ export const useGenerateInviteLink = () => {
 };
 
 
-/* 
+/*
+   INVITE BY EMAIL
+ */
+
+export const useInviteByEmail = () => {
+  return useMutation({
+    mutationFn: inviteByEmailApi,
+
+    onError: (error) => {
+      console.error(
+        error?.response?.data?.message ||
+          "Failed to send invite email"
+      );
+    },
+  });
+};
+
+
+/*
    JOIN COMPANY
  */
 
@@ -122,7 +141,7 @@ export const useJoinCompany = () => {
     mutationFn: joinCompanyApi,
 
     onSuccess: (data) => {
-      const updatedUser = data.updatedUser;
+      const updatedUser = data.data;
 
       setUser(updatedUser);
 

@@ -1,14 +1,14 @@
-import { ArrowRight, Briefcase } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import JobStudioCard from "./Components/JobStudioCard";
 import ApplicantCard from "./Components/ApplicantCard";
 import { useNavigate } from "react-router-dom";
 import { routeAfterAuth } from "../../Utils/routeAfterAuth";
 import { useAuth } from "../Auth/Hooks/useAuth";
-
+import { motion } from "motion/react";
 const RecruiterSuite = () => {
     const navigate = useNavigate();
-  const { loading, handleLogin, error, handleGoogleLogin,googleLoading } = useAuth();
+  const { handleGoogleLogin } = useAuth();
     const handleContinue = async(intent) =>{
       sessionStorage.setItem("authIntent", intent);
       const data = await handleGoogleLogin();
@@ -19,10 +19,15 @@ const RecruiterSuite = () => {
   
   return (
     <section className="mt-30">
-      <div className="text-lg inline-flex items-center gap-2 px-10 py-2.5 rounded-full bg-violet/10 border border-violet/20 text-violet font-sans mb-8 tracking-wider uppercase">
-        <Briefcase />
-        RECRUITER SUITE
-      </div>
+       <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-xs inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-violet/10 border border-violet/20 text-violet font-sans mb-8 tracking-wider uppercase"
+        >
+          <span className="inline-block  w-2 h-2 bg-violet rounded-full animate-pulse" />
+          Candidate Suite
+        </motion.div>
       <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-extrabold tracking-tight leading-[1.1] mb-6 max-w-5xl mx-auto text-ink">
         Streamline Hiring with <br></br>
         <span className="text-transparent bg-clip-text bg-linear-to-b from-violet via-purple to-violet">

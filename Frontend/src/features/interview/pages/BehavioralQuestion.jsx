@@ -6,10 +6,10 @@ const BehavioralQuestion = () => {
     const { report } = useInterview();
   const { behavioralQuestions } = report;
   return (
-    <div className="min-h-screen">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 ">
-        <div className="flex flex-col items-center justify-between gap-4">
-            <h1 className="text-xl font-semibold text-gray-50 leading-snug mb-1.5 tracking-wide">Behavioral Questions of {report.title}</h1>
+    <div>
+      <div className="max-w-4xl mx-auto">
+        <div className="flex flex-col items-center justify-between gap-3">
+            <h2 className="text-base font-bold font-display text-ink leading-snug mb-1.5">Behavioral Questions of {report.title}</h2>
           {behavioralQuestions.map((q, i) => (
             <QuestionCard
               key={q.question}

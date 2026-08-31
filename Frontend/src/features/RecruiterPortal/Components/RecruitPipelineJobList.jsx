@@ -1,9 +1,9 @@
 import { Briefcase, MapPin, SignalHigh, Users, Wallet } from "lucide-react";
 
 const statusStyles = {
-  active: "border-emerald-400/30 bg-emerald-400/10 text-emerald-400",
-  draft: "border-amber-400/30 bg-amber-400/10 text-amber-400",
-  closed: "border-line bg-ink/5 text-muted",
+  OPEN: "border-emerald-400/30 bg-emerald-400/10 text-emerald-400",
+  DRAFT: "border-amber-400/30 bg-amber-400/10 text-amber-400",
+  CLOSED: "border-line bg-ink/5 text-muted",
 };
 const formatSalary = (min, max, currency) => {
   const fmt = new Intl.NumberFormat("en-US", {
@@ -21,15 +21,15 @@ const RecruitPipelineJobList = ({
   setSelectedJobId,
 }) => {
   return (
-    <div className="rounded-2xl border border-line bg-surface p-4">
+    <div className="rounded-2xl border border-line bg-surface p-4 ">
       <div className="mb-4">
         <h2 className="text-sm font-bold text-ink">Jobs</h2>
-        <p className="mt-1 text-xs text-muted">
+        <p className="mt-1 text-sm text-muted">
           Select a job to view applicants
         </p>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 ">
         {jobs.map((job) => {
           const isSelected = selectedJobId === job._id;
 
@@ -49,7 +49,7 @@ const RecruitPipelineJobList = ({
       }
     `}
   >
-    <div className="flex items-start gap-3">
+    <div className="flex items-start gap-3 ">
       <div
         className={`
           mt-0.5 shrink-0 rounded-lg p-2
@@ -65,10 +65,10 @@ const RecruitPipelineJobList = ({
       </div>
 
       <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-start justify-between gap-2">
+        <div className="flex  items-start justify-between gap-2">
           <h3
             className={`
-              truncate text-sm font-semibold leading-5
+               text-sm font-semibold leading-5 mb-3
               transition-colors
               ${isSelected ? "text-violet" : "text-ink"}
             `}
@@ -89,7 +89,7 @@ const RecruitPipelineJobList = ({
           )}
         </div>
 
-        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <div className="mb-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
           {job.location && (
             <span className="flex items-center gap-1 text-xs text-muted">
               <MapPin className="h-3 w-3 shrink-0" />
@@ -100,12 +100,31 @@ const RecruitPipelineJobList = ({
           {job?.experienceLevel && (
             <span className="flex items-center gap-1 text-xs text-muted">
               <SignalHigh className="h-3 w-3 shrink-0" />
-              <span className="truncate">{job.experienceLevel}</span>
+              <span className="">{job.experienceLevel} LEVEL</span>
+            </span>
+          )}
+          {typeof job.applicantsCount === "number" && (
+            <span
+              className={`
+                flex items-center gap-1 rounded-full border px-2 py-0.5
+                text-sm font-mono font-bold
+                transition-colors mt-2
+                ${
+                  job.applicantsCount > 0
+                    ? "border-violet/30 bg-violet/10 text-violet group-hover:border-violet/50 group-hover:bg-violet/15"
+                    : "border-line bg-ink/5 text-muted"
+                }
+              `}
+            >
+              <Users className="h-3 w-3 shrink-0" />
+              {job.applicantsCount}{" "}
+              {job.applicantsCount === 1 ? "applicant" : "applicants"}
             </span>
           )}
 
+
           {job?.salary && (
-            <span className="flex items-center gap-1 text-xs text-muted">
+            <span className="flex items-center gap-1 mt-2 text-xs text-muted">
               <Wallet className="h-3 w-3 shrink-0" />
               <span className="truncate">
                 {formatSalary(

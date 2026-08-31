@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../Hooks/useAuth.js";
 
 import { useState } from "react";
@@ -12,26 +12,32 @@ const Login = () => {
   const [isRecruiterLoading, setIsRecruiterLoading] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from;
   const { handleGoogleLogin } = useAuth();
-  const handleContinue = async (intent) => {
-    sessionStorage.setItem("authIntent", intent);
-    if (intent === "recruiter") setIsRecruiterLoading(true);
-    else if (intent === "candidate") setIsCandidateLoading(true);
+const handleContinue = async (intent) => {
+  sessionStorage.setItem("authIntent", intent);
+  if (intent === "recruiter") setIsRecruiterLoading(true);
+  else if (intent === "candidate") setIsCandidateLoading(true);
 
-    try {
-      const data = await handleGoogleLogin();
-      if (data?.success) {
+  try {
+    const data = await handleGoogleLogin();
+    if (data?.success) {
+      if (from) {
+        navigate(`${from.pathname}${from.search || ""}`, { replace: true });
+      } else {
         routeAfterAuth(data.user, intent, navigate);
       }
-    } finally {
-      setIsCandidateLoading(false);
-      setIsRecruiterLoading(false);
     }
-  };
+  } finally {
+    setIsCandidateLoading(false);
+    setIsRecruiterLoading(false);
+  }
+};
   return (
     <div className="bg-app text-ink min-h-screen flex flex-col justify-center items-center px-4 py-12 font-sans relative overflow-hidden">
       {/* Background radial highlight */}
-      <div className="absolute w-[600px] h-[600px] bg-violet/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute w-150 h-150 bg-violet/10 rounded-full blur-[140px] pointer-events-none" />
 
       {/* Back button */}
       <button

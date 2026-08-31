@@ -172,7 +172,7 @@ const JobStudio = () => {
         {/*  Header */}
         <div className="border-b border-line pb-4 flex items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-bold font-display text-ink">
+            <h2 className="text-xl lg:text-2xl font-bold font-display text-ink">
               Job Creation Studio
             </h2>
             <p className="text-xs text-muted font-mono mt-1">
@@ -197,7 +197,7 @@ const JobStudio = () => {
                     : "border-line text-muted"
               }`}
             >
-              <div className="text-[10px] font-mono uppercase">
+              <div className="text-sm font-mono uppercase">
                 Step 0{s.num}
               </div>
               <div className="text-xs sm:text-sm font-sans">{s.label}</div>

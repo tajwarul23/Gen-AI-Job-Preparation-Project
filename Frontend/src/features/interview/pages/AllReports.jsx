@@ -5,6 +5,7 @@ import AllReportSkeleton from "./AllReportSkeleton";
 import ReportCard from "../Components/ReportCard";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { NotebookPen } from "lucide-react";
 
 const AllReports = () => {
   const { reports, loading, getAllReport, error } = useInterview();
@@ -23,18 +24,17 @@ const AllReports = () => {
   }
   if (!reports?.length) {
     return (
-      <div className="my-15 text-white font-display">
+      <div className=" text-white font-display">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-8">
-            <p className="text-violet uppercase font-sans tracking-wider text-sm">
-              // Interview Reports
-            </p>
+            <div className="flex items-center gap-2 mb-1">
+              <NotebookPen className="w-5 h-5 text-teal" />
+              <h1 className="text-xl lg:text-2xl font-bold font-display text-ink">
+                Your Analysis History
+              </h1>
+            </div>
 
-            <h1 className="text-4xl sm:text-5xl font-black text-ink font-display mt-3">
-              Your Analysis History
-            </h1>
-
-            <p className="text-muted mt-3">
+            <p className="text-xs sm:text-sm text-muted font-sans mb-6">
               Total Reports: {reports?.length || 0}
             </p>
           </div>
@@ -45,7 +45,7 @@ const AllReports = () => {
             Analyze Resume →
           </Link>
         </div>
-           <div className="border-t border-line max-w-6xl mx-auto" />
+           
          
       </div>
     );
@@ -56,15 +56,14 @@ const AllReports = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <p className="text-violet uppercase font-sans tracking-wider text-sm">
-            // Interview Reports
-          </p>
+          <div className="flex items-center gap-2 mb-1">
+            <NotebookPen className="w-5 h-5 text-teal" />
+            <h1 className="text-xl lg:text-2xl font-bold font-display text-ink">
+              Your Analysis History
+            </h1>
+          </div>
 
-          <h1 className="text-4xl sm:text-5xl font-black text-ink font-display mt-3">
-            Your Analysis History
-          </h1>
-
-          <p className="text-muted mt-3">
+          <p className="text-xs text-muted font-sans mb-6">
             Total Reports: {reports?.length || 0}
           </p>
         </div>

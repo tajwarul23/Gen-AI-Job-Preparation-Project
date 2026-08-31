@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getAllApplicationForCompanyApi, updateApplicationStatusApi } from "../Services/Application.api";
+import { analyzePrepApi, applyToJobApi, getAllApplicationForCompanyApi, updateApplicationStatusApi } from "../Services/application.api.js";
 import { useContext } from "react";
 import { AuthContext } from "../../Auth/auth.context";
 import toast from "react-hot-toast";
@@ -47,6 +47,40 @@ export const useUpdateApplicationStatus = () =>{
 
     onError: (error)=>{
       toast.error(error?.response?.data?.message || "Failed to update application status")
+    }
+  })
+}
+
+export const useApplyToJob = () =>{
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn:applyToJobApi,
+
+    onSuccess: () =>{
+      toast.success("Applied to job successfully");
+
+      queryClient.invalidateQueries({
+        queryKey: ["companyApplications"]
+      });
+
+      queryClient.invalidateQueries({
+        queryKey:["jobFeed"]
+      })
+    },
+
+    onError: (error)=>{
+      toast.error(error?.response?.data?.message || "Failed to apply for this job")
+    }
+  })
+}
+
+export const useAnalyzePrep = () =>{
+  return useMutation({
+    mutationFn:analyzePrepApi,
+
+    onError: (error)=>{
+      toast.error(error?.response?.data?.message || "Failed to generate interview prep report")
     }
   })
 }

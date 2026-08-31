@@ -15,6 +15,11 @@ export const generateInvitationLinkApi = async()=>{
     return response.data;
 }
 
+export const inviteByEmailApi = async(email)=>{
+    const response = await api.post("/invite-email", { email });
+    return response.data;
+}
+
 export const joinCompanyApi = async(token)=>{
     const response = await api.post(`/join?token=${token}`);
     return response.data;

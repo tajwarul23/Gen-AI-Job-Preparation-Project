@@ -41,6 +41,7 @@ const ResumeCard = ({ resume }) => {
       }, 100);
     } catch (error) {
       toast.error(error?.message || "Something went wrong");
+      console.log(error);
     } finally {
       setDownloading(false);
     }

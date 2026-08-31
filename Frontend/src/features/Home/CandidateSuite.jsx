@@ -7,6 +7,7 @@ import AnalyzePrepCard from "./Components/AnalyzePrepCard";
 import { useNavigate } from "react-router-dom";
 import { routeAfterAuth } from "../../Utils/routeAfterAuth";
 import { useAuth } from "../Auth/Hooks/useAuth";
+import { motion } from "motion/react";
 const CandidateSuite = () => {
   const navigate = useNavigate();
   const { loading, handleLogin, error, handleGoogleLogin, googleLoading } =
@@ -20,10 +21,15 @@ const CandidateSuite = () => {
   };
   return (
     <section className="mt-30">
-      <div className="text-lg inline-flex items-center gap-2 px-10 py-2.5 rounded-full bg-violet/10 border border-violet/20 text-violet font-sans mb-8 tracking-wider uppercase">
-        <Terminal />
-        CAREER SUITE
-      </div>
+     <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-xs inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-violet/10 border border-violet/20 text-violet font-sans mb-8 tracking-wider uppercase"
+        >
+          <span className="inline-block  w-2 h-2 bg-violet rounded-full animate-pulse" />
+          Candidate Suite
+        </motion.div>
       <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-extrabold tracking-tight leading-[1.1] mb-6 max-w-5xl mx-auto text-ink">
         Everything You Need to Land Your{" "}
         <span className="text-transparent bg-clip-text bg-linear-to-b from-violet via-purple to-violet">
@@ -51,7 +57,7 @@ const CandidateSuite = () => {
        shadow-[0_0_20px_rgba(192,132,252,0.25)] hover:shadow-[0_0_35px_rgba(192,132,252,0.5)]
        focus:outline-none focus:ring-2 focus:ring-purple-400/50 flex items-center justify-center gap-2 cursor-pointer"
       >
-        Launch Career Suite
+        Launch Candidate Suite
         <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
       </button>
     </section>

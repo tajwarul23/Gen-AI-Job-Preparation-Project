@@ -6,6 +6,7 @@ import {
   getAllResumeAPI,
   getResumeByIdAPI,
 } from "../Services/resume.api.js";
+import toast from "react-hot-toast";
 
 export const useResume = () => {
   const context = useContext(ResumeContext);
@@ -34,6 +35,8 @@ export const useResume = () => {
       return response.resume;
     } catch (error) {
       setError(error?.response?.data?.message || "Something went wrong");
+      toast.error(error?.response?.data?.message || "Something went wrong")
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -48,6 +51,7 @@ export const useResume = () => {
       return response.allResume;
     } catch (error) {
       setError(error?.response?.data?.message || "Something went wrong");
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -62,6 +66,7 @@ export const useResume = () => {
       return response.resumeById;
     } catch (error) {
       setError(error?.response?.data?.message || "Something went wrong");
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -75,6 +80,7 @@ export const useResume = () => {
       return response;
     } catch (error) {
       setError(error?.response?.data?.message || "Something went wrong");
+      console.log(error);
     } finally {
       setLoading(false);
     }

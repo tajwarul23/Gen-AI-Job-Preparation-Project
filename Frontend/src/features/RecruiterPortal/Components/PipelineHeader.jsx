@@ -7,7 +7,7 @@ const PipelineHeader = () => {
   return (
     <div className="flex items-center justify-between border-b border-line pb-4 mb-5 mt-5">
             <div>
-              <h2 className="text-xl font-bold font-display text-ink">
+              <h2 className="text-xl lg:text-2xl font-bold font-display text-ink">
                 Active Recruiting Pipelines
               </h2>
               <p className="text-xs text-muted font-mono mt-1">

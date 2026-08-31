@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   CalendarClock,
   CheckCircle2,
@@ -13,12 +13,19 @@ import {
   useGetAllApplicationForCompany,
   useUpdateApplicationStatus,
 } from "../Hooks/useApplication";
+import UpdateJobStatusModalBody from "./UpdateJobStatusModalBody";
 
 const statusStyles = {
-  applied: "bg-violet/10 text-violet",
-  shortlisted: "bg-blue-400/10 text-blue-400",
-  rejected: "bg-red-400/10 text-red-400",
-  hired: "bg-emerald-400/10 text-emerald-400",
+  applied: "border border-violet/30 bg-violet/10 text-violet",
+  shortlisted: "border border-blue-400/30 bg-blue-400/10 text-blue-400",
+  rejected: "border border-red-400/30 bg-red-400/10 text-red-400",
+  hired: "border border-emerald-400/30 bg-emerald-400/10 text-emerald-400",
+};
+
+const getMatchScoreStyles = (score) => {
+  if (score >= 80) return "border-emerald-400/30 bg-emerald-400/10 text-emerald-400";
+  if (score >= 50) return "border-amber-400/30 bg-amber-400/10 text-amber-400";
+  return "border-line bg-ink/5 text-muted";
 };
 
 const RecruitPipelineApplicantList = ({
@@ -33,25 +40,21 @@ const RecruitPipelineApplicantList = ({
   });
 
   const {
-    mutate: UpdateApplicationStatus,
+    mutate: updateApplicationStatus,
     isPending,
     variables: pendingVariables,
   } = useUpdateApplicationStatus();
 
-  const handleUpdateApplicationStatus = (applicationId, status) => {
-    UpdateApplicationStatus({
-      applicationId,
-      status,
-    });
-  };
-  const isActionPending = (applicationId, status) => {
-    return (
-      isPending &&
-      pendingVariables?.applicationId === applicationId &&
-      pendingVariables?.status === status
-    );
-  };
+  const isActionPending = (applicationId, status) =>
+    isPending &&
+    pendingVariables?.applicationId === applicationId &&
+    pendingVariables?.status === status;
+
   const applications = data?.data?.applications ?? [];
+
+  const updateStatusRef = useRef(null);
+
+  const [pendingUpdate, setPendingUpdate] = useState(null);
 
   // Automatically select first applicant
   useEffect(() => {
@@ -138,11 +141,6 @@ const RecruitPipelineApplicantList = ({
         const candidate = application.candidate;
         const matchScore = application.recruiterReport?.matchScore;
 
-        const stop = (fn) => (e) => {
-          e.stopPropagation();
-          fn();
-        };
-
         return (
           <div
             key={application._id}
@@ -160,7 +158,7 @@ const RecruitPipelineApplicantList = ({
             cursor-pointer
             ${
               isSelected
-                ? "border-violet shadow-sm shadow-violet/10"
+                ? "border-violet bg-violet/10 shadow-sm shadow-violet/10"
                 : "border-line bg-surface hover:-translate-y-0.5 hover:border-violet/40 hover:bg-overlay hover:shadow-md hover:shadow-black/5"
             }
           `}
@@ -198,15 +196,17 @@ const RecruitPipelineApplicantList = ({
 
                   <div className="flex shrink-0 items-center gap-1.5">
                     {matchScore != null && (
-                      <span className="rounded-full border border-violet/30 bg-violet/10 px-1.5 py-0.5 text-[9px] font-mono font-bold text-violet">
+                      <span
+                        className={`rounded-lg border px-1.5 py-0.5 text-sm font-mono font-bold ${getMatchScoreStyles(matchScore)}`}
+                      >
                         {matchScore}%
                       </span>
                     )}
 
                     <span
                       className={`
-                      rounded-full px-2 py-0.5
-                      text-[9px] font-mono font-bold uppercase
+                      rounded-lg px-2 py-0.5
+                      text-sm font-mono font-bold uppercase
                       ${statusStyles[application.status] ?? "bg-ink/5 text-muted"}
                     `}
                     >
@@ -220,18 +220,23 @@ const RecruitPipelineApplicantList = ({
                   {candidate?.email}
                 </p>
 
-                {/* - CONTACT / RESUME (secondary, plain links under candidate info) - */}
-                <div className="mt-2 flex items-center gap-3">
+                {/* - CONTACT / RESUME (secondary chip actions) - */}
+                <div className="mt-2 flex flex-wrap items-center gap-1.5">
                   <button
                     type="button"
-                    onClick={stop(() =>
-                      handleViewResume(application?.resume?._id),
-                    )}
+                    disabled={!application?.resume?._id}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleViewResume(application?.resume?._id);
+                    }}
                     className="
-                    flex items-center gap-1 text-xs font-semibold text-muted
+                    flex items-center gap-1.5 rounded-lg
+                    border border-violet/20 bg-overlay px-2.5 py-1
+                    text-[11px] font-semibold text-violet/80
                     transition-colors
-                    hover:text-violet
+                    hover:border-violet/40 hover:bg-violet/10 hover:text-violet
                     cursor-pointer
+                    disabled:cursor-not-allowed disabled:opacity-50 disabled:border-line disabled:text-muted disabled:hover:border-line disabled:hover:bg-overlay disabled:hover:text-muted
                   "
                   >
                     <FileText className="h-3 w-3" />
@@ -240,12 +245,19 @@ const RecruitPipelineApplicantList = ({
 
                   <button
                     type="button"
-                    onClick={stop(() => handleContactEmail(candidate?.email))}
+                    disabled={!candidate?.email}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleContactEmail(candidate?.email);
+                    }}
                     className="
-                    flex items-center gap-1 text-xs font-semibold text-muted
+                    flex items-center gap-1.5 rounded-lg
+                    border border-blue-400/20 bg-overlay px-2.5 py-1
+                    text-[11px] font-semibold text-blue-400/80
                     transition-colors
-                    hover:text-blue-400
+                    hover:border-blue-400/40 hover:bg-blue-400/10 hover:text-blue-400
                     cursor-pointer
+                    disabled:cursor-not-allowed disabled:opacity-50 disabled:border-line disabled:text-muted disabled:hover:border-line disabled:hover:bg-overlay disabled:hover:text-muted
                   "
                   >
                     <Mail className="h-3 w-3" />
@@ -262,100 +274,134 @@ const RecruitPipelineApplicantList = ({
                   <div className="flex flex-wrap items-center gap-1.5">
                     <button
                       type="button"
-                      onClick={stop(() =>
-                        handleUpdateApplicationStatus(
-                          application._id,
-                          "interview",
-                        ),
-                      )}
-                      className="
+                      disabled={isPending || application.status === "interview"}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPendingUpdate({
+                          applicationId: application._id,
+                          status: "interview",
+                        });
+                        updateStatusRef.current?.showModal();
+                      }}
+                      className={`
                       flex items-center gap-1.5 rounded-lg
-                      border border-amber-400/30 bg-amber-400/5 px-2.5 py-1
-                      text-[11px] font-semibold text-amber-400
+                      border px-2.5 py-1
+                      text-[11px] font-semibold
                       transition-colors
-                      hover:bg-amber-400/15
-                      cursor-pointer
-                    "
+                      disabled:cursor-not-allowed
+                      ${
+                        application.status === "interview"
+                          ? "border-amber-400/40 bg-amber-400/15 text-amber-400 opacity-70"
+                          : "border-amber-400/30 bg-amber-400/5 text-amber-400 hover:bg-amber-400/15 cursor-pointer disabled:opacity-50"
+                      }
+                    
+`}
                     >
                       {isActionPending(application._id, "interview") ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
                       ) : (
                         <CalendarClock className="h-3.5 w-3.5" />
                       )}
-                      Interview
+                      {application.status === "interview" ? "Interviewing" : "Call For Interview"}
                     </button>
 
                     <button
                       type="button"
-                      onClick={stop(() =>
-                        handleUpdateApplicationStatus(
-                          application._id,
-                          "shortlisted",
-                        ),
-                      )}
-                      className="
+                      disabled={isPending || application.status === "shortlisted"}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPendingUpdate({
+                          applicationId: application._id,
+                          status: "shortlisted",
+                        });
+                        updateStatusRef.current?.showModal();
+                      }}
+                      className={`
                       flex items-center gap-1.5 rounded-lg
-                      border border-blue-400/30 bg-blue-400/5 px-2.5 py-1
-                      text-[11px] font-semibold text-blue-400
+                      border px-2.5 py-1
+                      text-[11px] font-semibold
                       transition-colors
-                      hover:bg-blue-400/15
-                      cursor-pointer
-                    "
+                      disabled:cursor-not-allowed
+                      ${
+                        application.status === "shortlisted"
+                          ? "border-blue-400/40 bg-blue-400/15 text-blue-400 opacity-70"
+                          : "border-blue-400/30 bg-blue-400/5 text-blue-400 hover:bg-blue-400/15 cursor-pointer disabled:opacity-50"
+                      }
+                    
+`}
                     >
                       {isActionPending(application._id, "shortlisted") ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
                       ) : (
                         <Star className="h-3.5 w-3.5" />
                       )}
-                      Shortlist
+                      {application.status === "shortlisted" ? "Shortlisted" : "Mark as Shortlist"}
                     </button>
 
                     <button
                       type="button"
-                      onClick={stop(() =>
-                        handleUpdateApplicationStatus(application._id, "hired"),
-                      )}
-                      className="
+                      disabled={isPending || application.status === "hired"}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPendingUpdate({
+                          applicationId: application._id,
+                          status: "hired",
+                        });
+                        updateStatusRef.current?.showModal();
+                      }}
+                      className={`
                       flex items-center gap-1.5 rounded-lg
-                      border border-emerald-400/30 bg-emerald-400/5 px-2.5 py-1
-                      text-[11px] font-semibold text-emerald-400
+                      border px-2.5 py-1
+                      text-[11px] font-semibold
                       transition-colors
-                      hover:bg-emerald-400/15
-                      cursor-pointer
-                    "
+                      disabled:cursor-not-allowed
+                      ${
+                        application.status === "hired"
+                          ? "border-emerald-400/40 bg-emerald-400/15 text-emerald-400 opacity-70"
+                          : "border-emerald-400/30 bg-emerald-400/5 text-emerald-400 hover:bg-emerald-400/15 cursor-pointer disabled:opacity-50"
+                      }
+                    
+`}
                     >
                       {isActionPending(application._id, "hired") ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
                       ) : (
                         <CheckCircle2 className="h-3.5 w-3.5" />
                       )}
-                      Hire
+                      {application.status === "hired" ? "Hired" : "Hire"}
                     </button>
 
                     <button
                       type="button"
-                      disabled={isPending}
-                      onClick={stop(() =>
-                        handleUpdateApplicationStatus(
-                          application._id,
-                          "rejected",
-                        ),
-                      )}
-                      className="
+                      disabled={isPending || application.status === "rejected"}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPendingUpdate({
+                          applicationId: application._id,
+                          status: "rejected",
+                        });
+                        updateStatusRef.current?.showModal();
+                      }}
+                      className={`
                       flex items-center gap-1.5 rounded-lg
-                      border border-red-400/30 bg-red-400/5 px-2.5 py-1
-                      text-[11px] font-semibold text-red-400
+                      border px-2.5 py-1
+                      text-[11px] font-semibold
                       transition-colors
-                      hover:bg-red-400/15
-                      cursor-pointer
-                    "
+                      disabled:cursor-not-allowed
+                      ${
+                        application.status === "rejected"
+                          ? "border-red-400/40 bg-red-400/15 text-red-400 opacity-70"
+                          : "border-red-400/30 bg-red-400/5 text-red-400 hover:bg-red-400/15 cursor-pointer disabled:opacity-50"
+                      }
+                    
+`}
                     >
                       {isActionPending(application._id, "rejected") ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
                       ) : (
                         <XCircle className="h-3.5 w-3.5" />
                       )}
-                      Reject
+                      {application.status === "rejected" ? "Rejected" : "Reject"}
                     </button>
                   </div>
                 </div>
@@ -364,6 +410,13 @@ const RecruitPipelineApplicantList = ({
           </div>
         );
       })}
+      <UpdateJobStatusModalBody
+        updateStatusRef={updateStatusRef}
+        applicationId={pendingUpdate?.applicationId}
+        status={pendingUpdate?.status}
+        updateApplicationStatus={updateApplicationStatus}
+        isPending={isPending}
+      />
     </div>
   );
 };

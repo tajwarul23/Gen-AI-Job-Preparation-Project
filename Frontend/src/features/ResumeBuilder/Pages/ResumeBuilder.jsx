@@ -5,6 +5,7 @@ import { useResume } from "../Hooks/useResume.js";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Sparkles } from "lucide-react";
 
 // ── Sub-components ───────────────────────────────────────────────────────────
 const Field = ({ error, children }) => (
@@ -51,7 +52,7 @@ const Section = ({ title, children }) => (
 
 const CharCount = ({ current, max }) => (
   <span
-    className={`font-sans text-[10px] ml-auto flex-shrink-0 ${
+    className={`font-sans text-sm ml-auto flex-shrink-0 ${
       current > max ? "text-[#f7a090]" : "text-[#3a3a55]"
     }`}
   >
@@ -155,14 +156,14 @@ const ResumeBuilder = () => {
   else buttonContent = "Generate Resume";
   return (
     <div className="max-w-7xl mx-auto">
-      <div className="mt-10">
-        <p className="text-violet uppercase font-sans tracking-wider text-sm">
-          // Resume Builder
-        </p>
-        <h1 className=" text-4xl sm:text-5xl lg:text-7xl font-black leading-none  text-ink font-display scale-y-75  wrap-break-word">
-          Build a resume that actually gets read
-        </h1>
-        <p className="text-muted font-display">
+      <div className="mt-10 px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-2 mb-1 min-w-0">
+          <Sparkles className="w-5 h-5 text-teal shrink-0" />
+          <h1 className="text-xl lg:text-2xl font-bold font-display text-ink min-w-0">
+            Build a resume that actually gets read
+          </h1>
+        </div>
+        <p className="text-xs sm:text-sm flex items-center text-muted font-sans mb-6">
           Fill in your details and PrepLab generates a clean, ATS-optimized
           resume. No templates that look like everyone else's.
         </p>

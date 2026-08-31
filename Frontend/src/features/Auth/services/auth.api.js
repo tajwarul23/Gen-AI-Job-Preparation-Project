@@ -38,12 +38,7 @@ export const logout = async () => {
   return response.data;
 };
 
-export const verifyEmail = async (token) => {
-  const response = await api.get(
-    `/api/auth/verify-email?verificationToken=${token}`,
-  );
-  return response.data;
-};
+
 
 export const getMe = async () => {
   const response = await api.get("/api/auth/get-me");

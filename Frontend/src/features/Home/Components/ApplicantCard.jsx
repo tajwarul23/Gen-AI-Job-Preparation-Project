@@ -21,7 +21,7 @@ const ApplicantCard = () => {
 
         {/* Live Candidate Fit Pipeline Preview */}
         <div className="space-y-2.5 mb-6">
-          <span className="text-[10px] font-sans text-muted uppercase block font-bold">
+          <span className="text-sm font-sans text-muted uppercase block font-bold">
             LIVE SCORED CANDIDATE PIPELINE
           </span>
           {[
@@ -57,11 +57,11 @@ const ApplicantCard = () => {
               <div className="flex items-center justify-between">
                 <span className="text-ink font-bold">{cand.name}</span>
                 <div className="flex items-center gap-1.5">
-                  <span className="px-2 py-0.5 rounded bg-violet/10 text-violet-text font-sans text-[10px] font-bold border border-violet-border">
+                  <span className="px-2 py-0.5 rounded bg-violet/10 text-violet-text font-sans text-sm font-bold border border-violet-border">
                     {cand.exp}
                   </span>
                   <span
-                    className={`px-2 py-0.5 rounded font-sans text-[10px] font-bold border ${
+                    className={`px-2 py-0.5 rounded font-sans text-sm font-bold border ${
                       cand.fit >= 80
                         ? "bg-teal/10 text-teal border-teal-border"
                         : cand.fit >= 60
@@ -76,10 +76,10 @@ const ApplicantCard = () => {
               <div className="text-[11px] text-muted flex items-center justify-between">
                 <span>{cand.role}</span>
               </div>
-              <p className="text-[10px] text-ink/80 font-sans pt-1 border-t border-line/60">
+              <p className="text-sm text-ink/80 font-sans pt-1 border-t border-line/60">
                 <strong><span className="text-teal/70">Strength</span>:</strong> {cand.strength}
               </p>
-              <p className="text-[10px] text-ink/80 font-sans pt-1 border-t border-line/60">
+              <p className="text-sm text-ink/80 font-sans pt-1 border-t border-line/60">
                 <strong><span className="text-yellow-500/70">Weakness</span>:</strong> {cand.weakness}
               </p>
             </div>
