@@ -11,6 +11,7 @@ import ApiResponse from "../Utils/ApiResponse.js";
 import asyncHandler from "../Utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
 import { sendCompanyInviteEmail } from "../services/email.service.js";
+import { createNotification } from "../services/createNotification.js";
 
 const buildInviteLink = (companyId) => {
   const inviteToken = jwt.sign(
@@ -72,6 +73,7 @@ export const createCompanyController = asyncHandler(async (req, res) => {
     {
       role: "company_admin",
       company: company._id,
+      joinedAt: new Date(),
     },
     { new: true },
   );
@@ -152,14 +154,35 @@ export const joinCompanyController = asyncHandler(async (req, res) => {
 
   const company = await CompanyModel.findById(decoded.companyId);
   if (!company) throw new ApiError(404, "Company not found");
-  const updatedUser = await userModel.findByIdAndUpdate(
-    req.user.id,
+
+  if (
+    req.user.company &&
+    req.user.company.toString() !== company._id.toString()
+  ) {
+    throw new ApiError(400, "You are already associated with a company.");
+  }
+
+  const updatedUser = await userModel.findOneAndUpdate(
+    { _id: req.user.id, company: { $ne: company._id } },
     {
       role: "recruiter",
       company: company._id,
+      joinedAt: new Date(),
     },
     { new: true },
   );
+
+  if (!updatedUser) {
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          req.user,
+          `Already a member of ${company.companyName}`,
+        ),
+      );
+  }
 
   const newToken = jwt.sign(
     {
@@ -178,13 +201,30 @@ export const joinCompanyController = asyncHandler(async (req, res) => {
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
   });
 
+  //send notification to the company admin
+  const companyAdmin = await userModel
+    .findOne({ company: company._id, role: "company_admin" })
+    .select("_id");
+
+  if (companyAdmin) {
+    await createNotification({
+      recipient: companyAdmin._id,
+      type: "COMPANY_MEMBER_JOINED",
+      title: "New team member joined",
+      message: `${req.user.userName} joined the company`,
+    });
+  }
+
   return res
     .status(200)
     .json(
-      new ApiResponse(200, updatedUser, `Joined ${company.name} successfully`),
+      new ApiResponse(
+        200,
+        updatedUser,
+        `Joined ${company.companyName} successfully`,
+      ),
     );
 });
-//updateCompanyController => when a company update's their name we have to update all their job opening's company name as we are storing company name on jobModel
 
 /**
  * @name updateCompanyController
@@ -300,41 +340,41 @@ export const getCompanyController = asyncHandler(async (req, res) => {
       message: "Company not found",
     });
   }
-const applicationLength = await applicationModel.countDocuments({
-  company: req.company._id,
-});
+  const applicationLength = await applicationModel.countDocuments({
+    company: req.company._id,
+  });
   const company = req.company;
-  
+
   const employeeDetails = await CompanyModel.aggregate([
     {
-      $match:{
-        _id: req.company._id
-      }
+      $match: {
+        _id: req.company._id,
+      },
     },
-  {
-    $lookup: {
-      from: "users",
-      localField: "_id",
-      foreignField: "company",
-      as: "employees",
-      pipeline: [
-        {
-          $project: {
-            userName: 1,
-            email: 1,
-            role: 1,
-            createdAt: 1,
+    {
+      $lookup: {
+        from: "users",
+        localField: "_id",
+        foreignField: "company",
+        as: "employees",
+        pipeline: [
+          {
+            $project: {
+              userName: 1,
+              email: 1,
+              role: 1,
+              createdAt: 1,
+            },
           },
-        },
-      ],
-    }
-  },
-  {
-    $addFields: {
-      employeeCount: { $size: "$employees" }
-    }
-  }
-])
+        ],
+      },
+    },
+    {
+      $addFields: {
+        employeeCount: { $size: "$employees" },
+      },
+    },
+  ]);
   return res
     .status(200)
     .json(
@@ -344,4 +384,123 @@ const applicationLength = await applicationModel.countDocuments({
         "Company data fetched successfully",
       ),
     );
+});
+
+/**
+ * @name leaveCompanyController
+ * @description leave the company
+ * @access Private (company_admin || recruiter )
+ */
+export const leaveCompanyController = asyncHandler(async (req, res) => {
+  if (!req.company) {
+    throw new ApiError(404, "Company not found");
+  }
+
+  if (req.user.role === "company_admin") {
+    const oldestEmployee = await userModel
+      .findOne({
+        company: req.company._id,
+        role: "recruiter",
+      })
+      .sort({ joinedAt: 1 });
+
+    if (oldestEmployee) {
+      oldestEmployee.role = "company_admin";
+      await oldestEmployee.save();
+      const company = await CompanyModel.findById(req.company._id);
+      company.createdBy = oldestEmployee._id;
+      await company.save()
+    }
+    if (!oldestEmployee) {
+      throw new ApiError(
+        400,
+        "There are no other members in this company. To leave, you must delete the company first.",
+      );
+    }
+    const updatedUser = await userModel.findOneAndUpdate(
+      {
+        _id: req.user._id,
+        company: req.company._id,
+      },
+      {
+        $set: {
+          role: "candidate",
+          company: null,
+        },
+      },
+      { new: true },
+    );
+
+    if (!updatedUser) {
+      throw new ApiError(500, "Error leaving the company");
+    }
+    return res
+      .status(200)
+      .json(new ApiResponse(200, updatedUser, "Left the company successfully"));
+  }
+  const updatedUser = await userModel.findOneAndUpdate(
+    {
+      _id: req.user.id,
+      company: req.company._id,
+    },
+    {
+      $set: {
+        role: "candidate",
+        company: null,
+      },
+    },
+    { new: true },
+  );
+
+  if (!updatedUser) {
+    throw new ApiError(500, "Error leaving the company");
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedUser, "Left the company successfully"));
+});
+
+/**
+ * @name removeEmployeeController
+ * @description admin can remove employee (recruiter)
+ * @access Private (company_admin )
+ */
+export const removeEmployeeController = asyncHandler(async (req, res) => {
+  const company = await CompanyModel.findById(req.user.company);
+
+  if (!company) {
+    throw new ApiError(404, "Company not found");
+  }
+
+  if (String(company.createdBy) !== String(req.user.id)) {
+    throw new ApiError(403, "You are not authorized to update this company");
+  }
+  const { userId } = req.params;
+  if (!userId) {
+    throw new ApiError(400, "User id is required");
+  }
+
+  if (String(userId) === String(req.user.id)) {
+    throw new ApiError(400, "Wrong user id");
+  }
+
+  const updatedUser = await userModel.findOneAndUpdate(
+    {
+      _id: userId,
+      company: company._id,
+    },
+    {
+      $set: {
+        role: "candidate",
+        company: null,
+      },
+    },
+    { new: true },
+  );
+  if (!updatedUser) {
+    throw new ApiError(500, "Failed to remove employee");
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedUser, "Employee removed successfully"));
 });

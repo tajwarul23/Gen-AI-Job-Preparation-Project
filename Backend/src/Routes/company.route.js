@@ -1,5 +1,5 @@
 import express from "express";
-import { createCompanyController, generateInviteController, getCompanyController, inviteByEmailController, joinCompanyController, updateCompanyController, updateCompanyLogoController } from "../Controllers/Company.controller.js";
+import { createCompanyController, generateInviteController, getCompanyController, inviteByEmailController, joinCompanyController, leaveCompanyController, removeEmployeeController, updateCompanyController, updateCompanyLogoController } from "../Controllers/Company.controller.js";
 import { authorizeRoles, verifyToken } from "../Middlewares/Auth.middleware.js";
 import upload from "../Middlewares/File.middleware.js";
 
@@ -51,4 +51,8 @@ companyRouter.patch("/updateLogo", verifyToken, authorizeRoles("company_admin"),
  */
 companyRouter.get("/", verifyToken, authorizeRoles("company_admin", "recruiter"), getCompanyController)
 
+
+companyRouter.patch("/leave-company", verifyToken, authorizeRoles("company_admin", "recruiter"), leaveCompanyController)
+
+companyRouter.patch("/remove-employee/:userId", verifyToken, authorizeRoles("company_admin"), removeEmployeeController)
 export default companyRouter;
