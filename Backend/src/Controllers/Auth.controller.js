@@ -27,6 +27,7 @@ export const registerUserController = async (req, res) => {
     }
     // if(!validator.isEmail(email))
     const isUserAlreadyExists = await userModel.findOne({ email });
+    
     if (isUserAlreadyExists) {
       return res.status(400).json({
         message: "Account already exists with this Email",

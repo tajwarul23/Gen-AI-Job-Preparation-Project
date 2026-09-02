@@ -16,6 +16,7 @@ import ApiResponse from "../Utils/ApiResponse.js";
 import asyncHandler from "../Utils/asyncHandler.js";
 import { sendApplicationStatusEmail } from "../services/email.service.js";
 import { application } from "express";
+import { createNotification } from "../services/createNotification.js";
 
 /**
  * @name applyToJobController
@@ -326,6 +327,13 @@ export const updateApplicationJobStatusController = asyncHandler(
       companyName: application.company.companyName,
       status,
     });
+
+    await createNotification({
+      recipient:application.candidate,
+      type:"APPLICATION_STATUS_UPDATED",
+      title:"Application Status Updated",
+      message:`Your application for ${application.job.title} has been moved to ${application.status}`
+    })
   },
 );
 
