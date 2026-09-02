@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../Auth/Hooks/useAuth";
 import { Briefcase, Building2, Cpu, FileSearchCorner, FileUser, NotebookPen, Rss, Sparkles, SquareKanban, User, Users } from "lucide-react";
+import NotificationBell from "../Notifications/Components/NotificationBell";
 
 
 const candidateNavLinks = [
@@ -70,17 +71,20 @@ const Navbar = () => {
         </div>
 
         {/* ── Desktop right buttons — hidden on mobile/tablet ── */}
-        <div className="hidden lg:flex gap-4 shrink-0">
+        <div className="hidden lg:flex items-center gap-4 shrink-0">
           {user ? (
-            <button
-              onClick={() => navigate("/profile")}
-              className="rounded-xl border border-line px-4 py-2 text-lg text-muted font-sans
-                 cursor-pointer hover:text-ink transition-colors duration-200
-                 flex items-center gap-2"
-            >
-              <User className="w-4 h-4" />
-              Profile
-            </button>
+            <>
+              <NotificationBell />
+              <button
+                onClick={() => navigate("/profile")}
+                className="rounded-xl border border-line px-4 py-2 text-lg text-muted font-sans
+                   cursor-pointer hover:text-ink transition-colors duration-200
+                   flex items-center gap-2"
+              >
+                <User className="w-4 h-4" />
+                Profile
+              </button>
+            </>
           ) : (
             <Link
               to={"/login"}
@@ -136,7 +140,10 @@ const Navbar = () => {
 
           {/* Auth buttons */}
           {user ? (
-            <button
+            <div>
+              <NotificationBell/>
+             
+              <button
               onClick={() => {
                 navigate("/profile");
                 setMenuOpen(false);
@@ -146,6 +153,7 @@ const Navbar = () => {
               <User className="w-4 h-4" />
               Profile
             </button>
+            </div>
           ) : (
             <Link
               to={"/login"}
