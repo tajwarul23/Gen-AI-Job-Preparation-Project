@@ -17,6 +17,8 @@ import asyncHandler from "../Utils/asyncHandler.js";
 import { sendApplicationStatusEmail } from "../services/email.service.js";
 import { application } from "express";
 import { createNotification } from "../services/createNotification.js";
+import { userModel } from "../Models/user.model.js";
+import { NotificationModel } from "../Models/notification.model.js";
 
 /**
  * @name applyToJobController
@@ -32,7 +34,7 @@ export const applyToJobController = asyncHandler(async (req, res) => {
   }
 
   const job = await JobModel.findById(jobId).select(
-    "_id company description skills",
+    "_id company description skills title",
   );
 
   if (!job) {
@@ -65,6 +67,22 @@ export const applyToJobController = asyncHandler(async (req, res) => {
   res
     .status(201)
     .json(new ApiResponse(201, application, "Applied to job successfully"));
+
+  //send notification to the company_admin and recruiter
+  const recipients = await userModel.find({company:job.company, role:{$in:["recruiter", "company_admin"]}}).select("_id");
+
+  if(recipients.length > 0){
+    await NotificationModel.insertMany(
+      recipients.map((r)=>({
+        recipient: r._id,
+        type: "NEW_APPLICATION",
+        message:`${req.user.userName} applied for ${job.title}`,
+        title:"New Application Received"
+
+      }))
+    )
+  }
+
 
   // Generate report asynchronously
   generateRecruiterReport(resume.rawText, job.description, job.skills)
