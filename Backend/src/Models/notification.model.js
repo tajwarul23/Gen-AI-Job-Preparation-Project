@@ -15,6 +15,8 @@ const notificationSchema = new mongoose.Schema(
         "APPLICATION_STATUS_UPDATED",
         "NEW_APPLICATION",
         "COMPANY_MEMBER_JOINED",
+        "EMPLOYEE_LEAVED",
+        "PROMOTED_TO_COMPANY_ADMIN"
       ],
       required: true,
     },

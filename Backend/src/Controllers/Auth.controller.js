@@ -234,7 +234,7 @@ import admin from "../config/firebase.config.js";
 
 
 export const firebaseAuthController = async (req, res) => {
-  const { idToken } = req.body;
+  const { idToken, intent } = req.body;
   if (!idToken)
     return res
       .status(400)
@@ -251,6 +251,7 @@ export const firebaseAuthController = async (req, res) => {
         userName: name || email.split("@")[0],
         email,
         firebaseUid: uid,
+        role: intent === "recruiter" ? "pending_recruiter" : "candidate",
       });
     } else if (!user.firebaseUid) {
       user.firebaseUid = uid;
@@ -289,6 +290,56 @@ export const firebaseAuthController = async (req, res) => {
     console.log("Error in firebase", error.message);
 
     return res.status(401).json({ message: error.message, success: false });
+  }
+};
+
+/**
+ * @name becomeCandidateController
+ * @description let a pending_recruiter opt out and switch to a plain candidate
+ * @access Private (pending_recruiter)
+ */
+export const becomeCandidateController = async (req, res) => {
+  try {
+    const updatedUser = await userModel.findByIdAndUpdate(
+      req.user.id,
+      { role: "candidate" },
+      { new: true },
+    );
+
+    const token = jwt.sign(
+      {
+        id: updatedUser._id,
+        userName: updatedUser.userName,
+        role: updatedUser.role,
+        company: updatedUser.company,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" },
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    });
+
+    return res.status(200).json({
+      message: "Switched to candidate",
+      success: true,
+      user: {
+        id: updatedUser._id,
+        email: updatedUser.email,
+        userName: updatedUser.userName,
+        role: updatedUser.role,
+        company: updatedUser.company,
+      },
+    });
+  } catch (error) {
+    console.log("Error in becomeCandidateController", error.message);
+
+    return res
+      .status(500)
+      .json({ message: "Error switching to candidate", success: false });
   }
 };
 

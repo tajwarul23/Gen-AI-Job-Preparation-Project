@@ -1,6 +1,6 @@
 import express from "express";
-import { getMeController, loginUserController, logoutUserController, registerUserController,  firebaseAuthController } from "../Controllers/Auth.controller.js";
-import { verifyToken } from "../Middlewares/Auth.middleware.js";
+import { getMeController, loginUserController, logoutUserController, registerUserController,  firebaseAuthController, becomeCandidateController } from "../Controllers/Auth.controller.js";
+import { verifyToken, authorizeRoles } from "../Middlewares/Auth.middleware.js";
 const authRouter = express.Router();
 
 /**
@@ -38,6 +38,13 @@ authRouter.get("/get-me",verifyToken,getMeController)
  * @access Public
  */
 authRouter.post("/firebase", firebaseAuthController);
+
+/**
+ * @route POST /api/auth/become-candidate
+ * @description let a pending_recruiter opt out and switch to a plain candidate
+ * @access Private [only pending_recruiter]
+ */
+authRouter.post("/become-candidate", verifyToken, authorizeRoles("pending_recruiter"), becomeCandidateController);
 
 
 

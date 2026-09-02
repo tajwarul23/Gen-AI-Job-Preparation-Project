@@ -424,7 +424,7 @@ export const leaveCompanyController = asyncHandler(async (req, res) => {
       },
       {
         $set: {
-          role: "candidate",
+          role: "pending_recruiter",
           company: null,
         },
       },
@@ -434,6 +434,13 @@ export const leaveCompanyController = asyncHandler(async (req, res) => {
     if (!updatedUser) {
       throw new ApiError(500, "Error leaving the company");
     }
+    //send notification to the new admin
+    await createNotification({
+      recipient:oldestEmployee._id,
+      message:"You've been promoted to company admin",
+      title:"Promoted to Company Admin",
+      type:"PROMOTED_TO_COMPANY_ADMIN"
+    })
     return res
       .status(200)
       .json(new ApiResponse(200, updatedUser, "Left the company successfully"));
@@ -445,7 +452,7 @@ export const leaveCompanyController = asyncHandler(async (req, res) => {
     },
     {
       $set: {
-        role: "candidate",
+        role: "pending_recruiter",
         company: null,
       },
     },
@@ -455,6 +462,8 @@ export const leaveCompanyController = asyncHandler(async (req, res) => {
   if (!updatedUser) {
     throw new ApiError(500, "Error leaving the company");
   }
+
+  //send notification to the admin
   return res
     .status(200)
     .json(new ApiResponse(200, updatedUser, "Left the company successfully"));
@@ -491,7 +500,7 @@ export const removeEmployeeController = asyncHandler(async (req, res) => {
     },
     {
       $set: {
-        role: "candidate",
+        role: "pending_recruiter",
         company: null,
       },
     },
