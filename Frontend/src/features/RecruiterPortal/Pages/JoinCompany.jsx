@@ -3,12 +3,24 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { Users, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import { useJoinCompany } from "../Hooks/useCompany.js";
+import { useState } from "react";
 
 const JoinCompany = () => {
   const [searchParams] = useSearchParams();
+  const [pastedLink, setPastedLink] = useState("");
   const navigate = useNavigate();
   const token = searchParams.get("token");
   const { mutate, isPending, isSuccess, isError, error } = useJoinCompany();
+
+  const extractToken = (value) => {
+    const trimmed = value.trim();
+    try {
+      const url = new URL(trimmed);
+      return url.searchParams.get("token") || "";
+    } catch {
+      return trimmed; // not a URL — assume they pasted the raw token
+    }
+  };
 
   useEffect(() => {
     if (token) {
@@ -36,10 +48,27 @@ const JoinCompany = () => {
         </h3>
       </div>
 
-      {!token && (
-        <p className="text-muted text-sm font-sans">
-          This link is missing an invite token. Ask your admin to resend the invite.
-        </p>
+      {!token && !isPending && !isSuccess && (
+        <div className="flex flex-col items-center gap-3 w-full">
+          <p className="text-muted text-sm font-sans">
+            Paste your invitation link below to join.
+          </p>
+          <input
+            type="text"
+            value={pastedLink}
+            onChange={(e) => setPastedLink(e.target.value)}
+            placeholder="Paste invite link or token"
+            className="w-full bg-overlay text-ink text-sm border border-line rounded-xl p-3 focus:outline-none focus:border-teal placeholder:text-muted font-sans"
+          />
+          <button
+            type="button"
+            disabled={!pastedLink.trim()}
+            onClick={() => mutate(extractToken(pastedLink))}
+            className="btn"
+          >
+            Join Company
+          </button>
+        </div>
       )}
 
       {isPending && (
