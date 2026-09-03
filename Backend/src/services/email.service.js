@@ -5,8 +5,8 @@ const STATUS_EMAIL_CONTENT = {
     title: "You've been invited to interview!",
     color: "#d97706",
     bg: "#fef3c7",
-    message: (jobTitle, companyName) =>
-      `Good news — ${companyName} would like to move forward with an interview for the ${jobTitle} role. Keep an eye on your inbox for scheduling details.`,
+    message: (jobTitle, companyName, interviewDate, interviewTime, interviewLink) =>
+      `Good news — ${companyName} would like to move forward with an interview for the ${jobTitle} role, scheduled for ${interviewDate} at ${interviewTime}. Join here: ${interviewLink}`,
   },
   shortlisted: {
     icon: "⭐",
@@ -40,6 +40,9 @@ export const sendApplicationStatusEmail = async ({
   jobTitle,
   companyName,
   status,
+  interviewLink,
+  interviewDate,
+  interviewTime,
 }) => {
   const content = STATUS_EMAIL_CONTENT[status];
 
@@ -51,21 +54,50 @@ export const sendApplicationStatusEmail = async ({
     job_title: jobTitle,
     company_name: companyName,
     status_title: content.title,
-    status_message: content.message(jobTitle, companyName),
+    status_message: content.message(
+      jobTitle,
+      companyName,
+      interviewDate,
+      interviewTime,
+      interviewLink,
+    ),
     accent_color: content.color,
     accent_bg: content.bg,
     status_icon: content.icon,
     time: new Date().toLocaleString(),
+    ...(status === "interview" && {
+      interview_link: interviewLink,
+      interview_date: interviewDate,
+      interview_time: interviewTime,
+    }),
   };
+
+  const serviceId =
+    status === "interview"
+      ? process.env.EMAILJS_SERVICE_ID_INTERVIEW
+      : process.env.EMAILJS_SERVICE_ID;
+  const templateId =
+    status === "interview"
+      ? process.env.EMAILJS_TEMPLATE_ID_INTERVIEW
+      : process.env.EMAILJS_TEMPLATE_ID;
 
   try {
     await emailjs.send(
-      process.env.EMAILJS_SERVICE_ID,
-      process.env.EMAILJS_TEMPLATE_ID,
+      serviceId,
+      templateId,
       templateParams,
+      status === "interview"
+        ? {
+            publicKey: process.env.EMAILJS_PUBLIC_KEY_INTERVIEW,
+            privateKey: process.env.EMAILJS_PRIVATE_KEY_INTERVIEW,
+          }
+        : undefined,
     );
   } catch (error) {
-    console.error("Failed to send application status email", error.message);
+    console.error(
+      "Failed to send application status email",
+      error?.text || error?.message || error,
+    );
   }
 };
 

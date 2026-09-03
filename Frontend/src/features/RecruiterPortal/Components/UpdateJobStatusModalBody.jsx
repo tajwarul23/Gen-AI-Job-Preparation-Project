@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const STATUS_COPY = {
   interview: {
     title: "Call for Interview?",
@@ -44,10 +46,31 @@ const UpdateJobStatusModalBody = ({
     confirmClassName: "btn-primary",
   };
 
+  const isInterview = status === "interview";
+  const [interviewLink, setInterviewLink] = useState("");
+  const [interviewDate, setInterviewDate] = useState("");
+  const [interviewTime, setInterviewTime] = useState("");
+
+  const canConfirm =
+    !isInterview ||
+    (interviewLink.trim() && interviewDate && interviewTime);
+
   const handleConfirm = () => {
+    if (!canConfirm) return;
     updateApplicationStatus(
-      { applicationId, status },
-      { onSuccess: () => updateStatusRef?.current?.close() },
+      {
+        applicationId,
+        status,
+        ...(isInterview && { interviewLink, interviewDate, interviewTime }),
+      },
+      {
+        onSuccess: () => {
+          setInterviewLink("");
+          setInterviewDate("");
+          setInterviewTime("");
+          updateStatusRef?.current?.close();
+        },
+      },
     );
   };
 
@@ -57,6 +80,48 @@ const UpdateJobStatusModalBody = ({
         <h3 className="text-lg font-mono">{copy.title}</h3>
 
         <p className="py-4 font-mono">{copy.body}</p>
+
+        {isInterview && (
+          <div className="space-y-3 pb-4 font-mono">
+            <div>
+              <label className="block text-xs mb-1 uppercase">
+                Meeting Link
+              </label>
+              <input
+                type="url"
+                value={interviewLink}
+                onChange={(e) => setInterviewLink(e.target.value)}
+                placeholder="https://meet.google.com/..."
+                disabled={isPending}
+                className="w-full bg-overlay text-ink text-sm border border-line rounded-xl p-3 focus:outline-none focus:border-teal placeholder:text-muted font-sans"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs mb-1 uppercase">Date</label>
+                <input
+                  type="date"
+                  value={interviewDate}
+                  onChange={(e) => setInterviewDate(e.target.value)}
+                  disabled={isPending}
+                  className="w-full bg-overlay text-ink text-sm border border-line rounded-xl p-3 focus:outline-none focus:border-teal font-sans"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs mb-1 uppercase">Time</label>
+                <input
+                  type="time"
+                  value={interviewTime}
+                  onChange={(e) => setInterviewTime(e.target.value)}
+                  disabled={isPending}
+                  className="w-full bg-overlay text-ink text-sm border border-line rounded-xl p-3 focus:outline-none focus:border-teal font-sans"
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="modal-action font-mono">
           <button
@@ -72,7 +137,7 @@ const UpdateJobStatusModalBody = ({
             type="button"
             className={`btn ${copy.confirmClassName}`}
             onClick={handleConfirm}
-            disabled={isPending}
+            disabled={isPending || !canConfirm}
           >
             {isPending ? copy.pendingLabel : copy.confirmLabel}
           </button>

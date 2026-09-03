@@ -19,8 +19,17 @@ export const getAllApplicationForCompanyApi = async ({
   return response.data;
 };
 
-export const updateApplicationStatusApi = async (applicationId, status) => {
-  const response = await api.patch(`/${applicationId}`, { status });
+export const updateApplicationStatusApi = async (
+  applicationId,
+  status,
+  { interviewLink, interviewDate, interviewTime } = {},
+) => {
+  const response = await api.patch(`/${applicationId}`, {
+    status,
+    interviewLink,
+    interviewDate,
+    interviewTime,
+  });
   return response.data;
 };
 

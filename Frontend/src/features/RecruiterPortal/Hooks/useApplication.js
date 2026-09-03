@@ -35,7 +35,8 @@ export const useUpdateApplicationStatus = () =>{
   const company = user?.company;
 
   return useMutation({
-    mutationFn: ({applicationId, status}) => updateApplicationStatusApi(applicationId, status),
+    mutationFn: ({applicationId, status, interviewLink, interviewDate, interviewTime}) =>
+      updateApplicationStatusApi(applicationId, status, { interviewLink, interviewDate, interviewTime }),
 
     onSuccess: ()=>{
       queryClient.invalidateQueries({

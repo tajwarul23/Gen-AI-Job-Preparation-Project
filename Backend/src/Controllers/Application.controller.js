@@ -262,7 +262,7 @@ export const getCompanyApplicantListByJobIdController = asyncHandler(
 export const updateApplicationJobStatusController = asyncHandler(
   async (req, res) => {
     const { applicationId } = req.params;
-    const { status } = req.body;
+    const { status, interviewLink, interviewDate, interviewTime } = req.body;
     if (!status) {
       throw new ApiError(401, "Status is required");
     }
@@ -283,6 +283,12 @@ export const updateApplicationJobStatusController = asyncHandler(
     };
     if (!allowedStatus.includes(status)) {
       throw new ApiError(401, "Invalid status input");
+    }
+    if (
+      status === "interview" &&
+      (!interviewLink?.trim() || !interviewDate || !interviewTime?.trim())
+    ) {
+      throw new ApiError(400, "Interview link, date and time are required");
     }
     if (!mongoose.isValidObjectId(applicationId)) {
       throw new ApiError(400, "Invalid Id");
@@ -344,13 +350,19 @@ export const updateApplicationJobStatusController = asyncHandler(
       jobTitle: application.job.title,
       companyName: application.company.companyName,
       status,
+      interviewLink,
+      interviewDate,
+      interviewTime,
     });
 
     await createNotification({
       recipient:application.candidate,
       type:"APPLICATION_STATUS_UPDATED",
       title:"Application Status Updated",
-      message:`Your application for ${application.job.title} has been moved to ${application.status}`
+      message:
+        status === "interview"
+          ? `You've been called for an interview for ${application.job.title} on ${interviewDate} at ${interviewTime}. Join here: ${interviewLink}`
+          : `Your application for ${application.job.title} has been moved to ${application.status}`,
     })
   },
 );
