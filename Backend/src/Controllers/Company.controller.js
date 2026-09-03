@@ -12,6 +12,7 @@ import asyncHandler from "../Utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
 import { sendCompanyInviteEmail } from "../services/email.service.js";
 import { createNotification } from "../services/createNotification.js";
+import mongoose from "mongoose";
 
 const buildInviteLink = (companyId) => {
   const inviteToken = jwt.sign(
@@ -409,7 +410,7 @@ export const leaveCompanyController = asyncHandler(async (req, res) => {
       await oldestEmployee.save();
       const company = await CompanyModel.findById(req.company._id);
       company.createdBy = oldestEmployee._id;
-      await company.save()
+      await company.save();
     }
     if (!oldestEmployee) {
       throw new ApiError(
@@ -417,9 +418,40 @@ export const leaveCompanyController = asyncHandler(async (req, res) => {
         "There are no other members in this company. To leave, you must delete the company first.",
       );
     }
-    const updatedUser = await userModel.findOneAndUpdate(
+    const updatedUser = await userModel
+      .findOneAndUpdate(
+        {
+          _id: req.user._id,
+          company: req.company._id,
+        },
+        {
+          $set: {
+            role: "pending_recruiter",
+            company: null,
+          },
+        },
+        { new: true },
+      )
+      .select("-password");
+
+    if (!updatedUser) {
+      throw new ApiError(500, "Error leaving the company");
+    }
+    //send notification to the new admin
+    await createNotification({
+      recipient: oldestEmployee._id,
+      message: "You've been promoted to company admin",
+      title: "Promoted to Company Admin",
+      type: "PROMOTED_TO_COMPANY_ADMIN",
+    });
+    return res
+      .status(200)
+      .json(new ApiResponse(200, updatedUser, "Left the company successfully"));
+  }
+  const updatedUser = await userModel
+    .findOneAndUpdate(
       {
-        _id: req.user._id,
+        _id: req.user.id,
         company: req.company._id,
       },
       {
@@ -429,35 +461,8 @@ export const leaveCompanyController = asyncHandler(async (req, res) => {
         },
       },
       { new: true },
-    );
-
-    if (!updatedUser) {
-      throw new ApiError(500, "Error leaving the company");
-    }
-    //send notification to the new admin
-    await createNotification({
-      recipient:oldestEmployee._id,
-      message:"You've been promoted to company admin",
-      title:"Promoted to Company Admin",
-      type:"PROMOTED_TO_COMPANY_ADMIN"
-    })
-    return res
-      .status(200)
-      .json(new ApiResponse(200, updatedUser, "Left the company successfully"));
-  }
-  const updatedUser = await userModel.findOneAndUpdate(
-    {
-      _id: req.user.id,
-      company: req.company._id,
-    },
-    {
-      $set: {
-        role: "pending_recruiter",
-        company: null,
-      },
-    },
-    { new: true },
-  );
+    )
+    .select("-password");
 
   if (!updatedUser) {
     throw new ApiError(500, "Error leaving the company");
@@ -493,19 +498,21 @@ export const removeEmployeeController = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Wrong user id");
   }
 
-  const updatedUser = await userModel.findOneAndUpdate(
-    {
-      _id: userId,
-      company: company._id,
-    },
-    {
-      $set: {
-        role: "pending_recruiter",
-        company: null,
+  const updatedUser = await userModel
+    .findOneAndUpdate(
+      {
+        _id: userId,
+        company: company._id,
       },
-    },
-    { new: true },
-  );
+      {
+        $set: {
+          role: "pending_recruiter",
+          company: null,
+        },
+      },
+      { new: true },
+    )
+    .select("-password");
   if (!updatedUser) {
     throw new ApiError(500, "Failed to remove employee");
   }
@@ -513,3 +520,37 @@ export const removeEmployeeController = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, updatedUser, "Employee removed successfully"));
 });
+
+/**
+ * @name aboutCompanyController
+ * @description all can view aboutCompany to know company details
+ * @access all authenticated user
+ */
+export const aboutCompanyController = async (req, res) => {
+  try {
+    const { companyId } = req.params;
+    if (!companyId || !mongoose.Types.ObjectId.isValid(companyId)) {
+      return res.status(400).json({
+        message: "Invalid Company ID",
+        success: false,
+      });
+    }
+    const company = await CompanyModel.findById(companyId).select(
+      "industry country aboutCompany",
+    );
+    if (!company) {
+      return res
+        .status(404)
+        .json({ message: "Company Not Found", success: false });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "About Company Fetched", company, success: true });
+  } catch (error) {
+    console.log("Error fetching about company", error.message);
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch about company", success: false });
+  }
+};

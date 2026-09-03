@@ -7,9 +7,12 @@ import {
 import {
   createCompanyApi,
   generateInvitationLinkApi,
+  getAboutCompanyApi,
   getCompanyApi,
   inviteByEmailApi,
   joinCompanyApi,
+  leaveCompanyApi,
+  removeEmployeeApi,
   updateCompanyInfoApi,
   updateCompanyLogoApi,
 } from "../Services/company.api";
@@ -28,11 +31,21 @@ export const useGetCompany = () => {
   return useQuery({
     queryKey: ["company", user?.id],
     queryFn: getCompanyApi,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 1 * 60 * 1000,
     enabled: !!user?.id,
   });
 };
+/* 
+   GET ABOUT COMPANY
+ */
 
+   export const useGetAboutCompany = (companyId, enabled = true) =>{
+    return useQuery({
+      queryKey:["aboutCompany", companyId],
+      queryFn: ()=>getAboutCompanyApi(companyId),
+      enabled: !!companyId && enabled
+    })
+   }
 
 /* 
    CACHE HELPER
@@ -160,7 +173,65 @@ export const useJoinCompany = () => {
 };
 
 
-/* 
+/*
+   LEAVE COMPANY
+ */
+
+export const useLeaveCompany = () => {
+  const queryClient = useQueryClient();
+  const { setUser } = useContext(AuthContext);
+
+  return useMutation({
+    mutationFn: leaveCompanyApi,
+
+    onSuccess: (data) => {
+      const updatedUser = data.data;
+
+      setUser(updatedUser);
+
+      queryClient.invalidateQueries({
+        queryKey: ["company", updatedUser?.id],
+      });
+    },
+
+    onError: (error) => {
+      console.error(
+        error?.response?.data?.message ||
+          "Failed to leave company"
+      );
+    },
+  });
+};
+
+
+/*
+   REMOVE EMPLOYEE
+ */
+
+export const useRemoveEmployee = () => {
+  const queryClient = useQueryClient();
+  const { user } = useContext(AuthContext);
+
+  return useMutation({
+    mutationFn: removeEmployeeApi,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["company", user?.id],
+      });
+    },
+
+    onError: (error) => {
+      console.error(
+        error?.response?.data?.message ||
+          "Failed to remove employee"
+      );
+    },
+  });
+};
+
+
+/*
    UPDATE COMPANY INFO
  */
 

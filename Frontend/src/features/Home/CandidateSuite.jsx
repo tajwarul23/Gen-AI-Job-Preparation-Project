@@ -1,24 +1,20 @@
-import { ArrowRight, Terminal } from "lucide-react";
+import { ArrowRight} from "lucide-react";
 import ResumeAnalyzerCard from "./Components/ResumeAnalyzerCard";
 import ResumeBuilderCard from "./Components/ResumeBuilderCard";
 import JobTrackerCard from "./Components/JobTrackerCard";
 import MarketPlaceCard from "./Components/MarketPlaceCard";
 import AnalyzePrepCard from "./Components/AnalyzePrepCard";
 import { useNavigate } from "react-router-dom";
-import { routeAfterAuth } from "../../Utils/routeAfterAuth";
+
 import { useAuth } from "../Auth/Hooks/useAuth";
 import { motion } from "motion/react";
 const CandidateSuite = () => {
   const navigate = useNavigate();
-  const { loading, handleLogin, error, handleGoogleLogin, googleLoading } =
+  const {   user } =
     useAuth();
-  const handleContinue = async (intent) => {
-    sessionStorage.setItem("authIntent", intent);
-    const data = await handleGoogleLogin();
-    if (data?.success) {
-      routeAfterAuth(data.user, intent, navigate);
-    }
-  };
+    
+
+  
   return (
     <section className="mt-30">
      <motion.div
@@ -47,9 +43,10 @@ const CandidateSuite = () => {
         <MarketPlaceCard />
         <AnalyzePrepCard />
       </div>
-      <button
+      {
+        user?.role === "candidate" && (     <button
         onClick={() => {
-          handleContinue("candidate");
+          navigate("/all/job")
         }}
         className="group relative ml-auto px-6 py-3 rounded-lg border border-purple-400/40 text-purple-300  uppercase
        backdrop-blur-sm bg-purple-400/10 hover:bg-purple-400/20 
@@ -59,7 +56,8 @@ const CandidateSuite = () => {
       >
         Launch Candidate Suite
         <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-      </button>
+      </button>)
+      }
     </section>
   );
 };

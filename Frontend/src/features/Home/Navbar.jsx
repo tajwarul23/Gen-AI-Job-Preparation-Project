@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../Auth/Hooks/useAuth";
-import { Briefcase, Building2, Cpu, FileSearchCorner, FileUser, NotebookPen, Rss, Sparkles, SquareKanban, User, Users } from "lucide-react";
+import { Briefcase, Building2, Cpu, FileSearchCorner, FileUser, LayersPlus, NotebookPen, Rss, Sparkles, SquareKanban, User, Users } from "lucide-react";
 import NotificationBell from "../Notifications/Components/NotificationBell";
 
 
@@ -21,6 +21,11 @@ const recruiterNavLinks = [
   { to: "/recruiter/companyProfile", label: "Company Profile", icon:Building2 },
 ];
 
+const pendingRecruiterNavLinks = [
+  { to: "/all/job", label: "Job Feed", icon:Rss },
+  { to: "/onboarding/company", label: "Join Company", icon:LayersPlus },
+];
+
 const Navbar = () => {
   const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -29,6 +34,7 @@ const Navbar = () => {
 
   let navLinks;
   if (!user) navLinks = [];
+  else if (user?.role === "pending_recruiter") navLinks = pendingRecruiterNavLinks;
   else if (user?.role === "candidate" && authIntent === "recruiter") navLinks = [];
   else if (user?.role === "company_admin" || user.role === "recruiter")
     navLinks = recruiterNavLinks;
@@ -96,9 +102,10 @@ const Navbar = () => {
         </div>
 
         {/* ── Hamburger button — visible on mobile/tablet only ── */}
-        <button
+       <div className="lg:hidden flex gap-3 items-center" >
+         <button
           onClick={() => setMenuOpen((prev) => !prev)}
-          className="lg:hidden flex flex-col justify-center items-center gap-1.5 w-8 h-8 cursor-pointer"
+          className=" flex flex-col justify-center items-center gap-1.5 w-8 h-8 cursor-pointer"
           aria-label="Toggle menu"
         >
           {/* 3 bars — animate into X when open */}
@@ -115,6 +122,8 @@ const Navbar = () => {
             ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
           />
         </button>
+        <NotificationBell/>
+       </div>
       </nav>
 
       {/* ── Mobile drawer — slides down when open ── */}
@@ -141,7 +150,7 @@ const Navbar = () => {
           {/* Auth buttons */}
           {user ? (
             <div>
-              <NotificationBell/>
+              
              
               <button
               onClick={() => {

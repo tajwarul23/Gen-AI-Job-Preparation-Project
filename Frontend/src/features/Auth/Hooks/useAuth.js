@@ -1,8 +1,9 @@
 import { useContext } from "react";
 import { AuthContext } from "../auth.context.jsx";
-import { login, register, logout } from "../services/auth.api.js";
+import { login, register, logout, becomeCandidate } from "../services/auth.api.js";
 
 import { useFirebaseAuth } from "./useFirebaseAuth.js";
+
 
 export const useAuth = () => {
   const { signInWithGoogle, signOutFromFirebase } = useFirebaseAuth();
@@ -39,11 +40,11 @@ export const useAuth = () => {
       setLoading(false);
     }
   };
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = async (intent) => {
     setGoogleLoading(true);
     setError(null);
     try {
-      const data = await signInWithGoogle();
+      const data = await signInWithGoogle(intent);
       if (data?.success) {
         setUser(data.user);
       }
@@ -80,12 +81,30 @@ export const useAuth = () => {
       await signOutFromFirebase();
        await logout();
 
-    
+
     } catch (error) {
       setError(error?.response?.data?.message || "Something Went Wrong..!");
       console.log(error);
     } finally {
       setUser(null);
+      setLoading(false);
+    }
+  };
+
+  const handleBecomeCandidate = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await becomeCandidate();
+      if (data?.success) {
+        setUser(data.user);
+      }
+      return data;
+    } catch (error) {
+      setError(error?.response?.data?.message || "Something Went Wrong..!");
+      
+      console.log(error);
+    } finally {
       setLoading(false);
     }
   };
@@ -97,7 +116,9 @@ export const useAuth = () => {
     handleRegister,
     handleLogin,
     handleLogout,
+    handleBecomeCandidate,
     error,
+    setError,
     isInitializing,
     handleGoogleLogin,
     googleLoading

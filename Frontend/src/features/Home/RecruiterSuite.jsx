@@ -3,19 +3,13 @@ import { ArrowRight } from "lucide-react";
 import JobStudioCard from "./Components/JobStudioCard";
 import ApplicantCard from "./Components/ApplicantCard";
 import { useNavigate } from "react-router-dom";
-import { routeAfterAuth } from "../../Utils/routeAfterAuth";
+
 import { useAuth } from "../Auth/Hooks/useAuth";
 import { motion } from "motion/react";
 const RecruiterSuite = () => {
     const navigate = useNavigate();
-  const { handleGoogleLogin } = useAuth();
-    const handleContinue = async(intent) =>{
-      sessionStorage.setItem("authIntent", intent);
-      const data = await handleGoogleLogin();
-      if(data?.success){
-        routeAfterAuth(data.user, intent, navigate);
-      }
-    }
+  const {  user } = useAuth();
+   
   
   return (
     <section className="mt-30">
@@ -44,9 +38,10 @@ const RecruiterSuite = () => {
         <ApplicantCard />
       </div>
 
-      <button
+     {
+      (user?.role === "recruiter" || user?.role === "company_admin") && (  <button
         onClick={() => {
-          handleContinue("recruiter")
+          navigate("/recruiter/pipeline")
         }}
         className="group relative ml-auto px-6 py-3 rounded-lg border border-purple-400/40 text-purple-300 uppercase 
        backdrop-blur-sm bg-purple-400/10 hover:bg-purple-400/20 
@@ -56,7 +51,24 @@ const RecruiterSuite = () => {
       >
         Launch Recruiter Suite
         <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-      </button>
+      </button> )
+     }
+     {
+      (user?.role === "pending_recruiter" || user?.role === "candidate") && (  <button
+        onClick={() => {
+          navigate("/onboarding/company")
+        }}
+        className="group relative ml-auto px-6 py-3 rounded-lg border border-purple-400/40 text-purple-300 uppercase 
+       backdrop-blur-sm bg-purple-400/10 hover:bg-purple-400/20 
+       hover:text-white transition-all duration-300 
+       shadow-[0_0_20px_rgba(192,132,252,0.25)] hover:shadow-[0_0_35px_rgba(192,132,252,0.5)]
+       focus:outline-none focus:ring-2 focus:ring-purple-400/50 flex items-center justify-center gap-2 cursor-pointer"
+      >
+        Hiring instead?
+Become a recruiter
+        
+      </button> )
+     }
     </section>
   );
 };

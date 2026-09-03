@@ -39,3 +39,18 @@ export const getCompanyApi = async ()=>{
     const response = await api.get("/");
     return response.data;
 }
+
+export const leaveCompanyApi = async ()=>{
+    const response = await api.patch("/leave-company");
+    return response.data;
+}
+
+export const removeEmployeeApi = async (userId)=>{
+    const response = await api.patch(`/remove-employee/${userId}`);
+    return response.data;
+}
+
+export const getAboutCompanyApi = async(companyId) =>{
+    const response = await api.get(`/aboutCompany/${companyId}`);
+    return response.data;
+}

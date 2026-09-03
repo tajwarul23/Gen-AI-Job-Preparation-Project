@@ -45,4 +45,9 @@ export const getMe = async () => {
   return response.data;
 };
 
+export const becomeCandidate = async () => {
+  const response = await api.post("/api/auth/become-candidate");
+  return response.data;
+};
+
 

@@ -7,16 +7,34 @@ import RecruiterSuite from "./RecruiterSuite";
 import { useAuth } from "../Auth/Hooks/useAuth";
 import { routeAfterAuth } from "../../Utils/routeAfterAuth";
 import SpinLoader from "../../Shared/SpinLoader";
+import toast from "react-hot-toast";
+import { useEffect } from "react";
 const Hero = () => {
   const navigate = useNavigate();
-const {  handleGoogleLogin,googleLoading } = useAuth();
+const {  handleGoogleLogin,googleLoading, user, handleBecomeCandidate, loading, error, setError } = useAuth();
   const handleContinue = async(intent) =>{
     sessionStorage.setItem("authIntent", intent);
-    const data = await handleGoogleLogin();
+    const data = await handleGoogleLogin(intent);
     if(data?.success){
       routeAfterAuth(data.user, intent, navigate);
     }
   }
+
+  useEffect(()=>{
+    if(error){
+      toast.error(error);
+      setError(null)
+    }
+  },[error, setError])
+
+  const handleContinueAsCandidate = async () => {
+    const data = await handleBecomeCandidate();
+    if (data?.success) {
+      toast.success(data?.message || "Switched to candidate");
+      navigate("/all/job");
+    }
+   
+  };
   if(googleLoading){
     return <SpinLoader/>
   }
@@ -33,13 +51,13 @@ const {  handleGoogleLogin,googleLoading } = useAuth();
 
       {/* SECONDARY GLOW */}
       <div
-        className="pointer-events-none absolute left-[40%] top-[20px]
+        className="pointer-events-none absolute left-[40%] top-5
                       h-[250px] w-[min(350px,80vw)]
                       rounded-full bg-purple/20 blur-[120px]"
       />
 
       {/* HERO SECTION */}
-      <section className="relative pt-32 pb-20 px-6 max-w-7xl mx-auto text-center">
+      <section className="relative pt-10 pb-20 px-6 max-w-7xl mx-auto text-center">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -63,6 +81,8 @@ const {  handleGoogleLogin,googleLoading } = useAuth();
           Candidate Intelligence & Recruiter Insights
         </motion.h1>
 
+     
+
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -73,14 +93,44 @@ const {  handleGoogleLogin,googleLoading } = useAuth();
           organizations with deep behavioral synthesis, ATS resume parsing, and
           high-fidelity technical evaluation.
         </motion.p>
-
+         {(user?.role === "pending_recruiter" || user?.role === "company_admin" || user?.role === "recruiter") && (
+          <button
+            type="button"
+            onClick={handleContinueAsCandidate}
+            disabled={loading}
+            className="group relative mx-auto px-6 py-3 rounded-lg border border-purple-400/40 text-purple-300  uppercase
+       backdrop-blur-sm bg-purple-400/10 hover:bg-purple-400/20 
+       hover:text-white transition-all duration-300 
+       shadow-[0_0_20px_rgba(192,132,252,0.25)] hover:shadow-[0_0_35px_rgba(192,132,252,0.5)]
+       focus:outline-none focus:ring-2 focus:ring-purple-400/50 flex items-center justify-center gap-2 cursor-pointer"
+          >
+            Not hiring? Continue as a candidate instead
+          </button>
+        )}
+            {
+      ( user?.role === "candidate") && (  <button
+        onClick={() => {
+          navigate("/onboarding/company")
+        }}
+        className="group relative mx-auto px-6 py-3 rounded-lg border border-purple-400/40 text-purple-300 uppercase 
+       backdrop-blur-sm bg-purple-400/10 hover:bg-purple-400/20 
+       hover:text-white transition-all duration-300 
+       shadow-[0_0_20px_rgba(192,132,252,0.25)] hover:shadow-[0_0_35px_rgba(192,132,252,0.5)]
+       focus:outline-none focus:ring-2 focus:ring-purple-400/50 flex items-center justify-center gap-2 cursor-pointer"
+      >
+        Hiring instead?
+Become a recruiter
+        
+      </button> )
+     }
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
         >
-            <button
+          {
+            !user && (  <button
       onClick={() => {
               handleContinue("candidate")
             }}
@@ -91,8 +141,10 @@ const {  handleGoogleLogin,googleLoading } = useAuth();
       >
         Find Your Next Role
         <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-      </button>
-          <button
+      </button>)
+          }
+       {
+        !user && (   <button
             onClick={() => {
               handleContinue("recruiter")
             }}
@@ -100,7 +152,8 @@ const {  handleGoogleLogin,googleLoading } = useAuth();
           >
             Hire Smarter with AI
             <Sparkles className="w-4 h-4 text-purple" />
-          </button>
+          </button>)
+       }
         </motion.div>
         <motion.div
           initial={{ opacity: 0, x: -80 }}

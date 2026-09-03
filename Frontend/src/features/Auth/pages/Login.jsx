@@ -21,7 +21,7 @@ const handleContinue = async (intent) => {
   else if (intent === "candidate") setIsCandidateLoading(true);
 
   try {
-    const data = await handleGoogleLogin();
+    const data = await handleGoogleLogin(intent);
     if (data?.success) {
       if (from) {
         navigate(`${from.pathname}${from.search || ""}`, { replace: true });

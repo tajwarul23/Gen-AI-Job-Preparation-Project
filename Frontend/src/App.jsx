@@ -80,8 +80,12 @@ const App = () => {
       {/* Protected — candidate or recruiter */}
       <Route element={<ProtectedLayout allowedRoles={["candidate", "recruiter", "company_admin"]} />}>
         <Route path="/interview/allReports" element={<Suspense fallback={<SpinLoader/>}><AllReports /></Suspense>} />
-        <Route path="/all/job" element={<Suspense fallback={<SpinLoader/>}><AllJobFeed /></Suspense>} />
         <Route path="/interview/:interviewId" element={<Suspense fallback={<SpinLoader/>}><InterviewReport /></Suspense>} />
+      </Route>
+
+      {/* Protected — candidate, recruiter, or pending_recruiter (read-only job browsing) */}
+      <Route element={<ProtectedLayout allowedRoles={["candidate", "recruiter", "company_admin", "pending_recruiter"]} />}>
+        <Route path="/all/job" element={<Suspense fallback={<SpinLoader/>}><AllJobFeed /></Suspense>} />
       </Route>
 
       {/* 404 inside the layout so Navbar still shows */}

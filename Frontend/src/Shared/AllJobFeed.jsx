@@ -37,6 +37,8 @@ const JobFeed = () => {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useGetJobFeed(activeFilters);
+    
+    
 
   const jobList = useMemo(
     () => data?.pages.flatMap((page) => page.data.jobs) || [],

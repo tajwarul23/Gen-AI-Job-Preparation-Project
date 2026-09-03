@@ -10,6 +10,7 @@ import {
   SquarePen,
   Link as LinkIcon,
   Send,
+  UserMinus,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../Auth/auth.context";
@@ -19,6 +20,7 @@ import {
   useInviteByEmail,
 } from "../Hooks/useCompany";
 import UpdateCompanyModalBody from "../Components/UpdateCompanyModalBody";
+import RemoveEmployeeModalBody from "../Components/RemoveEmployeeModalBody";
 import SpinLoader from "../../../Shared/SpinLoader";
 
 const DEFAULT_LOGO =
@@ -40,9 +42,11 @@ const CompanyProfile = () => {
   const { user } = useContext(AuthContext);
   const isAdmin = user?.role === "company_admin";
   const updateDialogRef = useRef(null);
+  const removeDialogRef = useRef(null);
   const [inviteLink, setInviteLink] = useState("");
   const [copied, setCopied] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
+  const [employeeToRemove, setEmployeeToRemove] = useState(null);
 
   const { data, isLoading } = useGetCompany();
   const { mutate: generateInvite, isPending: isInvitePending } =
@@ -85,6 +89,11 @@ const CompanyProfile = () => {
         
        }
     });
+  };
+
+  const handleRemoveClick = (employee) => {
+    setEmployeeToRemove(employee);
+    removeDialogRef.current?.showModal();
   };
 
   const handleCopyInvite = async () => {
@@ -276,15 +285,29 @@ const CompanyProfile = () => {
                     </div>
                   </div>
 
-                  <span
-                    className={`text-xs font-mono uppercase px-2 py-0.5 rounded-full font-bold shrink-0 ${
-                      employee.role === "company_admin"
-                        ? "bg-teal/10 text-teal border border-teal/30"
-                        : "bg-overlay text-muted border border-line"
-                    }`}
-                  >
-                    {employee.role === "company_admin" ? "Admin" : "Recruiter"}
-                  </span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span
+                      className={`text-xs font-mono uppercase px-2 py-0.5 rounded-full font-bold ${
+                        employee.role === "company_admin"
+                          ? "bg-teal/10 text-teal border border-teal/30"
+                          : "bg-overlay text-muted border border-line"
+                      }`}
+                    >
+                      {employee.role === "company_admin" ? "Admin" : "Recruiter"}
+                    </span>
+
+                    {isAdmin && employee.role !== "company_admin" && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveClick(employee)}
+                        className="flex items-center gap-1 text-xs font-mono font-bold uppercase text-muted hover:text-error border border-line hover:border-error/40 rounded-full px-2.5 py-1 cursor-pointer transition-colors"
+                        aria-label={`Remove ${employee.userName || "employee"}`}
+                      >
+                        <UserMinus className="w-3.5 h-3.5" />
+                        Remove
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -298,6 +321,14 @@ const CompanyProfile = () => {
         <UpdateCompanyModalBody
           updateDialogRef={updateDialogRef}
           company={company}
+        />
+      )}
+
+      {isAdmin && (
+        <RemoveEmployeeModalBody
+          removeDialogRef={removeDialogRef}
+          employeeId={employeeToRemove?._id}
+          employeeName={employeeToRemove?.userName}
         />
       )}
     </div>

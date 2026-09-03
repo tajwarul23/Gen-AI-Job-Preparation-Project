@@ -18,7 +18,7 @@ const Register = () => {
 
     const handleGoogleLoginClick = async () => {
     try {
-    const res =  await handleGoogleLogin();
+    const res =  await handleGoogleLogin("candidate");
     if (res?.success) {
         toast.success(res.message || "Login successful!");
         navigate(from, { replace: true });

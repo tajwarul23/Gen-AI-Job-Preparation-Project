@@ -32,7 +32,7 @@ const JoinCompany = () => {
       <div className="flex items-center gap-2">
         <Users className="w-5 h-5 text-violet" />
         <h3 className="text-sm font-mono text-muted tracking-wider uppercase font-bold">
-          PATH BETA // JOIN COMPANY
+          JOIN COMPANY
         </h3>
       </div>
 
@@ -55,7 +55,6 @@ const JoinCompany = () => {
           <p className="text-sm text-ink font-sans">
             Joined successfully. Redirecting to your dashboard...
           </p>
-          {setTimeout(() => navigate("/recruiter/pipeline"), 1500) && null}
         </div>
       )}
 

@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const data = await getMe();
       setUser(data?.user || null);
-      console.log("User after fetched or set", data.user);
+      // console.log("User after fetched or set", data.user);
     } catch (error) {
       setUser(null);
 

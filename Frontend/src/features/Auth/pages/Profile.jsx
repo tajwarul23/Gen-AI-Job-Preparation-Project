@@ -1,8 +1,10 @@
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
-import { LogOut, Mail, User as UserIcon } from "lucide-react";
+import { LogOut, Mail, User as UserIcon, Building2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../Hooks/useAuth.js";
+import LeaveCompanyModalBody from "../../RecruiterPortal/Components/LeaveCompanyModalBody.jsx";
 
 const ROLE_LABELS = {
   candidate: "Candidate",
@@ -13,6 +15,9 @@ const ROLE_LABELS = {
 const Profile = () => {
   const { user, handleLogout, loading } = useAuth();
   const navigate = useNavigate();
+  const leaveDialogRef = useRef(null);
+  const canLeaveCompany =
+    user?.role === "company_admin" || user?.role === "recruiter";
 
   const handleLogoutClick = async () => {
     navigate("/");
@@ -21,7 +26,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-app flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-app flex items-start md:items-center justify-center px-4 pt-16 pb-12 md:py-12">
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -52,6 +57,18 @@ const Profile = () => {
 
         <div className="my-6 h-px bg-line" />
 
+        {canLeaveCompany && (
+          <button
+            onClick={() => leaveDialogRef.current?.showModal()}
+            className="w-full py-3 mb-3 rounded-xl border-2 border-line text-muted font-semibold text-sm
+              flex items-center justify-center gap-2 cursor-pointer transition-colors
+              hover:bg-overlay hover:text-ink"
+          >
+            <Building2 className="w-4 h-4" />
+            Leave Company
+          </button>
+        )}
+
         <button
           onClick={handleLogoutClick}
           disabled={loading}
@@ -72,6 +89,10 @@ const Profile = () => {
           )}
         </button>
       </motion.div>
+
+      {canLeaveCompany && (
+        <LeaveCompanyModalBody leaveDialogRef={leaveDialogRef} />
+      )}
     </div>
   );
 };

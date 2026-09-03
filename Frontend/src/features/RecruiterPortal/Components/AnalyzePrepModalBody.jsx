@@ -4,7 +4,7 @@ import { useResume } from "../../ResumeBuilder/Hooks/useResume";
 import { useAnalyzePrep } from "../Hooks/useApplication";
 import { Check, FileText, Loader2, Sparkles, Upload, X } from "lucide-react";
 
-const AnalyzePrepModalBody = ({ analyzeDialogRef, jobId }) => {
+const AnalyzePrepModalBody = ({ analyzeDialogRef, isOpen, onClose, jobId }) => {
   const [mode, setMode] = useState("existing");
   const [selectedResumeId, setSelectedResumeId] = useState(null);
   const [uploadFile, setUploadFile] = useState(null);
@@ -18,8 +18,9 @@ const AnalyzePrepModalBody = ({ analyzeDialogRef, jobId }) => {
   } = useResume();
 
   useEffect(() => {
+    if (!isOpen) return;
     getAllResume();
-  }, []);
+  }, [isOpen]);
 
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const AnalyzePrepModalBody = ({ analyzeDialogRef, jobId }) => {
 
   const closeModal = () => {
     if (isPending || resumeLoading) return;
-    analyzeDialogRef?.current?.close();
+    onClose?.();
   };
 
   const handleModeChange = (newMode) => {

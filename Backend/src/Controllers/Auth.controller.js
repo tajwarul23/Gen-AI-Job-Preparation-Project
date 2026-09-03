@@ -27,7 +27,7 @@ export const registerUserController = async (req, res) => {
     }
     // if(!validator.isEmail(email))
     const isUserAlreadyExists = await userModel.findOne({ email });
-    
+
     if (isUserAlreadyExists) {
       return res.status(400).json({
         message: "Account already exists with this Email",
@@ -38,12 +38,11 @@ export const registerUserController = async (req, res) => {
     const hash = await bcrypt.hash(password, 10);
 
     //generate verification token
-  
+
     const user = await userModel.create({
       userName,
       email,
       password: hash,
-      
     });
 
     const token = jwt.sign(
@@ -207,8 +206,6 @@ export const getMeController = async (req, res) => {
     }
     let company = null;
 
-   
-
     return res.status(200).json({
       message: `Fetching details for ${user.userName}`,
       user: {
@@ -227,11 +224,7 @@ export const getMeController = async (req, res) => {
   }
 };
 
-
-
-
 import admin from "../config/firebase.config.js";
-
 
 export const firebaseAuthController = async (req, res) => {
   const { idToken, intent } = req.body;
@@ -300,12 +293,26 @@ export const firebaseAuthController = async (req, res) => {
  */
 export const becomeCandidateController = async (req, res) => {
   try {
+    if ((req.user.role === "company_admin" || req.user.role === "recruiter") && req.user.company) {
+      return res.status(400).json({
+        message: "You've to leave the company first to become a candidate",
+        success: false,
+      });
+    }
+    if (req.user.role === "candidate") {
+      return res.status(400).json({
+        message:"You're already a candidate",
+        success:false
+      })
+    }
     const updatedUser = await userModel.findByIdAndUpdate(
       req.user.id,
       { role: "candidate" },
       { new: true },
     );
-
+    if(!updatedUser){
+      return res.status(404).json({message:"User Not found", success:false})
+    }
     const token = jwt.sign(
       {
         id: updatedUser._id,

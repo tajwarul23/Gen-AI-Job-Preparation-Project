@@ -11,6 +11,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useRef } from "react";
+import { useDialog } from "../../../Hooks/useDialog";
 import { useAuth } from "../../Auth/Hooks/useAuth";
 import DescriptionModalBody from "./DescriptionModalBody";
 import UpdateModalBody from "./UpdateModalBody";
@@ -18,6 +19,7 @@ import DeleteModalBody from "./DeleteModalBody";
 import { useNavigate } from "react-router-dom";
 import ApplyModalBody from "./ApplyModalBody";
 import AnalyzePrepModalBody from "./AnalyzePrepModalBody";
+import AboutCompanyModalBody from "./AboutCompanyModalBody";
 
 const formatSalary = (min, max, currency) => {
   const fmt = new Intl.NumberFormat("en-US", {
@@ -41,7 +43,6 @@ const formatDeadline = (deadline) => {
   });
   return { label, daysLeft };
 };
-
 
 const workModeStyles = {
   REMOTE: "bg-blue-500/10 text-blue-400 border-blue-500/30",
@@ -69,12 +70,29 @@ const JobCard = ({ job, view }) => {
     companyName,
     status,
     company,
+    
   } = job;
   const dialogRef = useRef(null);
-  const applyDialogRef = useRef(null);
-  const analyzeDialogRef = useRef(null);
+  const {
+    ref: applyDialogRef,
+    isOpen: isApplyDialogOpen,
+    show: showApplyDialog,
+    close: closeApplyDialog,
+  } = useDialog();
+  const {
+    ref: analyzeDialogRef,
+    isOpen: isAnalyzeDialogOpen,
+    show: showAnalyzeDialog,
+    close: closeAnalyzeDialog,
+  } = useDialog();
   const updateDialogRef = useRef(null);
   const deleteDialogRef = useRef(null);
+  const {
+    ref: aboutCompanyDialogRef,
+    isOpen: isAboutCompanyDialogOpen,
+    show: showAboutCompanyDialog,
+    close: closeAboutCompanyDialog,
+  } = useDialog();
   const deadlineInfo = formatDeadline(deadline);
   const isClosingSoon =
     deadlineInfo?.daysLeft !== undefined &&
@@ -170,10 +188,33 @@ const JobCard = ({ job, view }) => {
 
       {/* - ROW 2: companyName, location, workMode, salary, employmentType, experienceLevel, vacancy - */}
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
-        <span className="flex items-center gap-1.5 text-sm font-medium text-ink">
-          <Map className="h-3.5 w-3.5 shrink-0 text-teal" />
-          {companyName}
-        </span>
+        <button
+          onClick={showAboutCompanyDialog}
+          className="
+    group cursor-pointer
+    rounded-md px-2 py-1
+    transition-all duration-200
+    hover:bg-teal/10
+  "
+        >
+          <span
+            className="
+      flex items-center gap-1.5
+      text-sm font-medium text-ink
+      transition-colors duration-200
+      group-hover:text-teal
+    "
+          >
+            <Map
+              className="
+        h-3.5 w-3.5 shrink-0 text-teal
+        transition-transform duration-200
+        group-hover:-translate-y-0.5
+      "
+            />
+            {companyName}
+          </span>
+        </button>
 
         <span className="flex items-center gap-1.5 text-xs text-muted">
           <MapPin className="h-3.5 w-3.5 shrink-0" />
@@ -313,21 +354,19 @@ const JobCard = ({ job, view }) => {
             <button
               type="button"
               disabled={job?.isApplied}
-              onClick={()=>{applyDialogRef?.current?.showModal()}}
+              onClick={showApplyDialog}
               className={`flex items-center justify-center gap-1.5
         shrink-0 rounded-lg px-4 py-2
         text-xs font-semibold text-white
         transition-colors ${job?.isApplied ? "bg-violet/40 cursor-not-allowed opacity-60" : "bg-violet hover:bg-violet-dim cursor-pointer"}`}
             >
               <Send className="h-3.5 w-3.5" />
-              {
-                job?.isApplied? ("Applied") : ("Apply Now")
-              }
+              {job?.isApplied ? "Applied" : "Apply Now"}
             </button>
 
             <button
               type="button"
-              onClick={() => analyzeDialogRef.current?.showModal()}
+              onClick={showAnalyzeDialog}
               className="
         flex items-center justify-center gap-1.5
         shrink-0 rounded-lg border-2 border-violet px-4 py-2
@@ -340,8 +379,8 @@ const JobCard = ({ job, view }) => {
               Analyze & Prep
             </button>
           </div>
-        ) }
-      
+        )}
+
         {isMyCompany && (
           <button
             type="button"
@@ -368,14 +407,31 @@ const JobCard = ({ job, view }) => {
         employmentType={employmentType}
         description={description}
       />
+      {/* - ABOUT COMPANY MODAL - */}
+     <AboutCompanyModalBody
+     aboutCompanyDialogRef={aboutCompanyDialogRef}
+     isOpen={isAboutCompanyDialogOpen}
+     onClose={closeAboutCompanyDialog}
+     company = {company}
+     />
       {/* UPDATE MODAL */}
       <UpdateModalBody updateDialogRef={updateDialogRef} job={job} />
       {/* DELETE MODAL */}
       <DeleteModalBody deleteDialogRef={deleteDialogRef} jobId={job._id} />
       {/* APPLY MODAL */}
-      <ApplyModalBody applyDialogRef={applyDialogRef} jobId= {job._id}/>
+      <ApplyModalBody
+        applyDialogRef={applyDialogRef}
+        isOpen={isApplyDialogOpen}
+        onClose={closeApplyDialog}
+        jobId={job._id}
+      />
       {/* ANALYZE & PREP MODAL */}
-      <AnalyzePrepModalBody analyzeDialogRef={analyzeDialogRef} jobId={job._id} />
+      <AnalyzePrepModalBody
+        analyzeDialogRef={analyzeDialogRef}
+        isOpen={isAnalyzeDialogOpen}
+        onClose={closeAnalyzeDialog}
+        jobId={job._id}
+      />
     </div>
   );
 };

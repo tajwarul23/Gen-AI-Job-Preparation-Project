@@ -1,5 +1,9 @@
 export const routeAfterAuth = (user, intent, navigate) =>{
-    if(user.role === "candidate" && intent === "recruiter" && !user.company){
+    const wantsRecruiterOnboarding =
+        user.role === "pending_recruiter" ||
+        (user.role === "candidate" && intent === "recruiter");
+
+    if(wantsRecruiterOnboarding && !user.company){
         navigate("/onboarding/company");
         return;
     }

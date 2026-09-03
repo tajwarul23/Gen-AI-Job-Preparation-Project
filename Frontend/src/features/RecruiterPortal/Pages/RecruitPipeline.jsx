@@ -9,6 +9,7 @@ import RecruitPipelineJobList from "../Components/RecruitPipelineJobList";
 import RecruitPipelineApplicantInfo from "../Components/RecruitPipelineApplicantInfo";
 import RecruitPipelineApplicantList from "../Components/RecruitPipelineApplicantList";
 import { useSearchParams } from "react-router-dom";
+import { useRef } from "react";
 
 const RecruitPipeline = () => {
   const { isError, error } = useGetCompany();
@@ -19,8 +20,10 @@ const RecruitPipeline = () => {
 
   const [selectedJobId, setSelectedJobId] = useState(null);
   const [selectedApplication, setSelectedApplication] = useState(null);
-
+  const applicantListRef =  useRef(null);
+  const applicantInfoRef =  useRef(null);
   
+  const isVerticalLayout = () => window.matchMedia("(max-width: 1033px)").matches;
 
   
   useEffect(() => {
@@ -50,7 +53,17 @@ const RecruitPipeline = () => {
     setSelectedJobId(jobId);
     setSelectedApplication(null);
     setStatusFilter("");
+    if(isVerticalLayout()){
+      applicantListRef.current?.scrollIntoView({behavior: "smooth", block:"start"})
+    }
   };
+
+  const handleApplicationSelect = (app) => {
+  setSelectedApplication(app);
+  if (isVerticalLayout()) {
+    applicantInfoRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+};
 
   return (
     <div className="mx-auto min-h-screen max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -68,7 +81,7 @@ const RecruitPipeline = () => {
           </div>
 
           {/* APPLICANTS */}
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-4" ref={applicantListRef}>
             <div className="mb-3">
               <div className="mb-2 flex items-center justify-between">
                 <p className="text-sm font-mono font-semibold uppercase tracking-wider text-muted">
@@ -182,13 +195,13 @@ const RecruitPipeline = () => {
             <RecruitPipelineApplicantList
               selectedJobId={selectedJobId}
               selectedApplication={selectedApplication}
-              setSelectedApplication={setSelectedApplication}
+              setSelectedApplication={handleApplicationSelect}
               statusFilter={statusFilter}
             />
           </div>
 
           {/* APPLICANT INFO */}
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-5" ref={applicantInfoRef}>
             <RecruitPipelineApplicantInfo application={selectedApplication} />
           </div>
         </div>

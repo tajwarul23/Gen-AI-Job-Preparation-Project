@@ -4,7 +4,7 @@ import { useApplyToJob } from "../Hooks/useApplication";
 import { Check, FileText, Loader2, Upload, X } from "lucide-react";
 import toast from "react-hot-toast";
 
-const ApplyModalBody = ({ applyDialogRef, jobId }) => {
+const ApplyModalBody = ({ applyDialogRef, isOpen, onClose, jobId }) => {
   const [mode, setMode] = useState("existing");
   const [selectedResumeId, setSelectedResumeId] = useState(null);
   const [uploadFile, setUploadFile] = useState(null);
@@ -18,8 +18,9 @@ const ApplyModalBody = ({ applyDialogRef, jobId }) => {
   } = useResume();
 
   useEffect(() => {
+    if (!isOpen) return;
     getAllResume();
-  }, []);
+  }, [isOpen]);
 
   // useEffect(() => {
   //   toast.error(error?.response?.data?.message || "Something went wrong ");
@@ -35,7 +36,7 @@ const ApplyModalBody = ({ applyDialogRef, jobId }) => {
 
   const closeModal = () => {
     if (isPending || resumeLoading) return;
-    applyDialogRef?.current?.close();
+    onClose?.();
   };
 
   const handleModeChange = (newMode) => {

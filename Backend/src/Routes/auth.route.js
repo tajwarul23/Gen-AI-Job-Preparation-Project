@@ -44,7 +44,7 @@ authRouter.post("/firebase", firebaseAuthController);
  * @description let a pending_recruiter opt out and switch to a plain candidate
  * @access Private [only pending_recruiter]
  */
-authRouter.post("/become-candidate", verifyToken, authorizeRoles("pending_recruiter"), becomeCandidateController);
+authRouter.post("/become-candidate", verifyToken, authorizeRoles("pending_recruiter", "company_admin", "recruiter"), becomeCandidateController);
 
 
 
