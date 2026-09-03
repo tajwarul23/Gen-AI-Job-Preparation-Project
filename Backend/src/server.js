@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import app from "./app.js";
 import { connectToDB } from "./config/database.js";
+import { startJobExpireCron } from "./services/cron.service.js";
 
 
 
@@ -9,8 +10,21 @@ import { connectToDB } from "./config/database.js";
 const port = process.env.PORT ;
 
 
-connectToDB();
+const startServer = async()=>{
+  try {
+    await connectToDB();
 
-app.listen(port,"0.0.0.0", () => {
-  console.log(`Server is running on port ${port}`);
-});
+    await startJobExpireCron();
+
+    app.listen(port, ()=>{
+      console.log(`Server running on port: ${port}`);
+      
+    })
+  } catch (error) {
+    console.error("Server startup failed:", error.message);
+
+    process.exit(1);
+  }
+}
+
+startServer();
