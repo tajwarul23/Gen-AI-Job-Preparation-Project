@@ -2,6 +2,8 @@ import { ArrowRight } from "lucide-react";
 
 import JobStudioCard from "./Components/JobStudioCard";
 import ApplicantCard from "./Components/ApplicantCard";
+import StatusUpdateCard from "./Components/StatusUpdateCard";
+import TeamManagementCard from "./Components/TeamManagementCard";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../Auth/Hooks/useAuth";
@@ -20,7 +22,7 @@ const RecruiterSuite = () => {
           className="text-xs inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-violet/10 border border-violet/20 text-violet font-sans mb-8 tracking-wider uppercase"
         >
           <span className="inline-block  w-2 h-2 bg-violet rounded-full animate-pulse" />
-          Candidate Suite
+          Recruiter Suite
         </motion.div>
       <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-extrabold tracking-tight leading-[1.1] mb-6 max-w-5xl mx-auto text-ink">
         Streamline Hiring with <br></br>
@@ -36,6 +38,8 @@ const RecruiterSuite = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16 max-w-5xl mx-auto">
         <JobStudioCard />
         <ApplicantCard />
+        <StatusUpdateCard />
+        <TeamManagementCard />
       </div>
 
      {

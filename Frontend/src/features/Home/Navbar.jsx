@@ -103,6 +103,7 @@ const Navbar = () => {
 
         {/* ── Hamburger button — visible on mobile/tablet only ── */}
        <div className="lg:hidden flex gap-3 items-center" >
+        <NotificationBell/>
          <button
           onClick={() => setMenuOpen((prev) => !prev)}
           className=" flex flex-col justify-center items-center gap-1.5 w-8 h-8 cursor-pointer"
@@ -122,7 +123,7 @@ const Navbar = () => {
             ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
           />
         </button>
-        <NotificationBell/>
+        
        </div>
       </nav>
 
