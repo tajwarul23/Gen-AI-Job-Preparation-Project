@@ -164,7 +164,7 @@ const ResumeBuilder = () => {
           </h1>
         </div>
         <p className="text-xs sm:text-sm flex items-center text-muted font-sans mb-6">
-          Fill in your details and PrepLab generates a clean, ATS-optimized
+          Fill in your details and HireFlow generates a clean, ATS-optimized
           resume. No templates that look like everyone else's.
         </p>
       </div>

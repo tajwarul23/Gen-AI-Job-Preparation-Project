@@ -8,7 +8,7 @@ export const useFirebaseAuth = () => {
     const idToken = await result.user.getIdToken();
     const { data } = await axios.post(
       // "https://gen-ai-job-preparation-project.onrender.com/api/auth/firebase",
-      "http://localhost:3000/api/auth/firebase",
+      "https://hireflow-r73i.onrender.com/api/auth/firebase",
       { idToken, intent },
       { withCredentials: true }
     );

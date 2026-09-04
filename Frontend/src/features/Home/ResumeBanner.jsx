@@ -16,7 +16,7 @@ const ResumeBanner = () => {
             Build a resume that actually gets read
           </h1>
           <p className="text-muted font-display">
-            Fill in your details and PrepLab generates a clean, ATS-optimized
+            Fill in your details and HireFlow generates a clean, ATS-optimized
             resume. No templates that look like everyone else's.
           </p>
           <div className="flex items-center gap-2 mt-10">

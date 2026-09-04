@@ -20,7 +20,7 @@ const Features = () => {
           </div>
           <div>
             <p className="text-muted font-display">
-              PrepLab does the deep work — you focus on the prep. One resume
+              HireFlow does the deep work — you focus on the prep. One resume
               upload, full intelligence suite.
             </p>
           </div>

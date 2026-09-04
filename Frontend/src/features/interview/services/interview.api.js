@@ -6,7 +6,7 @@ import axios from "axios";
 //   withCredentials: true,
 // });
 const api = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "https://hireflow-r73i.onrender.com",
   withCredentials: true,
 });
 
