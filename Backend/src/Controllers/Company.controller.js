@@ -26,7 +26,7 @@ const buildInviteLink = (companyId) => {
 
   const clientUrl =
     process.env.NODE_ENV === "production"
-      ? "https://preplab-ai.vercel.app"
+      ? "https://hireflow-dev.vercel.app"
       : "http://localhost:5173";
 
   return `${clientUrl}/onboarding/company?token=${inviteToken}`;

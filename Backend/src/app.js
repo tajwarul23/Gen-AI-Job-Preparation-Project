@@ -21,7 +21,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(cookieParser());
 
-const allowedOrigins = process.env.NODE_ENV === "production" ? ["https://preplab-ai.vercel.app"] : "http://localhost:5173";
+const allowedOrigins = process.env.NODE_ENV === "production" ? ["https://hireflow-dev.vercel.app"] : "http://localhost:5173";
 
 app.use(cors({
     origin:allowedOrigins,

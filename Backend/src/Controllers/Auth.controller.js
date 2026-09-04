@@ -58,7 +58,7 @@ export const registerUserController = async (req, res) => {
     });
 
     return res.status(201).json({
-      message: `Welcome to PrepLab, ${userName}! Your account has been created successfully.`,
+      message: `Welcome to HireFlow, ${userName}! Your account has been created successfully.`,
       success: true,
       user: { id: user._id, email: user.email, userName: user.userName },
     });
